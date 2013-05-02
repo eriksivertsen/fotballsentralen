@@ -1,0 +1,262 @@
+a {
+    color: black;
+}
+
+div.loader {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    background-color: white;
+    z-index: 100;
+}
+div.menubody {
+    margin-left: 150px;
+    margin-right: 150px;
+    margin-top: 50px;
+    background-color: #8dbdd8;
+    padding:10px;
+    display:block;
+    color:#fff;
+    text-transform:uppercase;
+    cursor:pointer;
+    font-size:12px;
+}
+
+div.top {
+    background-color: #8dbdd8;
+    padding:10px;
+    display:block;
+    color:#fff;
+    text-transform:uppercase;
+    cursor:pointer;
+    font-size:12px;
+}
+
+text.teamname {
+    color:black;
+    font-size: 16pt;
+    margin-left: 25px;
+    font-family:arial;
+}
+text.playername {
+    color:black;
+    font-size: 16pt;
+    margin-left: 25px;
+    font-family:arial;
+}
+
+div.indexbody {
+    margin-left: 150px;
+    margin-right: 150px;
+    margin-bottom: 50px;
+    min-height: 90%;
+    background-color: #8dbdd8;
+}
+
+/* tables */
+table.tablesorter{
+    font-family: arial;
+    background-color: #d8d8d8;
+    margin:20px;
+    font-size: 8pt;
+    width: auto;
+    text-align: left;
+    min-width: 290px;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+    background-color: #e6EEEE;
+    border: 1px solid #FFF;
+    font-size: 8pt;
+    padding: 4px;
+}
+table.tablesorter thead tr .header {
+    background-image: url(bg.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+table.tablesorter tbody td {
+    color: #3D3D3D;
+    padding: 4px;
+    background-color: #FFF;
+    vertical-align: top;
+}
+table.tablesorter tbody tr.odd td {
+    background-color:#F0F0F6;
+}
+table.tablesorter thead tr .headerSortUp {
+    background-image: url(asc.gif);
+}
+table.tablesorter thead tr .headerSortDown {
+    background-image: url(desc.gif);
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+    background-color: #8dbdd8;
+}
+caption.tableheader {
+    font-size: 15px;
+    color: black;
+    font-weight:  bold;
+    cursor: pointer;
+    background-color:  #d8d8d8;
+    border-top-left-radius: 2em;
+    border-top-right-radius: 2em;
+}
+
+#jMenu {
+    display:table;
+    margin:0;
+    padding:0
+}
+
+/********************/
+/** premier niveau **/
+/********************/
+#jMenu li {
+    display:table-cell;
+    background-color:#8dbdd8;
+    margin:0;
+    float:left;
+}
+#jMenu li a {
+    padding:10px;
+    display:block;
+    background-color: transparent;
+    color:#fff;
+    text-transform:uppercase;
+    cursor:pointer;
+    font-size:12px;
+}
+
+/*******************/
+/** second niveau **/
+/*******************/
+#jMenu li ul {
+    display:none;
+    position:absolute;
+    padding:0;
+    margin:0
+}
+#jMenu li ul li {
+    background-color:#8dbdd8;
+    display:block;
+    border-bottom:1px solid #484548;
+    padding:0
+}
+#jMenu li ul li.arrow {
+    background:#8dbdd8 url('arrow_down.png') no-repeat center center;
+    height:6px;
+    padding:0;
+    border-bottom:none;
+    padding-bottom:10px
+}
+#jMenu li ul li a {
+    font-size:11px;
+    text-transform:none;
+    padding:7px;
+    display:block;
+    border-top:1px solid transparent;
+    border-bottom:1px solid transparent;
+}
+#jMenu li ul li a.isParent {
+    background:#8dbdd8 url('arrow_right.png') no-repeat right center;
+}
+#jMenu li ul li hover {
+    background-color:#8dbdd8;
+    border-top:1px solid #322f32;
+    border-bottom:1px solid #322f32;
+}
+
+.breadcrumb_container
+{
+	display:block;
+	height:34px;
+	margin:0px;
+	padding:0px;
+	font-size:10pt;
+	color:#404040;
+}
+
+.breadcrumb_e
+{
+	height:34px;
+	line-height: 34px;
+	display:inline-block;
+	float:left;
+	min-width:4px;
+	background-repeat:no-repeat;
+	background-image:url('../css/breadcrumbs/bc-sprite-full.png');
+}
+
+.breadcrumb_icon_home
+{
+	width:15px;
+	height:17px;
+	background-position:0px -67px;
+	display:block;
+	margin-top:7px;
+}
+
+.breadcrumb_icon_search
+{
+	width:18px;
+	height:17px;
+	background-position:-16px -67px;
+	display:block;
+	margin-top:7px;
+}
+
+.breadcrumb_item
+{
+	background-image:url('breadcrumbs/bc-mid.png');
+	background-repeat:repeat-x;
+	padding:0px 8px 0px 8px;
+	cursor:pointer;
+}
+
+.breadcrumb_item_short
+{
+	padding:0px 4px 0px 4px;
+}
+
+.breadcrumb_item_hover
+{
+	background-position:0px -34px;
+}
+
+.breadcrumb_divider
+{
+	width:24px;
+	background-position: -28px 0px;
+}
+
+.breadcrumb_divider_right
+{
+	background-position: -86px 0px;
+}
+
+.breadcrumb_divider_left
+{
+	background-position: -86px -34px;
+}
+
+.breadcrumb_end
+{
+	width:24px;
+	background-position: -57px 0px;
+}
+
+.breadcrumb_end_hover
+{
+	background-position: -57px -34px;
+}
+
+.breadcrumb_before
+{
+	width:17px;
+}
+
+.breadcrumb_before_hover
+{
+	background-position: 0px -34px;
+}

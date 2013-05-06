@@ -76,7 +76,8 @@ if(isset($_POST['action'])){
             'topscorer' => $db->getEventInfoJSON(0, $_POST['leagueid'], '4,8', $_POST['season']),
             'topscorercount' => $db->getTopscorerCount(0,$_POST['leagueid'],$_POST['season']),
             'hometeam' => $db->getBestHometeam($_POST['leagueid'], $_POST['season']),
-            'awayteam' => $db->getBestAwayteam($_POST['leagueid'], $_POST['season'])
+            'awayteam' => $db->getBestAwayteam($_POST['leagueid'], $_POST['season']),
+            'leaguetable' => $db->getLeagueTable($_POST['season'], $_POST['leagueid'])
          );
         echo json_encode($events);
     }

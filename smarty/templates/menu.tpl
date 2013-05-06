@@ -18,7 +18,7 @@
                 getLeagues();
                 $("#jMenu").jMenu({
                     
-                     animatedText : true,
+                    animatedText : true,
                     paddingLeft: 2
                 });
                 
@@ -81,6 +81,7 @@
                     </li>
 
                     <li><a class="fNiv" href="index.php?page=populare">Populære</a></li>
+                    <!--<li><a class="fNiv" href="index.php?page=preview">Forhåndsstoff</a></li>-->
                     <li><a class="fNiv" href="index.php?page=suspension&league_id=134365">Suspensjonsliste</a></li>
                 </ul>
             </center>
@@ -96,8 +97,7 @@
                 
                 <input id="tags" type="text" style="font-style: italic;color: grey;" value="Søk " onfocus="removeText(this)"  onblur="addText()"></input>
                 
-            </div>
-                                
+            </div>      
         </div>
     </body>
 </html>

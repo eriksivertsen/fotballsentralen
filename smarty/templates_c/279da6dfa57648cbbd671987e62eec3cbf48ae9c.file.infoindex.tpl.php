@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-05-01 09:41:36
+<?php /* Smarty version Smarty-3.1.12, created on 2013-05-06 10:34:52
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1367401295,
+      1 => 1367836490,
       2 => 'file',
     ),
   ),
@@ -64,6 +64,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 }
                 else if(page == 'suspension'){
                     getSuspensionList(league_id);
+                }
+                else if(page == 'preview'){
+                    getPreview();
                 }
                 else{
                     getTeam(0,0);
@@ -152,7 +155,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </tr>
                </table>
                 
-                
+                <!--<table id="leaguetable" class="tablesorter playerinfo" style="margin:0px;margin-left:275px;margin-right:25px;">
+                </table>-->
+
                 <table id="playingminutes" class="tablesorter"></table>
                 <table id="goals" class="tablesorter"> </table>
                 <table id="yellowcard" class="tablesorter"> </table>
@@ -191,12 +196,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                             <td><text id="team_players_used"></text></td>
                         </tr>
                         <tr>
-                            <td>Mål scoret:</td>
-                            <td><text id="team_scored"></text></td>
-                        </tr>
-                        <tr>
-                            <td>Mål sluppet inn:</td>
-                            <td><text id="team_conceded"></text></td>
+                            <td>Mål for/mot:</td>
+                            <td><text id="team_scored"></text> - <text id="team_conceded"></td>
                         </tr>
                         <tr>
                             <td>Clean sheets:</td>
@@ -321,6 +322,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <div id="populare">
                 <table id="popularePlayers" class="tablesorter" style=""></table>
                 <table id="populareTeams" class="tablesorter" style="float:left; "></table>
+            </div>
+                            
+            <div id="preview">
+                
             </div>
 
             <div id="suspensionList">

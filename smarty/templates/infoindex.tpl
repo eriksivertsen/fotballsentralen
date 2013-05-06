@@ -31,6 +31,9 @@
                 else if(page == 'suspension'){
                     getSuspensionList(league_id);
                 }
+                else if(page == 'preview'){
+                    getPreview();
+                }
                 else{
                     getTeam(0,0);
                 }
@@ -118,7 +121,9 @@
                     </tr>
                </table>
                 
-                
+                <!--<table id="leaguetable" class="tablesorter playerinfo" style="margin:0px;margin-left:275px;margin-right:25px;">
+                </table>-->
+
                 <table id="playingminutes" class="tablesorter"></table>
                 <table id="goals" class="tablesorter"> </table>
                 <table id="yellowcard" class="tablesorter"> </table>
@@ -157,12 +162,8 @@
                             <td><text id="team_players_used"></text></td>
                         </tr>
                         <tr>
-                            <td>Mål scoret:</td>
-                            <td><text id="team_scored"></text></td>
-                        </tr>
-                        <tr>
-                            <td>Mål sluppet inn:</td>
-                            <td><text id="team_conceded"></text></td>
+                            <td>Mål for/mot:</td>
+                            <td><text id="team_scored"></text> - <text id="team_conceded"></td>
                         </tr>
                         <tr>
                             <td>Clean sheets:</td>
@@ -286,6 +287,10 @@
             <div id="populare">
                 <table id="popularePlayers" class="tablesorter" style=""></table>
                 <table id="populareTeams" class="tablesorter" style="float:left; "></table>
+            </div>
+                            
+            <div id="preview">
+                
             </div>
 
             <div id="suspensionList">

@@ -15,6 +15,7 @@
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
         
         <script type="text/javascript" src="js/common.js"></script>
+        <script type="text/javascript" src="js/Utils.js"></script>
         
         <link href="favicon.ico" rel="icon" type="image/x-icon" />
         

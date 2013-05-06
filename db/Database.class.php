@@ -779,6 +779,7 @@ class Database {
         $year = 2013;
         $q = "SELECT * FROM ".EVENTTABLE." e
             JOIN matchtable m ON e.`matchid` = m.`matchid` 
+            JOIN playertable p ON e.playerid = p.playerid and e.teamid = p.teamid and p.leagueid = m.leagueid
             WHERE e.eventtype = 2
             AND e.playerid != -1
             AND m.leagueid = {$leagueid}
@@ -809,7 +810,8 @@ class Database {
                 $data[$row['playerid']]['matchid'][] = $row['matchid'];
                 
                 if(count($data[$row['playerid']]['matchid']) == 2){
-                    $twoYellow[$row['playerid']]['matchid'] = $row['matchid'];
+                    $twoYellow[$row['playerid']]['teamid'] = $row['teamid'];
+                    $twoYellow[$row['playerid']]['playername'] = $row['playername'];
                     $twoYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
                 }
                 if(count($data[$row['playerid']]['matchid']) == 3){
@@ -817,7 +819,8 @@ class Database {
                     $threeYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
                 }
                 if(count($data[$row['playerid']]['matchid']) == 4){
-                    $fourYellow[$row['playerid']]['matchid'] = $row['matchid'];
+                    $fourYellow[$row['playerid']]['teamid'] = $row['teamid'];
+                    $fourYellow[$row['playerid']]['playername'] = $row['playername'];
                     $fourYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
                 }
                 if(count($data[$row['playerid']]['matchid']) == 5){
@@ -1085,10 +1088,10 @@ class Database {
         while($row = mysql_fetch_array($result))
         {
             $total++;
-            if($row['totalgoals'] > 3){
+            if($row['totalgoals'] >= 3){
                 $over3++;
             }
-            if($row['totalgoals'] > 4){
+            if($row['totalgoals'] >= 4){
                 $over4++;
             }
         }
@@ -1468,6 +1471,86 @@ class Database {
                 );
             }
             return $data;
+    }
+    function getLeagueTable($season, $leagueid)
+    {
+        $q = "
+        SELECT 
+          home.teamid,
+           home.teamname,
+        SUM(home.wins + away.wins) AS wins,
+        SUM(home.draws + away.draws) AS draws,
+        SUM(home.loss + away.loss) AS loss,
+        SUM(home.goals + away.goals) AS goals,
+        SUM(home.conceded + away.conceded) AS conceded,
+        SUM(home.mf + away.mf) AS mf,
+        SUM(home.points + away.points) AS points
+        FROM
+        (SELECT 
+            m.hometeamid AS teamid,
+            t.teamname,
+            (
+            SUM(IF(m.teamwonid = m.hometeamid, 1, 0)) * 3 + SUM(IF(m.teamwonid = 0, 1, 0))
+            ) AS points,
+            SUM(m.homescore) AS goals,
+            SUM(m.awayscore) AS conceded,
+            SUM(IF(m.teamwonid = m.hometeamid, 1, 0)) AS wins,
+            SUM(IF(m.teamwonid = 0, 1, 0)) AS draws,
+            SUM(IF(m.teamwonid = m.awayteamid, 1, 0)) AS loss,
+            (SUM(m.homescore) - SUM(m.awayscore)) AS mf 
+        FROM
+            matchtable m 
+            JOIN teamtable t 
+            ON t.teamid = m.hometeamid 
+            JOIN leaguetable l 
+            ON m.`leagueid` = l.`leagueid` 
+        WHERE l.`year` = {$season} 
+            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            AND l.java_variable = {$leagueid}
+        GROUP BY m.hometeamid 
+        ORDER BY points DESC,
+            mf DESC) AS home JOIN 
+        (SELECT 
+            m.awayteamid AS teamid,
+            (
+            SUM(IF(m.teamwonid = m.awayteamid, 1, 0)) * 3 + SUM(IF(m.teamwonid = 0, 1, 0))
+            ) AS points,
+            SUM(m.awayscore) AS goals,
+            SUM(m.homescore) AS conceded,
+            SUM(IF(m.teamwonid = m.awayteamid, 1, 0)) AS wins,
+            SUM(IF(m.teamwonid = 0, 1, 0)) AS draws,
+            SUM(IF(m.teamwonid = m.hometeamid, 1, 0)) AS loss,
+            (SUM(m.awayscore) - SUM(m.homescore)) AS mf 
+        FROM
+            matchtable m 
+            JOIN teamtable t 
+            ON t.teamid = m.awayteamid 
+            JOIN leaguetable l 
+            ON m.`leagueid` = l.`leagueid` 
+        WHERE l.`year` = {$season} AND l.`java_variable` = {$leagueid}
+            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+        GROUP BY m.awayteamid 
+        ORDER BY points DESC,
+            mf DESC) away ON home.teamid = away.teamid GROUP BY teamid ORDER BY points DESC, mf DESC, goals DESC";
+        
+         $data = array();
+       
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'teamid' => $row['teamid'],
+                'teamname' => $row['teamname'],
+                'wins' => $row['wins'],
+                'draws' => $row['draws'],
+                'loss' => $row['loss'],
+                'goals' => $row['goals'],
+                'conceded' => $row['conceded'],
+                'mf' => $row['mf'],
+                'points' => $row['points']
+            );
+        }
+        return $data;
     }
 }
 

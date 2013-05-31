@@ -290,7 +290,8 @@ class Database {
         WHERE p.`playerid` = {$playerid}
         AND l.year = {$season}
         AND p.ignore = 0 
-        GROUP BY p.`playerid`,p.`matchid`";
+        GROUP BY p.`playerid`,p.`matchid`
+        ORDER BY m.dateofmatch DESC";
         
         $q2 = "SELECT p.`playerid`,pt.`playername` as playername, p.minutesplayed AS `minutes played`, p.start AS `start`,
         home.teamid as homeid, away.teamid as awayid,
@@ -342,56 +343,8 @@ class Database {
         foreach($data as $value){
             $json[] = $value;
         }
-        if(empty($json)){
-            //return self::getPlayerInfoAlt($playerid);
-        }
         return $json;
-    }
-    public function getPlayerInfoAlt($playerid)
-    {
-        $q = "SELECT pta.`playerid`, pta.shirtnumber,pta.`playername`, home.teamid as homeid, away.teamid as awayid,
-        home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
-        SUM(IF(e.`eventtype` = 4, 1,0)) AS `goals scored`, 
-        SUM(IF(e.eventtype = 8, 1,0)) AS `penalty`,
-        SUM(IF(e.eventtype = 9, 1,0)) AS `own goals`,
-        SUM(IF(e.eventtype = 2, 1,0)) AS `yellow cards`, 
-        SUM(IF(e.eventtype = 3, 1,0)) AS `red cards` ,
-        SUM(IF(e.eventtype = 7, 1,0)) AS `subbed in` ,
-        SUM(IF(e.eventtype = 6, 1,0)) AS `subbed off` 
-        FROM playertable pta
-        LEFT JOIN ".EVENTTABLE." e ON e.playerid = pta.playerid AND e.teamid = pta.teamid AND e.ignore = 0
-        JOIN matchtable m ON e.matchid = m.matchid
-        JOIN teamtable home ON m.hometeamid = home.teamid
-        JOIN teamtable away ON m.awayteamid = away.teamid
-        WHERE pta.`playerid` = {$playerid}
-        GROUP BY m.matchid";
-        
-        $data = array();
-        $result = mysql_query($q);
-        while($row = mysql_fetch_array($result))
-        {
-            $data[$row['matchid']] = array(
-                'goals' => $row['goals scored'],
-                'penalty' => $row['penalty'],
-                'yellowcards' => $row['yellow cards'],
-                'redcards' => $row['red cards'],
-                'subbedin' => $row['subbed in'],
-                'owngoal' => $row['own goals'],
-                'subbedoff' => $row['subbed off'],
-                'hometeamname' => $row['homename'],
-                'awayteamname' => $row['awayname'],
-                'homeid' => $row['homeid'],
-                'awayid' => $row['awayid'],
-                'result' => $row['result'],
-                'dateofmatch' => $row['dateofmatch'],
-                'matchid' => $row['matchid']
-            );
-        }
-        $json = array();
-        foreach($data as $value){
-            $json[] = $value;
-        }
-        return $json;
+    
     }
     public function getTeamPlayerJSON($teamid,$season)
     {
@@ -503,6 +456,8 @@ class Database {
         if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist)){
             $q = "UPDATE teamtable SET webpagehits=webpagehits+1, last_visit=NOW() WHERE teamid = $id";
             mysql_query($q);
+            $q2 = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('team',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            mysql_query($q2);
         }
     }
     public function setPlayerHit($id)
@@ -510,15 +465,29 @@ class Database {
         if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist)){           
             $q = "UPDATE playertable SET webpagehits=webpagehits+1, last_visit=NOW() WHERE playerid = $id";
             mysql_query($q);
+            $q2 = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('player',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            mysql_query($q2);
         }
     }
     public function setLeagueHit($id)
     {
-        if($id != 22012 || $id != 32012){
-            if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist)){
-                $q = "UPDATE leaguetable SET webpagehits=webpagehits+1 WHERE leagueid = $id";
-                mysql_query($q);
-            }
+        if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist) && $id != 0){
+            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('league',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            mysql_query($q);
+        }
+    }
+    public function setPreviewHit($id)
+    {
+        if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist) && $id != 0){
+            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('preview',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            mysql_query($q);
+        }
+    }
+    public function setRefereeHit($id)
+    {
+        if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist) && $id != 0){
+            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('referee',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            mysql_query($q);
         }
     }
     public function getEventRankPlayer($playerid,$eventtype,$season)
@@ -597,7 +566,7 @@ class Database {
         JOIN teamtable tt ON tt.teamid = t.teamid
         JOIN matchtable m ON e.matchid = m.matchid
         JOIN leaguetable l ON l.leagueid = m.leagueid
-        WHERE e.eventtype = {$eventtype}
+        WHERE e.eventtype IN ( {$eventtype} )
         AND l.year = {$season}
         AND e.ignore = 0
         GROUP BY e.teamid, m.leagueid
@@ -706,7 +675,8 @@ class Database {
                 'hometeamname' => $row['homename'],
                 'awayteamname' => $row['awayname'],
                 'minute' => $min,
-                'result' => $row['result']
+                'result' => $row['result'],
+                'teamid' => $row['teamid']
             );
             
            
@@ -943,9 +913,10 @@ class Database {
             AND (m.`awayteamid` = p.`teamid` OR m.`hometeamid` = p.`teamid`)
             AND (c.`awayteamid` = p.`teamid` OR c.`hometeamid` = p.`teamid`)
             ORDER BY DATE ASC LIMIT 1";
+            
             $result = mysql_query($q);
             while($row = mysql_fetch_array($result)) {
-                if(!$row['matchid'] == null){
+                if(!$row['matchid'] == null && strtotime($row['dateofmatch']) > strtotime('now')){
                     $fiveYellowSuspended[] = array(
                         'matchid' => $row['matchid'],
                         'dateofmatch' => $row['date'],
@@ -1136,7 +1107,7 @@ class Database {
             echo 'not supported';
             return;
         }
-         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname " .
+         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid " .
             "FROM matchtable m  " .
             "JOIN leaguetable l ON m.`leagueid` = l.`leagueid` " .
             "JOIN teamtable home ON m.`hometeamid` = home.`teamid` " .
@@ -1158,7 +1129,8 @@ class Database {
                 'awayid' => $row['awayid'],
                 'awayname' => $row['awayname'],
                 'result' => $row['result'],
-                'dateofmatch' => $row['dateofmatch1']
+                'dateofmatch' => $row['dateofmatch1'],
+                'teamwonid' => $row['teamwonid']
             );
         }
         return $data;
@@ -1351,8 +1323,15 @@ class Database {
     {
         return self::getBestTeam('awayteam',$leagueid,$season);
     }
-    
-    public function getBestTeam($team,$leagueid,$season,$teamid = 0)
+    public function getLeagueTableHome($leagueid,$season)
+    {
+        return self::getBestTeam('hometeam',$leagueid,$season,0,20);
+    }
+    public function getLeagueTableAway($leagueid,$season)
+    {
+        return self::getBestTeam('awayteam',$leagueid,$season,0,20);
+    }    
+    public function getBestTeam($team,$leagueid,$season,$teamid = 0, $limit = 1)
     {
         if($team == 'hometeam'){
             $team = 'm.hometeamid';
@@ -1371,14 +1350,27 @@ class Database {
             echo 'not supported ';
             return;
         }
-        $q = "SELECT t.`teamname`,{$team} as teamid, " .
+        
+        $orderby = 'points';
+        $index = $orderby;
+        if($leagueid == 0 && $teamid == 0){
+            $orderby = 'pointavg DESC, played';
+            $index = 'pointavg';
+        }
+        
+        $q = "SELECT 
+            tabell.*,
+            tabell.wins + tabell.draws + tabell.loss AS played ,
+            ROUND((points/(tabell.wins + tabell.draws + tabell.loss)),2) AS pointavg
+            FROM(SELECT t.`teamname`,{$team} as teamid, " .
         "(SUM(IF(m.teamwonid = {$team}, 1,0)) * 3 + SUM(IF(m.teamwonid = 0, 1,0))) AS points,  " .
         "SUM({$scored}) AS goals,  " .
         "SUM({$conceded}) AS conceded, " .
         "SUM(IF(m.teamwonid = {$team}, 1,0)) AS wins, " .
         "SUM(IF(m.teamwonid = 0, 1,0)) AS draws, " .
         "SUM(IF(m.teamwonid = {$opposite}, 1,0)) AS loss,  " .
-        "(SUM({$scored}) - SUM({$conceded})) AS mf "  .      
+        "(SUM({$scored}) - SUM({$conceded})) AS mf ,"  .      
+        "(SUM(IF(m.teamwonid = m.awayteamid, 1, 0))+SUM(IF(m.teamwonid = 0, 1, 0))+SUM(IF(m.teamwonid = m.hometeamid, 1, 0))) AS played "    .     
         "FROM matchtable m " .
         "JOIN teamtable t ON t.teamid = {$team} " .
         "JOIN leaguetable l ON m.`leagueid` = l.`leagueid`  " .
@@ -1387,8 +1379,9 @@ class Database {
         ($teamid == 0 ? ' ' : ' AND t.teamid = '.$teamid.' ') .
         "AND m.`result` NOT REGEXP '- : -|(Utsatt)' " .
         "GROUP BY {$team} " .
-        "ORDER BY points DESC, mf DESC " .
-        "LIMIT 1";
+        "" .
+        ") as tabell 
+        ORDER BY $orderby DESC, mf DESC LIMIT {$limit}";
         
         //echo $q;
         
@@ -1398,14 +1391,16 @@ class Database {
         while($row = mysql_fetch_array($result))
         {
             $data[] = array(
-                'points' => $row['points'],
+                'points' => $row[$index],
                 'teamid' => $row['teamid'],
                 'teamname' => $row['teamname'],
                 'goals'=> $row['goals'],
                 'conceded' => $row['conceded'],
+                'mf' => $row['mf'],
                 'wins' => $row['wins'],
                 'draws' => $row['draws'],
-                'loss' => $row['loss']
+                'loss' => $row['loss'],
+                'played' => $row['played']
            );
         }
         return $data;
@@ -1474,6 +1469,17 @@ class Database {
     }
     function getLeagueTable($season, $leagueid)
     {
+        $orderby = 'points';
+        $index = $orderby;
+        $limit = 20;
+        
+        if($leagueid == 0){
+           $leagueid = '1,2,3,4,5,6';
+           //quickfix
+           $index = 'pointavg';
+           $orderby = 'pointavg DESC, played ';
+        }
+        
         $q = "
         SELECT 
           home.teamid,
@@ -1484,7 +1490,9 @@ class Database {
         SUM(home.goals + away.goals) AS goals,
         SUM(home.conceded + away.conceded) AS conceded,
         SUM(home.mf + away.mf) AS mf,
-        SUM(home.points + away.points) AS points
+        SUM(home.points + away.points) AS points,
+        (SUM(home.wins + away.wins) + SUM(home.draws + away.draws) + SUM(home.loss + away.loss)) AS played,
+        ROUND(SUM(home.points + away.points) / (SUM(home.wins + away.wins) + SUM(home.draws + away.draws) + SUM(home.loss + away.loss)),2) as pointavg 
         FROM
         (SELECT 
             m.hometeamid AS teamid,
@@ -1506,7 +1514,7 @@ class Database {
             ON m.`leagueid` = l.`leagueid` 
         WHERE l.`year` = {$season} 
             AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
-            AND l.java_variable = {$leagueid}
+            AND l.java_variable IN ( {$leagueid} )
         GROUP BY m.hometeamid 
         ORDER BY points DESC,
             mf DESC) AS home JOIN 
@@ -1527,12 +1535,12 @@ class Database {
             ON t.teamid = m.awayteamid 
             JOIN leaguetable l 
             ON m.`leagueid` = l.`leagueid` 
-        WHERE l.`year` = {$season} AND l.`java_variable` = {$leagueid}
+        WHERE l.`year` = {$season} AND l.`java_variable` IN ( {$leagueid} )
             AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
         GROUP BY m.awayteamid 
         ORDER BY points DESC,
-            mf DESC) away ON home.teamid = away.teamid GROUP BY teamid ORDER BY points DESC, mf DESC, goals DESC";
-        
+            mf DESC) away ON home.teamid = away.teamid GROUP BY teamid ORDER BY $orderby DESC, mf DESC, goals DESC LIMIT $limit";
+
          $data = array();
        
         $result = mysql_query($q);
@@ -1547,10 +1555,361 @@ class Database {
                 'goals' => $row['goals'],
                 'conceded' => $row['conceded'],
                 'mf' => $row['mf'],
-                'points' => $row['points']
+                'points' => $row[$index],
+                'played' => $row['played']
             );
         }
         return $data;
+    }
+    
+    function getRefereeStats($year)
+    {
+        $q = "
+       SELECT 
+        t.`refereeid`,
+        t.`refereename`,
+        SUM(IF(e.`eventtype` = 2, 1, 0)) AS `yellow`,
+        SUM(IF(e.`eventtype` = 3, 1, IF(e.`eventtype` = 1,1,0))) AS `red`
+        FROM
+        eventtable e 
+
+        JOIN matchtable m 
+            ON e.`matchid` = m.`matchid` 
+        JOIN refereetable t 
+            ON t.`refereeid` = m.`refereeid` 
+            WHERE t.refereeid != -1
+
+        GROUP BY t.`refereeid` ";
+        
+         $data = array();
+       
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[$row['refereeid']] = array(
+                'refereename' => $row['refereename'],
+                'refereeid' => $row['refereeid'],
+                'yellow' => $row['yellow'],
+                'red' => $row['red']
+            );
+        }
+
+        $q2 = "SELECT COUNT(*) AS matches,r.`refereeid` FROM matchtable r WHERE refereeid IS NOT NULL  AND r.`result` NOT LIKE '- : -' AND refereeid != -1 AND refereeid != 0 GROUP BY r.`refereeid`;";
+        $result = mysql_query($q2);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[$row['refereeid']]['matches'] = $row['matches'];
+            $data[$row['refereeid']]['yellowpr'] = number_format($data[$row['refereeid']]['yellow'] / $row['matches'], 2);
+            $data[$row['refereeid']]['redpr'] = number_format($data[$row['refereeid']]['red'] / $row['matches'], 2);
+        }
+        
+        $q3 = "SELECT 
+        matchid, m.`refereeid`,r.refereename, home.`teamname` as hometeam, away.teamname as awayteam, SUBSTRING(date FROM 1 FOR 16) as date
+        FROM
+        (SELECT 
+            MIN(r.dateofmatch) AS `date`,
+            r.`refereeid` 
+        FROM
+            matchtable r 
+        WHERE refereeid IS NOT NULL 
+            AND refereeid != - 1 
+            AND refereeid != 0 
+            AND r.`result` LIKE '- : -' 
+        GROUP BY r.`refereeid`) AS `first` 
+        JOIN matchtable m 
+            ON m.`dateofmatch` = first.date 
+            AND m.`refereeid` = first.refereeid 
+            
+            JOIN teamtable home ON m.`hometeamid` = home.`teamid`
+            JOIN teamtable away ON m.`awayteamid` = away.`teamid`
+            JOIN refereetable r ON r.refereeid = m.refereeid ";
+        
+        $result = mysql_query($q3);
+        while($row = mysql_fetch_array($result))
+        {
+            if(isset($data[$row['refereeid']])){
+                $data[$row['refereeid']]['nextmatch'] = $row['matchid'];
+                $data[$row['refereeid']]['dateofmatch'] = $row['date'];
+                $data[$row['refereeid']]['hometeam'] = $row['hometeam'];
+                $data[$row['refereeid']]['awayteam'] = $row['awayteam'];
+            }
+           
+        }
+        //var_dump($data);
+        return $data;
+    }
+    function getRefereeId($refereeid){
+        
+        $q = "SELECT 
+        t.`refereeid`,
+        t.`refereename`,
+        m.*,
+        h.teamname as homename,
+        a.teamname as awayname,
+        SUM(IF(e.`eventtype` = 2, 1, 0)) AS `yellow`,
+        SUM(IF(e.`eventtype` = 3, 1, IF(e.`eventtype` = 1,1,0))) AS `red`
+        FROM
+        eventtable e 
+
+        JOIN matchtable m 
+            ON e.`matchid` = m.`matchid`
+        JOIN teamtable h 
+            ON h.teamid = m.hometeamid
+        JOIN teamtable a 
+            ON a.teamid = m.awayteamid
+        JOIN refereetable t 
+            ON t.`refereeid` = m.`refereeid` 
+            WHERE t.refereeid = {$refereeid}
+        GROUP BY m.`matchid` ORDER BY m.dateofmatch DESC";
+            
+           // echo $q;
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'yellow' => $row['yellow'],
+                'red' => $row['red'],
+                'matchid' => $row['matchid'],
+                'dateofmatch' => $row['dateofmatch'],
+                'homename' => $row['homename'],
+                'homeid' => $row['hometeamid'],
+                'awayid' => $row['awayteamid'],
+                'awayname' => $row['awayname'],
+                'result' => $row['result'],
+                'refereename' => $row['refereename']
+            );
+        }
+        return $data;
+    }
+    function getMatchInfo($matchid)
+    {
+        $q = "SELECT hometeamid,awayteamid,leagueid,SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.refereeid FROM matchtable m WHERE matchid =  ".$matchid;
+        
+        $data = array();
+       
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data = array(
+                'hometeamid' => $row['hometeamid'],
+                'awayteamid' => $row['awayteamid'],
+                'dateofmatch' => $row['dateofmatch'],
+                'refereeid' => $row['refereeid'],
+                'leagueid' => $row['leagueid']
+             );
+        }
+        return $data;
+    }
+    public function getTeamInfo($teamid,$season){
+    $events = 
+        array (
+            'teamtoleague' => $this->getTeamToLeague($teamid,$season),
+            'yellow' => $this->getEventRankTeam($teamid,2,$season),
+            'yellowred' => $this->getEventRankTeam($teamid,1,$season),
+            'red' => $this->getEventRankTeam($teamid,3,$season),
+            'goal' => $this->getEventRankTeam($teamid,4,$season),
+            'subin' => $this->getEventRankTeam($teamid,6,$season),
+            'subout' => $this->getEventRankTeam($teamid,7,$season),
+            'penalty' => $this->getEventRankTeam($teamid,8,$season),
+            'owngoal' => $this->getEventRankTeam($teamid,9,$season),
+            'teamplayer' => $this->getTeamPlayerJSON($teamid ,$season),
+            'scoringminute' => $this->getGoalsScoringMinute($teamid,$season),
+            'concededminute' => $this->getGoalsConcededMinute($teamid,$season),
+            'topscorer' => $this->getMostEvents($teamid, $season,'4,8'),
+            'topscorercount' => $this->getTopscorerCount($teamid,0,$season),
+            'mostminutes' => $this->getMostMinutes($teamid, $season),
+            //'winstreak' => $this->getBestWinStreak($teamid, $season),
+            'cleansheets' => $this->getCleanSheets($teamid, $season),
+            'overgoals' => $this->getOverGoals($teamid, $season),
+            'mostyellow' => $this->getMostEvents($teamid, $season,2),
+            'mostred' => $this->getMostEvents($teamid, $season,'1,3'),
+            'nextmatches' => $this->getNextMatches($teamid),
+            'latestmatches' => $this->getLatestMatches($teamid),
+            'homestats' => $this->getHomestats($teamid, $season),
+            'awaystats' => $this->getAwaystats($teamid, $season),
+            'allmatches' => $this->getAllMatches($teamid, $season)
+         );
+        return $events;
+    }
+    public function getTrending()
+    {
+        $q = "SELECT 
+            c.`clicked_id`,
+            c.`clicktype`,
+            COUNT(*),
+            p.`playername`,
+            t.`teamname`,
+            m.`matchid`,
+            home.`teamname` as hometeam,
+            away.`teamname` as awayteam
+            FROM
+            clicktable c 
+            LEFT JOIN playertable p ON p.`playerid` = c.`clicked_id` AND p.year = 2012
+            LEFT JOIN teamtable t ON t.`teamid` = c.`clicked_id`
+            LEFT JOIN matchtable m ON m.`matchid` = c.`clicked_id`
+            LEFT JOIN teamtable home ON m.`hometeamid` = home.`teamid`
+            LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
+            WHERE c.`time` > NOW() - INTERVAL 24 HOUR  AND c.`clicktype` IN ('player','team','preview')
+            GROUP BY clicktype,
+            clicked_id
+            ORDER BY COUNT(*) DESC
+            LIMIT 10";
+        
+        $data = array();
+       
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            if($row['clicktype'] == 'player'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'playerid' => $row['clicked_id'],
+                    'playername' => $row['playername']
+                );
+            }else if($row['clicktype']=='team'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'teamid' => $row['clicked_id'],
+                    'teamname' => $row['teamname']
+                );
+            }else if($row['clicktype']=='preview'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'matchid' => $row['clicked_id'],
+                    'hometeam' => $row['hometeam'],
+                    'awayteam' => $row['awayteam']
+                );
+            }
+            
+            
+        }
+        return $data;
+    }
+    public function getMatchesOneWeek()
+    {
+        $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid, home.teamname as homename, away.teamname as awayname, l.java_variable
+            FROM matchtable m JOIN teamtable home on m.hometeamid = home.teamid 
+            JOIN teamtable away on m.awayteamid = away.teamid 
+            JOIN leaguetable l ON l.leagueid = m.leagueid
+            WHERE m.`result` LIKE '- : -' AND m.`dateofmatch` BETWEEN  NOW() AND NOW() + INTERVAL 3 DAY ORDER BY m.dateofmatch ASC ";
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'matchid' => $row['matchid'],
+                'homename' => $row['homename'],
+                'awayname' => $row['awayname'],
+                'dateofmatch' => $row['dateofmatch'],
+                'leagueid' => $row['java_variable']
+            );
+        }
+        return $data;
+    }
+    public function getPreviousMatches($teamid1, $teamid2)
+    {
+        $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS date, home.`teamname` AS homename, away.`teamname` AS awayname 
+        FROM matchtable m 
+        JOIN teamtable home ON home.`teamid` = m.`hometeamid` 
+        JOIN teamtable away ON away.`teamid` = m.`awayteamid` 
+        WHERE (m.`hometeamid` = $teamid1 OR m.`hometeamid` = $teamid2) 
+        AND (m.`awayteamid` = $teamid1 OR m.`awayteamid` = $teamid2 ) 
+        AND m.`result` NOT LIKE '- : -' 
+        ORDER BY m.dateofmatch desc";
+        
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'matchid' => $row['matchid'],
+                'hometeamid' => $row['hometeamid'],
+                'homename' => $row['homename'],
+                'awayname' => $row['awayname'],
+                'awayteamid' => $row['awayteamid'],
+                'dateofmatch' => $row['date'],
+                'result' => $row['result'],
+                'teamwonid' => $row['teamwonid']
+            );
+        }
+        return $data;
+    }
+    public function getFSScore($leagueid){
+        $q = "SELECT m.*, home.`teamname` as homename,away.`teamname` as awayname
+            FROM matchtable m 
+            JOIN teamtable home ON home.`teamid` = m.`hometeamid` 
+            JOIN teamtable away ON away.`teamid` = m.`awayteamid` 
+            WHERE m.`leagueid` = {$leagueid}
+            AND m.`result` NOT LIKE '- : -' 
+            ORDER BY m.`dateofmatch` ASC";
+        
+        $fsscore = array();
+        $result = mysql_query($q);
+        $startingValue = 1000;
+        
+        //constants
+        $awayWin = 6;
+        $awayDraw = 3;
+        
+        $homeWin = 4;
+        $homeDraw = 2;
+        
+        $divideConst = 10;
+        
+        while($row = mysql_fetch_array($result))
+        {
+            if(!isset($fsscore[$row['hometeamid']])){
+                $fsscore[$row['hometeamid']] = $startingValue;
+            }
+            if(!isset($fsscore[$row['awayteamid']])){
+                $fsscore[$row['awayteamid']] = $startingValue;
+            }
+            
+            $homeFS = $fsscore[$row['hometeamid']];
+            $awayFS = $fsscore[$row['awayteamid']];
+            $homeScore = $row['homescore'];
+            $awayScore = $row['awayscore'];
+            
+            $diff = abs($homeFS - $awayFS);
+            
+            //Homewin
+            
+            //echo 'match: ' . $row['homename'] . ' - ' .$row['awayname'] . ' :: diff : ' . $diff . '  res:' . $row['result'] . '   ';
+            if($homeScore > $awayScore){
+                $diffscore = $homeScore - $awayScore;
+                $fsscore[$row['hometeamid']] = $fsscore[$row['hometeamid']] + ((($diff/$divideConst) * $homeWin) + $diffscore);
+                $fsscore[$row['awayteamid']] = $fsscore[$row['awayteamid']] - ((($diff/$divideConst) * $homeWin) + $awayScore);
+                //echo 'Adding ' . (($diff/$divideConst) * $homeWin) + $diffscore . ' to ' .$row['homename'] . ' after winning home against ' .$row['awayname'] . '   '; 
+            }
+            //awaywin
+            else if ($homeScore < $awayScore) {
+                $diffscore = $awayScore - $homeScore;
+                $fsscore[$row['hometeamid']] = $fsscore[$row['hometeamid']] - ((($diff/$divideConst) * $awayWin) - $diffscore);
+                
+                $fsscore[$row['awayteamid']] = $fsscore[$row['awayteamid']] + ((($diff/$divideConst) * $awayWin) + $awayScore);
+               // echo 'Adding ' . ((($diff/$divideConst) * $awayWin) + $awayScore) . ' to ' .$row['awayname'] . ' after winning away against ' .$row['homename'] . '  '; 
+            }
+            //Draw
+            else if($homeScore == $awayScore){
+                
+                if($diff > 0){
+                    $fsscore[$row['hometeamid']] = $fsscore[$row['hometeamid']] + $homeDraw;
+                    $fsscore[$row['awayteamid']] = $fsscore[$row['awayteamid']] - $awayDraw;
+                    //echo '<br/>positive difference, means that hometeam should be stronger than awayteam, should be easy win ' .$diff . ' match: ' . $row['homename'] . ' - ' .$row['awayname'];
+                }
+                else{
+                    $diff = abs($diff);
+                    //negative difference, hometeam is weaker, strong victory
+                    $fsscore[$row['hometeamid']] = $fsscore[$row['hometeamid']] + $homeDraw;
+                    $fsscore[$row['awayteamid']] = $fsscore[$row['awayteamid']] - $awayDraw;
+                    
+                    //echo '<br/>negative difference, hometeam is weaker, strong victory ' .$diff .' match :' . $row['homename'] . ' - ' .$row['awayname'];
+                }
+            }
+            
+        }
+        return $fsscore;
     }
 }
 

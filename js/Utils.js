@@ -13,10 +13,12 @@ function getAndreDivAll(){
 
 function getPlayerLink(playerid,playername)
 {
+    //return '<a href="#" onclick="getPlayer('+playerid+')>'+playername+'</a>'
     return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
 function getTeamLink(teamid,teamname)
 {
+    //return '<a href="#" onclick="getTeam(0,'+teamid+')>'+teamname+'</a>'
     return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
 }
 function getLeagueLink(leagueid)
@@ -24,17 +26,70 @@ function getLeagueLink(leagueid)
     return '<a href="index.php?season='+season+'&league_id='+leagueid+'">'+getLeagueName(leagueid)+'</a>';
 }
 
+function getMatchLink(matchid,hometeam,awayteam)
+{
+    if(matchid !== undefined && hometeam !== undefined && awayteam !== undefined){
+        return getMatchLinkText(matchid,hometeam+' - ' + awayteam);
+    }
+    return '';
+}
+function getMatchResultLink(matchid,result)
+{
+    if(matchid !== undefined){
+        return getMatchLinkText(matchid,result);
+    }
+    return '';
+}
+function getMatchLinkText(matchid,text){
+    if(matchid !== undefined){
+        return '<a target="blank" href="http://www.fotball.no/System-pages/Kampfakta/?matchId='+matchid+'">'+text+'</a>';
+    }
+    return '';
+}
+function getPreviewLink(matchid,hometeam,awayteam, dateofmatch)
+{
+    if(matchid !== undefined){
+        return getPreviewLinkText(matchid,hometeam+' - ' + awayteam,dateofmatch);
+    }
+    return '';
+}
+function getPreviewLinkText(matchid,text,dateofmatch)
+{
+    if(matchid !== undefined){
+        return '<a href="index.php?page=preview&matchid='+matchid+'">'+(dateofmatch != undefined ? dateofmatch +': ' : '')+''+text+' </a>';
+    }
+    return '';
+}
+
 function getEventTypeLink(eventtype)
 {
     return '<a href="index.php?eventtype='+eventtype+'">'+getEventFromId(eventtype)+'</a>';
 }
 
-function getOverlib(text, value)
+function getRefereeLink(referee_id,refereename)
 {
-    return '<a href="javascript:void(0);" onmouseover="return overlib(\''+text+'\');" onmouseout="return nd();">'+value+'</a>';
+    return '<a href="index.php?page=referee&referee_id='+referee_id+'">'+refereename+'</a>';
+}
+
+function getOverlib(overlibtext, value)
+{
+    return '<a href="javascript:void(0);" onmouseover="return overlib(\''+overlibtext+'\');" onmouseout="return nd();">'+value+'</a>';
+}
+function getOverlibWidth(overlibtext, value, width)
+{
+    return '<a href="javascript:void(0);" onmouseover="return overlib(\''+overlibtext+'\', WIDTH, '+width+');" onmouseout="return nd();">'+value+'</a>';
+}
+function getOverlibLink(overlibtext, value, link)
+{
+    
+    return '<a href=\"'+link+'\" onmouseover="return overlib(\''+overlibtext+'\');" onmouseout="return nd();">'+value+'</a>';
 }
 function getTableHeader(array)
 {
+    for(var key in array){
+        var value = array[key];
+        array[key] = value.replace(" ","&nbsp;");
+    }
     var arrayString = '<th>'+array.join('</th><th>')+'</th>';
     return '<thead>'+arrayString+'</thead>';
 }
@@ -43,16 +98,21 @@ function getTableRow(array, i)
     var arrayString = '<td>'+array.join('</td><td>')+'</td>';
     return '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+arrayString+'</tr>';
 }
+function getTableRowId(array, i, id)
+{
+    var arrayString = '<td>'+array.join('</td><td>')+'</td>';
+    return '<tr id='+id+' class='+(i % 2 == 0 ? 'odd' : '')+'>'+arrayString+'</tr>';
+}
 function getEventFromId(eventid)
 {
     switch(eventid)
     {
         case 1:
-            return 'To gule kort'
+            return 'Rødt kort (to gule)'
         case 2:
             return 'Gule kort';
         case 3:
-            return 'Rødt kort';
+            return 'Rødt kort (direkte)';
         case 4:
             return 'Spillemål';
         case 6:
@@ -63,6 +123,8 @@ function getEventFromId(eventid)
             return 'Straffemål';
         case 9:
             return 'Selvmål';
+        case 10:
+            return 'Toppscorer'
     }
 }
 function getLeagueName(leagueid)
@@ -93,8 +155,17 @@ function getLeagueName(leagueid)
 }
 function getDateString(date)
 {
-    var monthNames = [ "jan", "feb", "mars", "april", "mai", "juni",
-            "juli", "aug", "sep", "okt", "nov", "des" ];
-    var dateA = new Date(date);
-    return dateA.getDate() + ". "+monthNames[dateA.getMonth()] + " " +dateA.getFullYear();
+    return date;
+    //var jdate = new Date(date);
+    //alert(jdate);
+    //alert(date);
+   // var monthNames = [ "jan", "feb", "mars", "april", "mai", "juni", "juli", "aug", "sep", "okt", "nov", "des" ];
+    //return jdate.getDate() + ". "+monthNames[jdate.getMonth()] + " " +jdate.getFullYear() + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes());
+}
+
+function getDoubleDigit(digit){
+    if(digit.length <= 1){
+        return '0'+digit;
+    }
+    return digit;
 }

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-05-06 10:51:48
+<?php /* Smarty version Smarty-3.1.12, created on 2013-05-26 13:36:30
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1367837507,
+      1 => 1369575385,
       2 => 'file',
     ),
   ),
@@ -115,8 +115,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </li>
 
                     <li><a class="fNiv" href="index.php?page=populare">Populære</a></li>
-                    <!--<li><a class="fNiv" href="index.php?page=preview">Forhåndsstoff</a></li>-->
+                    <li><a class="fNiv" href="index.php?page=preview">Forhåndsstoff</a></li>
                     <li><a class="fNiv" href="index.php?page=suspension&league_id=134365">Suspensjonsliste</a></li>
+                    <li><a class="fNiv" href="index.php?page=referee">Dommere</a></li>
                 </ul>
             </center>
             <ul id="breadcrumbs">

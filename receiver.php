@@ -46,6 +46,7 @@ if(isset($_POST['action'])){
         $db->setPlayerHit($_POST['playerid']);
         $events = array (
             'yellow' => $db->getEventRankPlayer($_POST['playerid'],2,$_POST['season']),
+            'yellow_red' => $db->getEventRankPlayer($_POST['playerid'],1,$_POST['season']),
             'red' => $db->getEventRankPlayer($_POST['playerid'],3,$_POST['season']),
             'goal' => $db->getEventRankPlayer($_POST['playerid'],4,$_POST['season']),
             'subin' => $db->getEventRankPlayer($_POST['playerid'],6,$_POST['season']),
@@ -66,8 +67,10 @@ if(isset($_POST['action'])){
         $events = array (
             'lastupdate' => $db->getLastUpdate($_POST['leagueid'],$_POST['season']),
             'yellow' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],2,$_POST['season']),
-            'red' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],'3,1',$_POST['season']),
+            'yellow_red' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],1,$_POST['season']),
+            'red' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],3,$_POST['season']),
             'goal' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],4,$_POST['season']),
+            'totalgoals' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],'4,8',$_POST['season']),
             'subin' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],6,$_POST['season']),
             'subout' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],7,$_POST['season']),
             'penalty' => $db->getEventInfoJSON($_POST['teamid'],$_POST['leagueid'],8,$_POST['season']),
@@ -77,49 +80,62 @@ if(isset($_POST['action'])){
             'topscorercount' => $db->getTopscorerCount(0,$_POST['leagueid'],$_POST['season']),
             'hometeam' => $db->getBestHometeam($_POST['leagueid'], $_POST['season']),
             'awayteam' => $db->getBestAwayteam($_POST['leagueid'], $_POST['season']),
-            'leaguetable' => $db->getLeagueTable($_POST['season'], $_POST['leagueid'])
+            'leaguetable' => $db->getLeagueTable($_POST['season'], $_POST['leagueid']),
+            'leaguetablehome' => $db->getLeagueTableHome($_POST['leagueid'], $_POST['season']),
+            'leaguetableaway' => $db->getLeagueTableAway($_POST['leagueid'], $_POST['season'])
          );
         echo json_encode($events);
     }
     if($_POST['action'] == 'getTeamInfo'){
         $db->setTeamHit($_POST['teamid']);
-        $events = array (
-            'teamtoleague' => $db->getTeamToLeague($_POST['teamid'],$_POST['season']),
-            'yellow' => $db->getEventRankTeam($_POST['teamid'],2,$_POST['season']),
-            'red' => $db->getEventRankTeam($_POST['teamid'],3,$_POST['season']),
-            'goal' => $db->getEventRankTeam($_POST['teamid'],4,$_POST['season']),
-            'subin' => $db->getEventRankTeam($_POST['teamid'],6,$_POST['season']),
-            'subout' => $db->getEventRankTeam($_POST['teamid'],7,$_POST['season']),
-            'penalty' => $db->getEventRankTeam($_POST['teamid'],8,$_POST['season']),
-            'owngoal' => $db->getEventRankTeam($_POST['teamid'],9,$_POST['season']),
-            'teamplayer' => $db->getTeamPlayerJSON($_POST['teamid'] ,$_POST['season']),
-            'scoringminute' => $db->getGoalsScoringMinute($_POST['teamid'],$_POST['season']),
-            'concededminute' => $db->getGoalsConcededMinute($_POST['teamid'],$_POST['season']),
-            'topscorer' => $db->getMostEvents($_POST['teamid'], $_POST['season'],'4,8'),
-            'topscorercount' => $db->getTopscorerCount($_POST['teamid'],0,$_POST['season']),
-            'mostminutes' => $db->getMostMinutes($_POST['teamid'], $_POST['season']),
-            //'winstreak' => $db->getBestWinStreak($_POST['teamid'], $_POST['season']),
-            'cleansheets' => $db->getCleanSheets($_POST['teamid'], $_POST['season']),
-            'overgoals' => $db->getOverGoals($_POST['teamid'], $_POST['season']),
-            'mostyellow' => $db->getMostEvents($_POST['teamid'], $_POST['season'],2),
-            'mostred' => $db->getMostEvents($_POST['teamid'], $_POST['season'],'1,3'),
-            'nextmatches' => $db->getNextMatches($_POST['teamid']),
-            'latestmatches' => $db->getLatestMatches($_POST['teamid']),
-            'homestats' => $db->getHomestats($_POST['teamid'], $_POST['season']),
-            'awaystats' => $db->getAwaystats($_POST['teamid'], $_POST['season']),
-            'allmatches' => $db->getAllMatches($_POST['teamid'], $_POST['season'])
-         );
+        $events = $db->getTeamInfo($_POST['teamid'],$_POST['season']);
         echo json_encode($events);
     }
     if($_POST['action'] == 'getPopulare'){
-        echo json_encode($db->getPopulare());
+        $ret = array(
+            'populare'  => $db->getPopulare(),
+            'trending' => $db->getTrending()
+        );
+        echo json_encode($ret);
     }
+    if($_POST['action'] == 'getReferee'){
+        echo json_encode($db->getRefereeStats($_POST['season']));
+    }
+    
+    if($_POST['action'] == 'getRefereeId'){
+        $db->setRefereeHit($_POST['referee_id']);
+        echo json_encode($db->getRefereeId($_POST['referee_id']));
+    }
+    
     if($_POST['action'] == 'getSuspensionList'){
         echo json_encode($db->getSuspList($_POST['leagueid']));
     }
     if($_POST['action'] == 'getSearchArray'){
         echo json_encode($db->getSearchArray());
     }
+    if($_POST['action'] == 'getMatchesOneWeek'){
+        echo json_encode($db->getMatchesOneWeek());
+    }
+    if($_POST['action'] == 'getMatchInfo'){
+        $db->setPreviewHit($_POST['matchid']);
+        $teamArray = $db->getMatchInfo($_POST['matchid']);
+        $refereeStats = $db->getRefereeStats(2013);
+        //$fsscore = $db->getFSScore($teamArray['leagueid']);
+        $retVal = array(
+            'hometeam' => $db->getTeamInfo($teamArray['hometeamid'],2013),
+            'awayteam' => $db->getTeamInfo($teamArray['awayteamid'],2013),
+            //'hometeamFS' => (isset($fsscore[$teamArray['hometeamid']]) ? $fsscore[$teamArray['hometeamid']]: ''),
+            //'awayteamFS' => (isset($fsscore[$teamArray['awayteamid']]) ? $fsscore[$teamArray['awayteamid']]: ''),
+            'suspension' => $db->getSuspList($teamArray['leagueid']),
+            'dateofmatch' => $teamArray['dateofmatch'],
+            'referee' => (isset($refereeStats[$teamArray['refereeid']]['refereename']) ? $refereeStats[$teamArray['refereeid']]['refereename'] : ''),
+            'refereeid' => (isset($refereeStats[$teamArray['refereeid']]['refereeid']) ? $refereeStats[$teamArray['refereeid']]['refereeid']: ''),
+            'refereestats' => (isset($refereeStats[$teamArray['refereeid']]) ? $refereeStats[$teamArray['refereeid']] : ''),
+            'previousmatches' => $db->getPreviousMatches($teamArray['hometeamid'], $teamArray['awayteamid'])
+          );
+        echo json_encode($retVal);
+    }
 }
+
 
 ?>

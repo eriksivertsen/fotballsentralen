@@ -24,6 +24,12 @@ if(isset($_GET['league_id'])){
 if(isset($_GET['page'])){
     $smarty->assign('page', $_GET['page']);
 }
+if(isset($_GET['matchid'])){
+    $smarty->assign('matchid', $_GET['matchid']);
+}
+if(isset($_GET['referee_id'])){
+    $smarty->assign('refereeid', $_GET['referee_id']);
+}
 if(isset($_GET['season'])){
     $smarty->assign('season',$_GET['season']);
 }else{

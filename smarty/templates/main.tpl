@@ -1,10 +1,5 @@
 <html>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script>
-     if (navigator.appName == 'Microsoft Internet Explorer'){
-               window.alert('Siden fungerer ikke særlig bra i Internet Explorer.');
-            }
-    </script>
     <head>
         
         <script type="text/javascript" src="js/jquery-1.8.2.js"></script>  

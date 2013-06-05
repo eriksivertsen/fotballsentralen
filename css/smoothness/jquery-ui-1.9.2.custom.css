@@ -32,7 +32,6 @@ div.infoWindow{
     border: 1px solid black;
     display: block; 
     position: absolute; 
-    
     margin-left: 250px; 
     width: auto; padding: 5px; 
     z-index: 100; 
@@ -93,7 +92,8 @@ div.indexbody {
         inset 7px 0 7px -7px #777,
         inset -7px 0 7px -7px #777;
     box-shadow:
-        inset 7px 0 7px -7px #777,
+        inset 7px
+        0 7px -7px #777,
         inset -7px 0 7px -7px #777;
     margin-left: 150px;
     margin-right: 150px;

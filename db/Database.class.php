@@ -452,12 +452,10 @@ class Database {
     }
     public function setTeamHit($id)
     {
-        //echo $_SERVER['HTTP_HOST'];
         if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist)){
             $q = "UPDATE teamtable SET webpagehits=webpagehits+1, last_visit=NOW() WHERE teamid = $id";
             mysql_query($q);
-            $q2 = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('team',$id,'".$_SERVER['REMOTE_ADDR']."')";
-            mysql_query($q2);
+            $this->setHit($id,'team');
         }
     }
     public function setPlayerHit($id)
@@ -465,28 +463,32 @@ class Database {
         if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist)){           
             $q = "UPDATE playertable SET webpagehits=webpagehits+1, last_visit=NOW() WHERE playerid = $id";
             mysql_query($q);
-            $q2 = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('player',$id,'".$_SERVER['REMOTE_ADDR']."')";
-            mysql_query($q2);
+            $this->setHit($id,'player');
         }
     }
     public function setLeagueHit($id)
     {
-        if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist) && $id != 0){
-            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('league',$id,'".$_SERVER['REMOTE_ADDR']."')";
-            mysql_query($q);
-        }
+        if($id == '3,4,5,6'){
+            $id = '8';
+        }        
+        $this->setHit($id,'league');
     }
     public function setPreviewHit($id)
     {
-        if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist) && $id != 0){
-            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('preview',$id,'".$_SERVER['REMOTE_ADDR']."')";
-            mysql_query($q);
-        }
+        $this->setHit($id,'preview');
     }
     public function setRefereeHit($id)
     {
+        $this->setHit($id, 'referee');
+    }
+    public function setExternalMatchHit($id)
+    {
+        $this->setHit($id,'match');
+    }
+    public function setHit($id,$type)
+    {
         if(!in_array($_SERVER['HTTP_HOST'], $this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist) && $id != 0){
-            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('referee',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('$type',$id,'".$_SERVER['REMOTE_ADDR']."')";
             mysql_query($q);
         }
     }
@@ -1089,6 +1091,34 @@ class Database {
     function getAllMatches($teamid,$season){
         return self::getMatches('all',$teamid,100,$season);
     }
+    function getGoalScoreresMatch(array $matchid, $teamid){
+        $matchids = implode($matchid,',');
+        $q = "SELECT 
+        e.matchid, p.`playername`,p.`playerid`,e.`eventtype`, e.`minute`,e.teamid
+        FROM
+        eventtable e 
+        JOIN playertable p 
+            ON p.`playerid` = e.`playerid` 
+            AND e.`leagueid` = p.`leagueid`
+        WHERE e.`matchid` IN ($matchids)
+        AND e.`eventtype` IN (4, 8, 9)
+        ORDER BY e.minute ASC";
+        
+       
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[$row['matchid']][] = array(
+                'playerid' => $row['playerid'],
+                'playername' => $row['playername'],
+                'minute' => $row['minute'],
+                'eventtype' => $row['eventtype'],
+                'teamid' => $row['teamid']
+            );
+        }
+        return $data;
+    }
     function getMatches($type,$teamid,$limit,$season = '')
     {
         $date = '';
@@ -1684,7 +1714,7 @@ class Database {
     }
     function getMatchInfo($matchid)
     {
-        $q = "SELECT hometeamid,awayteamid,leagueid,SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.refereeid FROM matchtable m WHERE matchid =  ".$matchid;
+        $q = "SELECT hometeamid,awayteamid,leagueid,SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch,UNIX_TIMESTAMP(dateofmatch) as timestamp, m.refereeid FROM matchtable m WHERE matchid =  ".$matchid;
         
         $data = array();
        
@@ -1696,12 +1726,20 @@ class Database {
                 'awayteamid' => $row['awayteamid'],
                 'dateofmatch' => $row['dateofmatch'],
                 'refereeid' => $row['refereeid'],
-                'leagueid' => $row['leagueid']
+                'leagueid' => $row['leagueid'],
+                'timestamp' => $row['timestamp']
              );
         }
         return $data;
     }
     public function getTeamInfo($teamid,$season){
+        $allmatches = $this->getAllMatches($teamid, $season);
+        $matchids = array();
+        foreach($allmatches as $array){
+            $matchids [] = $array['matchid'];
+        }
+        $goalscorers = $this->getGoalScoreresMatch($matchids, $teamid);
+        
     $events = 
         array (
             'teamtoleague' => $this->getTeamToLeague($teamid,$season),
@@ -1728,7 +1766,11 @@ class Database {
             'latestmatches' => $this->getLatestMatches($teamid),
             'homestats' => $this->getHomestats($teamid, $season),
             'awaystats' => $this->getAwaystats($teamid, $season),
-            'allmatches' => $this->getAllMatches($teamid, $season)
+            'allmatches' => $allmatches,
+            'homestreak' => $this->getStreakString($teamid,'home'),
+            'awaystreak' => $this->getStreakString($teamid,'away'),
+            'goalscorers' => $goalscorers
+           
          );
         return $events;
     }
@@ -1910,6 +1952,92 @@ class Database {
             
         }
         return $fsscore;
+    }
+    public function getClickTable()
+    {
+         $q = "SELECT * FROM clicktable c ORDER by c.time DESC LIMIT 100";
+        
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'clicktype' => $row['clicktype'],
+                'clicked_id' => $row['clicked_id'],
+                'time' => $row['time'],
+                'ip' =>  $row['ip']
+            );
+        }
+        return $data;
+    }
+    public function getStreakString($teamid,$type = '')
+    {
+        $where = "m.`hometeamid` = $teamid OR m.`awayteamid` = $teamid";
+        $typestring = '';
+        
+        if($type == 'home'){
+            $where = "m.`hometeamid` = $teamid";
+            $typestring = 'hjemme';
+        }else if($type == 'away'){
+            $where = "m.`awayteamid` = $teamid";
+            $typestring = 'borte';
+        }
+        $q = "SELECT * FROM matchtable m WHERE ($where) 
+        AND m.`result` NOT LIKE '- : -' ORDER BY m.`dateofmatch` ASC";
+        
+        $wins = 0;
+        $loss = 0;
+        $draws = 0;
+        $withoutloss = 0;
+        $withoutwin = 0;
+        $withoutdraws = 0;
+        
+        $string = '';
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $winId = $row['teamwonid'];
+            if($winId == $teamid){
+                $wins++;
+                $withoutloss++;
+                $withoutdraws++;
+                $withoutwin = 0;
+                $loss = 0;
+                $draws = 0;
+            }else if ($winId == 0){
+                $draws++;
+                $wins = 0;
+                $loss = 0;
+                $withoutloss++;
+                $withoutwin++;
+                $withoutdraws = 0;
+            }else{
+                $loss++;
+                $wins = 0;
+                $draws = 0;
+                $withoutloss = 0;
+                $withoutdraws++;
+                $withoutwin++;
+            }
+        }
+        if($withoutloss > $withoutwin){
+            //positive
+            $string = 'Har ikke tapt på ' . $withoutloss . ' ' .($typestring != '' ? $typestring : '' ). 'kamper. ';
+            if($wins >= $draws){
+                 $string .= 'Har ' . $wins . ' seire på rad';
+            }else{
+                 $string .= 'Har ' . $draws . ' uavgjort på rad';
+            }
+        }else{
+            //negative
+            $string = 'Har ikke vunnet på ' . $withoutwin . ' ' .($typestring != '' ? $typestring : '' ). 'kamper. ';
+            if($loss >= $draws){
+                $string .= 'Har  ' . $loss . ' tap på rad';
+            }else{
+                $string .= 'Har ' . $draws . ' uavgjort på rad';
+            }
+        }
+        return $string;
     }
 }
 

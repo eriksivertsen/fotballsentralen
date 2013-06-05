@@ -80,10 +80,10 @@
                         </ul>
                     </li>
 
-                    <li><a class="fNiv" href="index.php?page=populare">Populære</a></li>
-                    <li><a class="fNiv" href="index.php?page=preview">Forhåndsstoff</a></li>
-                    <li><a class="fNiv" href="index.php?page=suspension&league_id=134365">Suspensjonsliste</a></li>
-                    <li><a class="fNiv" href="index.php?page=referee">Dommere</a></li>
+                    <li><a class="fNiv" href="#" onclick="getPopulare()">Populære</a></li>
+                    <li><a class="fNiv" href="#" onclick="getPreviewMatches()">Forhåndsstoff</a></li>
+                    <li><a class="fNiv" href="#" onclick="getSuspensionList(134365)">Suspensjonsliste</a></li>
+                    <li><a class="fNiv" href="#" onclick="getReferee()">Dommere</a></li>
                 </ul>
             </center>
             <ul id="breadcrumbs">

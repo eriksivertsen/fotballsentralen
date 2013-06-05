@@ -88,8 +88,8 @@
         <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
         <div id="loader" class="loader"></div>
         {if $page == ''}
-        <input id="next" type="image" src="images/arrow_next.png" style="position:absolute;bottom:45%;right:55px" title="Neste sesong" onclick="nextSeason()">
-        <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:45%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
+        <input id="next" type="image" src="images/arrow_next.png" style="position:absolute;bottom:35%;right:55px" title="Neste sesong" onclick="nextSeason()">
+        <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
         {/if}
         <div class="indexbody">
             
@@ -138,10 +138,11 @@
                     </div>
                 </center>
             </div>
-            <div id="populare">
-                <table id="popularePlayers" class="tablesorter" style=""></table>
-                <table id="trending" class="tablesorter" style="float:left; "></table>
-                <table id="populareTeams" class="tablesorter" style="float:left; "></table>
+            <div id="populare" align="center">
+                <table id="trending" class="tablesorter playerinfo" style="float:left; "></table>
+                <table id="popularePlayers" class="tablesorter playerinfo" style="float:left;"></table>
+                <table id="populareTeams" class="tablesorter playerinfo" style="float:left; "></table>
+                </table>
                 <br/>
             </div>
                             

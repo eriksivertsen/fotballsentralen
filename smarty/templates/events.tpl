@@ -1,3 +1,4 @@
+<!--
 <table id="league_table" style="font-size: 9pt; margin-left:16px;">
         <tr>
             <td>Liga: </td> 
@@ -7,12 +8,12 @@
             <td>Toppscorer: </td> 
             <td><text id="league_topscorer"></text></td> 
         </tr>
-            <!--
+            
         <tr>
             <td>Formlag: </td>
             <td><text id="league_formteam"></text></td> 
         </tr>
-            -->
+            
         <tr>
             <td>Beste hjemmelag: </td> 
             <td><text id="league_hometeam"></text></td> 
@@ -22,7 +23,30 @@
             <td><text id="league_awayteam"></text></td> 
         </tr>
     </table>
-    <br/>
+    <br/>-->
+<div align="center">    
+    <div class="categoryheader"><text id="league_name"></text></div>
+    <table id="league_table" style="font-size: 9pt; width:100%">
+        <tr>
+            <td align="center">Toppscorer: </td> 
+            <td align="center">Beste hjemmelag: </td> 
+            <td align="center">Beste bortelag: </td> 
+        </tr>
+        <tr>
+            <td align="center"><text id="league_topscorer"></text></td> 
+            <td align="center"><text id="league_hometeam"></text></td> 
+            <td align="center"><text id="league_awayteam"></text></td> 
+        </tr>
+        <tr>
+            <td align="center"><img id="league_topscorer_logo"></img></td> 
+            <td align="center"><img id="league_hometeam_logo"></img></td> 
+            <td align="center"><img id="league_awayteam_logo"></img></td> 
+        </tr>
+        
+        <br/>
+        
+    </table>
+</div>
 
 <div align="center">
     <div id="mins" class="category">
@@ -49,7 +73,6 @@
 
     <div id="overall" class="category">
         <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
-        
         <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>
         <table id="leaguetablehome" class="tablesorter playerinfo" style="display: inline-table;"> </table>
         <table id="leaguetableaway" class="tablesorter playerinfo" style="display: inline-table;"> </table>

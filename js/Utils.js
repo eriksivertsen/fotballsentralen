@@ -13,17 +13,18 @@ function getAndreDivAll(){
 
 function getPlayerLink(playerid,playername)
 {
-    //return '<a href="#" onclick="getPlayer('+playerid+')>'+playername+'</a>'
-    return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
+    return '<a href="#" onclick="getPlayer('+playerid+')">'+playername+'</a>'
+    //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
 function getTeamLink(teamid,teamname)
 {
-    //return '<a href="#" onclick="getTeam(0,'+teamid+')>'+teamname+'</a>'
-    return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
+    return '<a href="#" onclick="getTeam(0,'+teamid+')">'+teamname+'</a>'
+    //return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
 }
 function getLeagueLink(leagueid)
 {
-    return '<a href="index.php?season='+season+'&league_id='+leagueid+'">'+getLeagueName(leagueid)+'</a>';
+    return '<a href="#" onclick="getTeam('+leagueid+',0)">'+getLeagueName(leagueid)+'</a>'
+    //return '<a href="index.php?season='+season+'&league_id='+leagueid+'">'+getLeagueName(leagueid)+'</a>';
 }
 
 function getMatchLink(matchid,hometeam,awayteam)
@@ -42,7 +43,7 @@ function getMatchResultLink(matchid,result)
 }
 function getMatchLinkText(matchid,text){
     if(matchid !== undefined){
-        return '<a target="blank" href="http://www.fotball.no/System-pages/Kampfakta/?matchId='+matchid+'">'+text+'</a>';
+        return '<a target="blank" href="http://www.fotball.no/System-pages/Kampfakta/?matchId='+matchid+'" onclick="setExternalMatchHit('+matchid+')">'+text+'</a>';
     }
     return '';
 }
@@ -56,7 +57,7 @@ function getPreviewLink(matchid,hometeam,awayteam, dateofmatch)
 function getPreviewLinkText(matchid,text,dateofmatch)
 {
     if(matchid !== undefined){
-        return '<a href="index.php?page=preview&matchid='+matchid+'">'+(dateofmatch != undefined ? dateofmatch +': ' : '')+''+text+' </a>';
+        return '<a href="#" onclick="getPreview('+matchid+')">'+(dateofmatch != undefined ? dateofmatch +': ' : '')+''+text+' </a>';
     }
     return '';
 }
@@ -68,7 +69,8 @@ function getEventTypeLink(eventtype)
 
 function getRefereeLink(referee_id,refereename)
 {
-    return '<a href="index.php?page=referee&referee_id='+referee_id+'">'+refereename+'</a>';
+    return '<a href="#" onclick="getRefereeId('+referee_id+')">'+refereename+'</a>';
+    //return '<a href="index.php?page=referee&referee_id='+referee_id+'">'+refereename+'</a>';
 }
 
 function getOverlib(overlibtext, value)
@@ -168,4 +170,30 @@ function getDoubleDigit(digit){
         return '0'+digit;
     }
     return digit;
+}
+function setTeamLogo(id,teamid){
+    id.attr("src",'images/logos/'+teamid+'.png');
+    id.attr("onclick",'getTeam(0,'+teamid+')');
+    id.css("cursor",'pointer');
+    id.error(function (){
+        id.attr("src",'images/logos/blank.png');
+    });
+    id.show();
+}
+function setExternalMatchHit(matchid)
+{
+     $.ajax({
+        type: "POST",
+        url: "receiver.php",
+        dataType: "json",
+        timeout: timeout,
+        data: {
+            action: "setExternalMatchHit", 
+            matchid: matchid
+        },
+        
+        success: function() {
+           
+        }
+    });
 }

@@ -128,12 +128,16 @@ if(isset($_POST['action'])){
             //'awayteamFS' => (isset($fsscore[$teamArray['awayteamid']]) ? $fsscore[$teamArray['awayteamid']]: ''),
             'suspension' => $db->getSuspList($teamArray['leagueid']),
             'dateofmatch' => $teamArray['dateofmatch'],
+            'timestamp' => $teamArray['timestamp'],
             'referee' => (isset($refereeStats[$teamArray['refereeid']]['refereename']) ? $refereeStats[$teamArray['refereeid']]['refereename'] : ''),
             'refereeid' => (isset($refereeStats[$teamArray['refereeid']]['refereeid']) ? $refereeStats[$teamArray['refereeid']]['refereeid']: ''),
             'refereestats' => (isset($refereeStats[$teamArray['refereeid']]) ? $refereeStats[$teamArray['refereeid']] : ''),
             'previousmatches' => $db->getPreviousMatches($teamArray['hometeamid'], $teamArray['awayteamid'])
           );
         echo json_encode($retVal);
+    }
+    if($_POST['action'] == 'setExternalMatchHit'){
+        $db->setExternalMatchHit($_POST['matchid']);
     }
 }
 

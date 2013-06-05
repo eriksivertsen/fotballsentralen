@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-05-27 14:18:28
+<?php /* Smarty version Smarty-3.1.12, created on 2013-06-03 07:39:20
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1369664300,
+      1 => 1370245159,
       2 => 'file',
     ),
   ),
@@ -126,8 +126,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
         <div id="loader" class="loader"></div>
         <?php if ($_smarty_tpl->tpl_vars['page']->value==''){?>
-        <input id="next" type="image" src="images/arrow_next.png" style="position:absolute;bottom:45%;right:55px" title="Neste sesong" onclick="nextSeason()">
-        <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:45%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
+        <input id="next" type="image" src="images/arrow_next.png" style="position:absolute;bottom:35%;right:55px" title="Neste sesong" onclick="nextSeason()">
+        <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
         <?php }?>
         <div class="indexbody">
             
@@ -179,10 +179,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </div>
                 </center>
             </div>
-            <div id="populare">
-                <table id="popularePlayers" class="tablesorter" style=""></table>
-                <table id="trending" class="tablesorter" style="float:left; "></table>
-                <table id="populareTeams" class="tablesorter" style="float:left; "></table>
+            <div id="populare" align="center">
+                <table id="trending" class="tablesorter playerinfo" style="float:left; "></table>
+                <table id="popularePlayers" class="tablesorter playerinfo" style="float:left;"></table>
+                <table id="populareTeams" class="tablesorter playerinfo" style="float:left; "></table>
+                </table>
                 <br/>
             </div>
                             

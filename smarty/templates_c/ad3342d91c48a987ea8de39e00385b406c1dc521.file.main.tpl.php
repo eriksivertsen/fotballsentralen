@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-05-29 11:35:22
+<?php /* Smarty version Smarty-3.1.12, created on 2013-06-04 17:03:02
          compiled from "smarty\templates\main.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2243450b0caef60c5f3-55980832%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'ad3342d91c48a987ea8de39e00385b406c1dc521' => 
     array (
       0 => 'smarty\\templates\\main.tpl',
-      1 => 1369827086,
+      1 => 1370365362,
       2 => 'file',
     ),
   ),
@@ -25,11 +25,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_50b0caef6b72a5_70578752')) {function content_50b0caef6b72a5_70578752($_smarty_tpl) {?><html>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script>
-     if (navigator.appName == 'Microsoft Internet Explorer'){
-               window.alert('Siden fungerer ikke særlig bra i Internet Explorer.');
-            }
-    </script>
     <head>
         
         <script type="text/javascript" src="js/jquery-1.8.2.js"></script>  

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-07-27 08:51:59
+<?php /* Smarty version Smarty-3.1.12, created on 2013-07-27 10:09:48
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1374915117,
+      1 => 1374919709,
       2 => 'file',
     ),
   ),
@@ -47,7 +47,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         }(document, 'script', 'facebook-jssdk'));
         
             $(document).ready(function() {
-
                
                 var player_id = '<?php echo $_smarty_tpl->tpl_vars['player_id']->value;?>
 ';
@@ -130,12 +129,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         
     </head>
     
-    <body onunload="">
-        <script type="text/javascript">
-        window.onload = function(){
-            console.log('onload called');
-        }
-        </script>
+    <body>
         <div id="fb-root"></div>
         <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
         <div id="loader" class="loader"></div>
@@ -174,10 +168,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </div>
             <div id="events">
                <?php echo $_smarty_tpl->getSubTemplate ("allevents.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
-
-            </div>
-            <div id="report_div">
-               <?php echo $_smarty_tpl->getSubTemplate ("report.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
             </div>
             <div id="playerminutes">
@@ -243,6 +233,5 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <br/>
             <br/>
         </div>
-        <input id="reloadValue" type="hidden" name="reloadValue" value="" />
     </body>
 </html><?php }} ?>

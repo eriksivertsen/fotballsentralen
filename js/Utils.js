@@ -324,3 +324,18 @@ function getOverlibStreakString(matches,teamid)
     }
     return matchString;
 }
+
+function getHistoryBack(haystack, needle, selectedid)
+{
+    var needleLength = needle.length;
+    var found = haystack.indexOf(needle);
+    if(found > 0){
+        var id = haystack.substr(found+needleLength);
+        if(id !== selectedid){
+            return id;
+        }else{
+            return -1;
+        }
+    }
+    return -1;
+}

@@ -14,8 +14,6 @@
         <script type="text/javascript" src="js/jquery.eventCalendar.min.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
-        <script type="text/javascript" src="js/jquery-history/jquery.history.min.js"></script>
-		
         
         <script type="text/javascript" src="js/common.js"></script>
         <script type="text/javascript" src="js/Utils.js"></script>

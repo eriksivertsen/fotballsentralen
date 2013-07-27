@@ -114,7 +114,10 @@ function getPopulare()
         return;
     }
     startLoad();
-    //history.pushState("", "Title", 'index.php?page=populare');
+    history.pushState("", "Title", 'index.php?page=populare');
+    
+    //$.History.trigger('/page=populare');
+    
     $("#populare").show();
     $.ajax({
         type: "POST",
@@ -141,7 +144,7 @@ function getSuspensionList(leagueid)
         return;
     }
     startLoad();
-    //window.location.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
+    location.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
     $('#suspensionSelect').show();
     $.ajax({
         type: "POST",
@@ -165,7 +168,7 @@ function getPreviewMatches(){
     if(!allowClicks){
         return;
     }
-    //history.pushState("", "Title", 'index.php?page=preview');
+    history.pushState("", "Title", 'index.php?page=preview');
     startLoad();
     $('#preview').show();
     $('#preview_table').hide();
@@ -212,7 +215,7 @@ function getPreview(matchid)
         return;
     }
     startLoad();
-    //history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
+    history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
     $('#preview').show();
     $('#preview_table').show();
     $('#preview_matches').hide();
@@ -323,7 +326,7 @@ function getTransfers()
         return;
     }
     startLoad();
-    //history.pushState("", "Title", 'index.php?page=transfers');
+    history.pushState("", "Title", 'index.php?page=transfers');
     $('#transfer_text').html('Kun interne overganger/lån i Norge. ');
     
     $('[id^="transfer_"]').show();
@@ -359,7 +362,7 @@ function getReferee()
         return;
     }
     startLoad();
-    //history.pushState("", "Title", 'index.php?page=referee');
+    history.pushState("", "Title", 'index.php?page=referee');
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -392,7 +395,7 @@ function getRefereeId(refereeid)
         return;
     }
     startLoad();
-    //history.pushState("", "Title", 'index.php?page=referee&referee_id='+refereeid);
+    history.pushState("", "Title", 'index.php?page=referee&referee_id='+refereeid);
     $('#referee').show();
     $('#referee_table_specific').empty();
     $.ajax({
@@ -853,9 +856,7 @@ function getPlayerFull(playerid,fromString)
         return;
     }
     playeridselected = playerid;
-    //$.History.go('index.php?season='+season+'&player_id='+playeridselected);
-    //window.location.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected);
-    //$.History.go('/season='+season+'&player_id='+playeridselected);
+    history.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected);
     startLoad();
     $('#player').show();
 
@@ -1025,9 +1026,9 @@ function getLeagueInfo(leagueid,teamid)
     leagueidselected = leagueid;
 
     if(leagueid == getAndreDivAll()){
-        //history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
+        history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
     }else{
-        //history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
+        history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
     }
     
     
@@ -1100,9 +1101,9 @@ function getTeamInfoFull(teamid,fromPage)
     }
     teamidselected = teamid;    
     //$.History.go('index.php?season='+season+'&team_id='+teamidselected);
-    //history.pushState("", "Title", 'index.php?season='+season+'&team_id='+teamidselected);
+    history.pushState("", "Title", 'index.php?season='+season+'&team_id='+teamidselected);
     //$.History.go('/season='+season+'&team_id='+teamidselected);
-    $.History.go('/season='+season+'&team_id='+teamidselected);
+    //$.History.trigger('/season='+season+'&team_id='+teamidselected);
     startLoad();
     
     $.ajax({

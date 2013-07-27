@@ -16,7 +16,6 @@
         }(document, 'script', 'facebook-jssdk'));
         
             $(document).ready(function() {
-
                
                 var player_id = '{$player_id}';
                 var team_id = '{$team_id}';
@@ -128,9 +127,6 @@
             </div>
             <div id="events">
                {include file="allevents.tpl"}
-            </div>
-            <div id="report_div">
-               {include file="report.tpl"}
             </div>
             <div id="playerminutes">
                 <center> 

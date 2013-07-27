@@ -1,29 +1,4 @@
-<!--
-<table id="league_table" style="font-size: 9pt; margin-left:16px;">
-        <tr>
-            <td>Liga: </td> 
-            <td><b><text id="league_name"></text></b></td> 
-        </tr>
-        <tr>
-            <td>Toppscorer: </td> 
-            <td><text id="league_topscorer"></text></td> 
-        </tr>
-            
-        <tr>
-            <td>Formlag: </td>
-            <td><text id="league_formteam"></text></td> 
-        </tr>
-            
-        <tr>
-            <td>Beste hjemmelag: </td> 
-            <td><text id="league_hometeam"></text></td> 
-        </tr>
-        <tr>
-            <td>Beste bortelag: </td> 
-            <td><text id="league_awayteam"></text></td> 
-        </tr>
-    </table>
-    <br/>-->
+
 <div align="center">    
     <div class="categoryheader"><text id="league_name"></text></div>
     <table id="league_table" style="font-size: 9pt; width:100%">
@@ -58,8 +33,8 @@
 
     <div id="goal" class="category">
         <div class="categoryheader" style="margin-top: 5px">Mål</div>
-        <!--<table id="totalgoals" class="tablesorter"> </table>-->
-        <table id="goals" class="tablesorter"> </table>
+        <table id="totalgoals" class="tablesorter"> </table>
+        <!--<table id="goals" class="tablesorter"> </table>-->
         <table id="penalty" class="tablesorter"> </table>
         <table id="owngoal" class="tablesorter"> </table>
     </div>

@@ -126,6 +126,7 @@ table.playerinfo {
     text-align: left;
     display: inline-block;
     border-collapse:collapse;
+    width: 300px;
 }
 
 table.matchinfo {
@@ -163,7 +164,7 @@ table.tablesorter tbody tr.odd td {
     background-color: #F0F0FF;
     /*#F0F0F6*/
 }
-.selected {
+table.tablesorter tbody tr.selected td  {
     background-color: #FFFFAA;
     /*#F0F0F6*/
 }

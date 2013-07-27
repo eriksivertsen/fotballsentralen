@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-06-03 07:39:20
+<?php /* Smarty version Smarty-3.1.12, created on 2013-07-27 08:51:59
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1370245159,
+      1 => 1374915117,
       2 => 'file',
     ),
   ),
@@ -32,8 +32,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_50ad1bad24f056_48494864')) {function content_50ad1bad24f056_48494864($_smarty_tpl) {?><html>
     <head>     
         <title>FotballSentralen.com</title>
+        
+        
         <script type="text/javascript">
-           
             
             !function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){ js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
             
@@ -81,12 +82,18 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 else if(page == 'suspension'){
                     getSuspensionList(league_id);
                 }
+                else if(page == 'transfers'){
+                    getTransfers();
+                }
                 else if(page == 'preview'){
                     if(matchid != ''){
                         getPreview(matchid);
                     }else{
                         getPreviewMatches();
                     }
+                }
+                else if(page == 'report' && matchid != ''){
+                    getReport(matchid);
                 }
                 else if(page == 'referee'){
                     if(refereeid == ''){
@@ -114,14 +121,21 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
-                
-                
+                               
             });
+            
+           
             
         </script> 
         
     </head>
-    <body>
+    
+    <body onunload="">
+        <script type="text/javascript">
+        window.onload = function(){
+            console.log('onload called');
+        }
+        </script>
         <div id="fb-root"></div>
         <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
         <div id="loader" class="loader"></div>
@@ -150,7 +164,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <?php echo $_smarty_tpl->getSubTemplate ("events.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
             </div>
-            
             <div id="team">
                 <?php echo $_smarty_tpl->getSubTemplate ("team.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
@@ -160,17 +173,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
             </div>
             <div id="events">
-                <center> 
-                    <div id="radio">
-                        <input id="teamradio" type="radio" value="team" name="type" onclick="getEventsTotalTeamSelected()"></input>
-                        <label for="teamradio"><text style="font-size:10pt">Lag</text></label>
-                        <input id="playerradio" type="radio" value="player" name="type" onclick="getEventsTotalSelected()"></input>
-                        <label for="playerradio"><text style="font-size:10pt">Spillere</text></label>
-                    </div>
-                    <div style="text-align: -moz-center">
-                        <table id="allEvents" class="tablesorter" style="width:auto;table-layout: fixed;"></table>
-                    </div>
-                </center>
+               <?php echo $_smarty_tpl->getSubTemplate ("allevents.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
+            </div>
+            <div id="report_div">
+               <?php echo $_smarty_tpl->getSubTemplate ("report.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
             </div>
             <div id="playerminutes">
                 <center> 
@@ -179,14 +187,23 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </div>
                 </center>
             </div>
-            <div id="populare" align="center">
-                <table id="trending" class="tablesorter playerinfo" style="float:left; "></table>
-                <table id="popularePlayers" class="tablesorter playerinfo" style="float:left;"></table>
-                <table id="populareTeams" class="tablesorter playerinfo" style="float:left; "></table>
-                </table>
+            <table id="populare" align="center" width="100%">
+                <tr>
+                    <td><table id="trending" class="tablesorter playerinfo" style="float:left; "></table></td>
+                    <td><table id="popularePlayers" class="tablesorter playerinfo" style="float:left;"></table></td>
+                    <td><table id="populareTeams" class="tablesorter playerinfo" style="float:left; "></table></td>
+                </tr>
                 <br/>
+                <br/>
+            </table>
+            <div id="transfer_div">
+                <text id="transfer_text" style="margin-left:20px"></text>
+                <table id="transfer_table" align="center" width="100%">
+                    <tr>
+                        <td><table id="transfer_transfer" class="tablesorter playerinfo" style="float:left; "></table></td>
+                    </tr>
+                </table>
             </div>
-                            
             <div id="preview">
                 <?php echo $_smarty_tpl->getSubTemplate ("preview.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
@@ -226,5 +243,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <br/>
             <br/>
         </div>
+        <input id="reloadValue" type="hidden" name="reloadValue" value="" />
     </body>
 </html><?php }} ?>

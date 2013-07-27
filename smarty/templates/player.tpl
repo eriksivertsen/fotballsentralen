@@ -1,7 +1,7 @@
 <img id="player_logo" style="margin-left:15px;margin-right: 15px; float: left; vertical-align: middle;">
 <table id="player_table" style="font-size: 9pt;">
         <thead>
-            <td><h4><text id="playername"></text></h4></td>
+            <td><h4><text id="playername"></text> <text id="player_number"></text></h4></td>
         </thead>
         <tr>
             <td>Spilletid i <text id="player_playingminutes_year"></text>:</td>
@@ -13,20 +13,24 @@
             <td><text id="player_winpercentage"></text></td>
         </tr>
         <tr>
-            <td>Mål:</td>
+            <td><text id="player_totalgoals_text"></td>
             <td><text id="player_totalgoals"></text></td>
         </tr>
         <tr>
-            <td><text id="player_dateofbirth_text">Født:</text></td>
+            <td>Født:</td>
             <td><text id="player_dateofbirth"></text></td>
         </tr>
         <tr>
-            <td><text id="player_height_text">Høyde:</text></td>
+            <td>Høyde:</td>
             <td><text id="player_height"></text></td>
         </tr>
         <tr>
-            <td><text id="player_position_text">Primærposisjon:</text></td>
+            <td>Primærposisjon:</td>
             <td><text id="player_position"></text></td>
+        </tr>
+        <tr>
+            <td>Land:</td>
+            <td><text id="player_country"></text></td>
         </tr>
         <tr>
             <td> </td>

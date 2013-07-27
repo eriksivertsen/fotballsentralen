@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-06-03 07:37:56
+<?php /* Smarty version Smarty-3.1.12, created on 2013-07-03 12:45:57
          compiled from "smarty\templates\events.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:6705519c9f3b113720-42590549%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '97909604d98e0a50eafe6000722a870744d61ea0' => 
     array (
       0 => 'smarty\\templates\\events.tpl',
-      1 => 1370245075,
+      1 => 1372855338,
       2 => 'file',
     ),
   ),
@@ -19,32 +19,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_519c9f3b169808_90813437',
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_519c9f3b169808_90813437')) {function content_519c9f3b169808_90813437($_smarty_tpl) {?><!--
-<table id="league_table" style="font-size: 9pt; margin-left:16px;">
-        <tr>
-            <td>Liga: </td> 
-            <td><b><text id="league_name"></text></b></td> 
-        </tr>
-        <tr>
-            <td>Toppscorer: </td> 
-            <td><text id="league_topscorer"></text></td> 
-        </tr>
-            
-        <tr>
-            <td>Formlag: </td>
-            <td><text id="league_formteam"></text></td> 
-        </tr>
-            
-        <tr>
-            <td>Beste hjemmelag: </td> 
-            <td><text id="league_hometeam"></text></td> 
-        </tr>
-        <tr>
-            <td>Beste bortelag: </td> 
-            <td><text id="league_awayteam"></text></td> 
-        </tr>
-    </table>
-    <br/>-->
+<?php if ($_valid && !is_callable('content_519c9f3b169808_90813437')) {function content_519c9f3b169808_90813437($_smarty_tpl) {?>
 <div align="center">    
     <div class="categoryheader"><text id="league_name"></text></div>
     <table id="league_table" style="font-size: 9pt; width:100%">
@@ -79,8 +54,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
     <div id="goal" class="category">
         <div class="categoryheader" style="margin-top: 5px">Mål</div>
-        <!--<table id="totalgoals" class="tablesorter"> </table>-->
-        <table id="goals" class="tablesorter"> </table>
+        <table id="totalgoals" class="tablesorter"> </table>
+        <!--<table id="goals" class="tablesorter"> </table>-->
         <table id="penalty" class="tablesorter"> </table>
         <table id="owngoal" class="tablesorter"> </table>
     </div>

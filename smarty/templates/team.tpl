@@ -4,6 +4,7 @@
         <thead>
             <td><h4><text id="teamname"></text></h4></td>
         </thead>
+        
         <tr>
             <td>Toppscorer:</td>
             <td><text id="team_topscorer"></text></td>
@@ -48,12 +49,46 @@
             <td>Bortebane:</td>
             <td><text id="team_away"></text></td>
         </tr>
+        <tr>
+            <td>Tilskuersnitt:</td>
+            <td><text id="team_attendance_avg"></text></td>
+        </tr>
+        <tr>
+            <td>Tilskuerrekord:</td>
+            <td><text id="team_attendance_max"></text></td>
+        </tr>
+        <tr>
+            <td>Spiller på:</td>
+            <td><text id="team_surface"></text></td>
+        </tr>
     </table>
-
+</div>
+    <br/>
+<div id="team_table">
+    <!--
+    <div id="team_radio" style="width:50%; margin: 0 auto;">
+        <input id="team_all" type="radio" value="team_all" name="type" onclick=""></input>
+        <label for="team_all"><text style="font-size:10pt">Alle</text></label>
+        <input id="team_home" type="radio" value="team_home" name="type" onclick=""></input>
+        <label for="team_home"><text style="font-size:10pt">Hjemme</text></label>
+        <input id="team_away" type="radio" value="team_away" name="type" onclick=""></input>
+        <label for="team_away"><text style="font-size:10pt">Borte</text></label>
+    </div>
+    -->
+    
+    <table id="team_tables">
+        <tr>
+            <td>
+                <table id="team_leaguetable" class="tablesorter playerinfo"> </table>
+            </td>
+            <td>
+                <table id="team_latestmatches" class="tablesorter matchinfo"></table>
+                <table id="team_nextmatches" class="tablesorter matchinfo"></table>
+            </td>
+        </tr>
+    </table>
 </div>
 
-<table id="team_latestmatches" class="tablesorter matchinfo"></table>
-<table id="team_nextmatches" class="tablesorter matchinfo"></table>
 <br/>
 
 <table id="teamplayerinfo" class="tablesorter playerinfo"></table>

@@ -677,31 +677,32 @@ class DatabaseTeam {
         WHERE pt.`teamid` = {$teamid}
         AND l.`year` = {$season}
         AND p.ignore = 0
-        GROUP BY p.`playerid` ";
+        GROUP BY p.`playerid`
+        order by pt.shirtnumber asc";
         
         
         $data = array();
-        $result = mysql_query($q);
-        while($row = mysql_fetch_array($result))
-        {
-            $data[$row['playerid']] = array(
-                'goals' => $row['goals scored'],
-                'penalty' => $row['penalty'],
-                'owngoals' => $row['own goals'],
-                'yellowcards' => $row['yellow cards'],
-                'redcards' => $row['red cards'],
-                'subbedin' => $row['subbed in'],
-                'subbedoff' => $row['subbed off']
-            );
-        }
         $result = mysql_query($q2);
         while($row = mysql_fetch_array($result))
         {
-            $data[$row['playerid']]['shirtnumber'] = $row['shirtnumber'];
-            $data[$row['playerid']]['playerid'] = $row['playerid'];
-            $data[$row['playerid']]['playername'] = $row['playername'];
-            $data[$row['playerid']]['minutesplayed'] = $row['minutes played'];
-            $data[$row['playerid']]['started'] = $row['started'];
+            $data[$row['playerid']] = array(
+                'shirtnumber' => $row['shirtnumber'],
+                'playerid' => $row['playerid'],
+                'playername' => $row['playername'],
+                'minutesplayed' => $row['minutes played'],
+                'started' => $row['started']
+            );
+        }
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[$row['playerid']]['goals'] = $row['goals scored'];
+            $data[$row['playerid']]['penalty'] = $row['penalty'];
+            $data[$row['playerid']]['owngoals'] = $row['own goals'];
+            $data[$row['playerid']]['yellowcards'] = $row['yellow cards'];
+            $data[$row['playerid']]['redcards'] = $row['red cards'];
+            $data[$row['playerid']]['subbedin'] = $row['subbed in'];
+            $data[$row['playerid']]['subbedoff'] = $row['subbed off'];
         }
         $json = array();
         foreach($data as $value){
@@ -725,8 +726,6 @@ class DatabaseTeam {
         "ORDER BY SUM(p.minutesplayed) DESC " .
         ($teamid == 0 ? ' LIMIT 10  ' : ' ') ;
 
-        //echo $q;
-        
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))

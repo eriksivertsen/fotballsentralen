@@ -24,6 +24,14 @@
 </div>
 
 <div align="center">
+    
+     <div id="overall" class="category">
+        <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
+        <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+        <table id="leaguetablehome" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+        <table id="leaguetableaway" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+    </div>
+    
     <div id="mins" class="category">
         <div class="categoryheader" style="margin-top: 5px">Spilletid</div>
         <table id="playingminutes" class="tablesorter"></table>
@@ -46,10 +54,4 @@
         <table id="redcard" class="tablesorter"> </table>
     </div>
 
-    <div id="overall" class="category">
-        <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
-        <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-        <table id="leaguetablehome" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-        <table id="leaguetableaway" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-    </div>
 </div>

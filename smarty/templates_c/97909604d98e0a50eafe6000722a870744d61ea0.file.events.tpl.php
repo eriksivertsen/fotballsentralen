@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-07-03 12:45:57
+<?php /* Smarty version Smarty-3.1.12, created on 2013-07-28 11:04:34
          compiled from "smarty\templates\events.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:6705519c9f3b113720-42590549%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '97909604d98e0a50eafe6000722a870744d61ea0' => 
     array (
       0 => 'smarty\\templates\\events.tpl',
-      1 => 1372855338,
+      1 => 1375009472,
       2 => 'file',
     ),
   ),
@@ -45,6 +45,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 </div>
 
 <div align="center">
+    
+     <div id="overall" class="category">
+        <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
+        <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+        <table id="leaguetablehome" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+        <table id="leaguetableaway" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+    </div>
+    
     <div id="mins" class="category">
         <div class="categoryheader" style="margin-top: 5px">Spilletid</div>
         <table id="playingminutes" class="tablesorter"></table>
@@ -67,10 +75,4 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <table id="redcard" class="tablesorter"> </table>
     </div>
 
-    <div id="overall" class="category">
-        <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
-        <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-        <table id="leaguetablehome" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-        <table id="leaguetableaway" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-    </div>
 </div><?php }} ?>

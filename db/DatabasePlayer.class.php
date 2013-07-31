@@ -90,9 +90,6 @@ class DatabasePlayer {
         AND l.year = {$season}
         GROUP BY pt.`teamid`,p.`playerid`,p.`matchid`";
         
-       // echo $q;
-        //echo $q2;
-        
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -111,6 +108,7 @@ class DatabasePlayer {
         $result = mysql_query($q2);
         while($row = mysql_fetch_array($result))
         {
+            if(isset( $data[$row['matchid']])) {
                 $data[$row['matchid']]['minutesplayed']= $row['minutes played'];
                 $data[$row['matchid']]['start'] = $row['start'];
                 $data[$row['matchid']]['hometeamname'] = $row['homename'];
@@ -122,6 +120,7 @@ class DatabasePlayer {
                 $data[$row['matchid']]['matchid'] = $row['matchid'];
                 $data[$row['matchid']]['playername'] = $row['playername'];
                 $data[$row['matchid']]['number'] = $row['shirtnumber'];
+            }
         }
         $json = array();
         foreach($data as $value){

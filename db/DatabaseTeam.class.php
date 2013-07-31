@@ -696,13 +696,15 @@ class DatabaseTeam {
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
-            $data[$row['playerid']]['goals'] = $row['goals scored'];
-            $data[$row['playerid']]['penalty'] = $row['penalty'];
-            $data[$row['playerid']]['owngoals'] = $row['own goals'];
-            $data[$row['playerid']]['yellowcards'] = $row['yellow cards'];
-            $data[$row['playerid']]['redcards'] = $row['red cards'];
-            $data[$row['playerid']]['subbedin'] = $row['subbed in'];
-            $data[$row['playerid']]['subbedoff'] = $row['subbed off'];
+            if(isset($data[$row['playerid']])){
+                $data[$row['playerid']]['goals'] = $row['goals scored'];
+                $data[$row['playerid']]['penalty'] = $row['penalty'];
+                $data[$row['playerid']]['owngoals'] = $row['own goals'];
+                $data[$row['playerid']]['yellowcards'] = $row['yellow cards'];
+                $data[$row['playerid']]['redcards'] = $row['red cards'];
+                $data[$row['playerid']]['subbedin'] = $row['subbed in'];
+                $data[$row['playerid']]['subbedoff'] = $row['subbed off'];
+            }
         }
         $json = array();
         foreach($data as $value){

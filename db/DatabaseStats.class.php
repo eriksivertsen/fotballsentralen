@@ -152,4 +152,17 @@ class DatabaseStats {
         }
         echo '</table>';
     }
+    
+    public function getLatestObserverDate()
+    {
+        $q= "SELECT MAX(lastupdate) as max FROM match_observe";
+        
+        $data = '';
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data = $row['max'];
+        }
+        return $data;
+    }
 }

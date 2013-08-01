@@ -1034,18 +1034,12 @@ function updatePlayerRank(array, eventtype)
 function getLeagueInfo(leagueid,teamid)
 {
     startLoad();
-    
     leagueidselected = leagueid;
-
     if(leagueid == getAndreDivAll()){
         history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
     }else{
         history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
     }
-    
-    
-    
-    
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -1063,12 +1057,6 @@ function getLeagueInfo(leagueid,teamid)
             
             if(json.topscorer.length > 0){
                 $('#league_topscorer').html(getPlayerLink(json.topscorer[0].playerid,json.topscorer[0].playername + ' - ' + json.topscorer[0].eventcount + ' mål'));
-                if(json.topscorercount == 2){
-                    //$('#league_topscorer').append(' ('+(json.topscorercount-1) +' annen spiller)');
-                }
-                else if(json.topscorercount > 2){
-                    //$('#league_topscorer').append(' ('+(json.topscorercount-1) +' andre spillere)');
-                }
                 setTeamLogo($('#league_topscorer_logo'),json.topscorer[0].teamid);
             }   
             if(json.hometeam.length > 0){

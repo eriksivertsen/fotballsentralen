@@ -787,9 +787,11 @@ class DatabaseTeam {
         ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
         'AND l.year = '.$season.' ' .
         "AND e.ignore = 0 " .         
-        "GROUP BY e.playerid, m.leagueid " .
+        "GROUP BY e.playerid " .
         "ORDER BY `event count` DESC ".
         ($teamid == 0 ? ' LIMIT 10 ' : ' ');
+        
+       
         
         $data = array();
         $result = mysql_query($q);

@@ -325,12 +325,10 @@ class DatabaseUtils {
             ORDER BY m.`dateofmatch` ASC ";
         
         $data = array();
-        $twoYellow = array();
         $threeYellow = array();
-        $fourYellow = array();
         $fiveYellow = array();
-        $threeYellowSuspended = array();
-        $fiveYellowSuspended = array();
+        $sevenYellow = array();
+        $nineYellow = array();
         $redCardSuspended = array();
         
         $result = mysql_query($q);
@@ -345,29 +343,25 @@ class DatabaseUtils {
             else{
                 $data[$row['playerid']]['matchid'][] = $row['matchid'];
                 
-                if(count($data[$row['playerid']]['matchid']) == 2){
-                    $twoYellow[$row['playerid']]['teamid'] = $row['teamid'];
-                    $twoYellow[$row['playerid']]['playername'] = $row['playername'];
-                    $twoYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
-                }
                 if(count($data[$row['playerid']]['matchid']) == 3){
                     $threeYellow[$row['playerid']]['matchid'] = $row['matchid'];
                     $threeYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
-                }
-                if(count($data[$row['playerid']]['matchid']) == 4){
-                    $fourYellow[$row['playerid']]['teamid'] = $row['teamid'];
-                    $fourYellow[$row['playerid']]['playername'] = $row['playername'];
-                    $fourYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
                 }
                 if(count($data[$row['playerid']]['matchid']) == 5){
                     $fiveYellow[$row['playerid']]['matchid'] = $row['matchid'];
                     $fiveYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
                 }
+                if(count($data[$row['playerid']]['matchid']) == 7){
+                    $sevenYellow[$row['playerid']]['matchid'] = $row['matchid'];
+                    $sevenYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
+                }
+                if(count($data[$row['playerid']]['matchid']) == 9){
+                    $nineYellow[$row['playerid']]['matchid'] = $row['matchid'];
+                    $nineYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
+                }
             }
         }
         
-        
-        //var_dump($threeYellow);
         
         //Sent off
         $q = "SELECT * FROM eventtable e
@@ -428,43 +422,20 @@ class DatabaseUtils {
                 }
             }
         }
-        foreach($threeYellow as $key => $value){
-            
-            $leagueid = $value['leagueid'];
-            $value = $value['matchid'];
-            
-            
-           
-            $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) as date,m.*,home.`teamname` AS homename, away.`teamname` AS awayname,p.*
-            FROM matchtable m 
-            JOIN matchtable c ON c.`matchid` = {$value} AND m.leagueid = {$leagueid}
-            JOIN playertable p ON p.`playerid` = {$key} AND p.year = {$year}
-            JOIN teamtable home ON m.`hometeamid` = home.`teamid`
-            JOIN teamtable away ON m.`awayteamid` = away.`teamid`
-            WHERE m.`dateofmatch` > c.`dateofmatch`
-            AND (m.`awayteamid` = p.`teamid` OR m.`hometeamid` = p.`teamid`)
-            AND (c.`awayteamid` = p.`teamid` OR c.`hometeamid` = p.`teamid`)
-            ORDER BY DATE ASC LIMIT 1";
-            //echo $q;
-            
-            $result = mysql_query($q);
-            while($row = mysql_fetch_array($result)) {
-                if(!$row['matchid'] == null && strtotime($row['dateofmatch']) > strtotime('now')) {
-                    $threeYellowSuspended[] = array(
-                        'matchid' => $row['matchid'],
-                        'dateofmatch' => $row['date'],
-                        'homename' => $row['homename'],
-                        'awayname' => $row['awayname'],
-                        'hometeamid' => $row['hometeamid'],
-                        'awayteamid' => $row['awayteamid'],
-                        'playerid' => $row['playerid'],
-                        'playername' => $row['playername'],
-                        'teamid' => $row['teamid']
-                    );
-                }
-            }
-        }
-        foreach($fiveYellow as $key => $value){
+       
+        return array (
+            'threeYellow' => DatabaseUtils::getSuspendedFromArray($threeYellow,$year),
+            'fiveYellow' => DatabaseUtils::getSuspendedFromArray($fiveYellow,$year),
+            'sevenYellow' => DatabaseUtils::getSuspendedFromArray($sevenYellow,$year),
+            'nineYellow' => DatabaseUtils::getSuspendedFromArray($nineYellow,$year),
+            'redCard' => $redCardSuspended
+        );
+    }
+    
+    public function getSuspendedFromArray(array $suspendedArray,$year)
+    {
+        $retVal = array();
+        foreach($suspendedArray as $key => $value){
             
             $leagueid = $value['leagueid'];
             $value = $value['matchid'];
@@ -483,7 +454,7 @@ class DatabaseUtils {
             $result = mysql_query($q);
             while($row = mysql_fetch_array($result)) {
                 if(!$row['matchid'] == null && strtotime($row['dateofmatch']) > strtotime('now')){
-                    $fiveYellowSuspended[] = array(
+                    $retVal[] = array(
                         'matchid' => $row['matchid'],
                         'dateofmatch' => $row['date'],
                         'homename' => $row['homename'],
@@ -497,15 +468,9 @@ class DatabaseUtils {
                 }
             }
         }
-        
-        return array (
-            'twoYellow' => $twoYellow,
-            'threeYellow' => $threeYellowSuspended,
-            'fourYellow' => $fourYellow,
-            'fiveYellow' => $fiveYellowSuspended,
-            'redCard' => $redCardSuspended
-        );
+        return $retVal;
     }
+    
     public function getGoalScoreresMatch(array $matchid)
     {
         $matchids = implode($matchid,',');

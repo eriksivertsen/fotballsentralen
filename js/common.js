@@ -144,7 +144,7 @@ function getSuspensionList(leagueid)
         return;
     }
     startLoad();
-    location.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
+    history.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
     $('#suspensionSelect').show();
     $.ajax({
         type: "POST",
@@ -311,6 +311,18 @@ function updateSuspensions(array, teamid, team){
         var value2 = array.fiveYellow[key2];
         if(value2['teamid'] == teamid){
             suspArray.push(getPlayerLink(value2['playerid'],value2['playername']) + ' (5 gule)');
+        }
+    }
+    for(var key3 in array.sevenYellow){
+        var value3 = array.sevenYellow[key3];
+        if(value3['teamid'] == teamid){
+            suspArray.push(getPlayerLink(value3['playerid'],value3['playername']) + ' (7 gule)');
+        }
+    }
+    for(var key4 in array.nineYellow){
+        var value4 = array.nineYellow[key4];
+        if(value4['teamid'] == teamid){
+            suspArray.push(getPlayerLink(value4['playerid'],value4['playername']) + ' (9 gule)');
         }
     }
     var susp = suspArray.join('<br/>');
@@ -1506,11 +1518,11 @@ function updateSuspensionList(array)
     updateBreadcrumbSpecific("Suspensjoner","getSuspensionList(134365)");
     $('#suspensionTable').empty();
     $('#suspensionTable').append('<thead><th>Spillernavn</th><th>Lag</th><th>Suspensjonsgrunn&nbsp&nbsp&nbsp</th><th>Suspendert i kamp</th><th>Kampdato</th></thead>');
-    //addDangerTable(array.twoYellow,array.fourYellow);
     addSuspensionTable(array.redCard,'rødt kort');
     addSuspensionTable(array.threeYellow,'3 gule kort');
     addSuspensionTable(array.fiveYellow,'5 gule kort');
-    //addDangerTable(array.twoYellow, null);
+    addSuspensionTable(array.sevenYellow,'7 gule kort');
+    addSuspensionTable(array.nineYellow,'9 gule kort');
     $('#suspensionText').html('Suspensjonslisten er under testing! Feil eller mangler? <a href="mailto:kontakt@fotballsentralen.com">Rapporter<a>. ');
     $('#suspensionText').show();
     

@@ -857,7 +857,7 @@ function selectPlayerTeam(){
     getPlayerTeam(playeridselected, $('#teamSelect').val());
 }
 function getPlayerTeam(playerid,teamid){
-    getPlayerFull(playerid,'',teamid);
+    getPlayerFull(playerid,'player_team',teamid);
 }
 function getPlayer(playerid){
     getPlayerFull(playerid,'',0);

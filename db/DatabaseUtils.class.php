@@ -328,7 +328,7 @@ class DatabaseUtils {
         $threeYellow = array();
         $fiveYellow = array();
         $sevenYellow = array();
-        $nineYellow = array();
+        $moreYellow = array();
         $redCardSuspended = array();
         
         $result = mysql_query($q);
@@ -355,9 +355,10 @@ class DatabaseUtils {
                     $sevenYellow[$row['playerid']]['matchid'] = $row['matchid'];
                     $sevenYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
                 }
-                if(count($data[$row['playerid']]['matchid']) == 9){
-                    $nineYellow[$row['playerid']]['matchid'] = $row['matchid'];
-                    $nineYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
+                if(count($data[$row['playerid']]['matchid']) >= 8){
+                    $moreYellow[$row['playerid']]['matchid'] = $row['matchid'];
+                    $moreYellow[$row['playerid']]['leagueid'] = $row['leagueid'];
+                    $moreYellow[$row['playerid']]['count'] = count($data[$row['playerid']]['matchid']);
                 }
             }
         }
@@ -427,7 +428,7 @@ class DatabaseUtils {
             'threeYellow' => DatabaseUtils::getSuspendedFromArray($threeYellow,$year),
             'fiveYellow' => DatabaseUtils::getSuspendedFromArray($fiveYellow,$year),
             'sevenYellow' => DatabaseUtils::getSuspendedFromArray($sevenYellow,$year),
-            'nineYellow' => DatabaseUtils::getSuspendedFromArray($nineYellow,$year),
+            'moreYellow' => DatabaseUtils::getSuspendedFromArray($moreYellow,$year),
             'redCard' => $redCardSuspended
         );
     }
@@ -463,7 +464,8 @@ class DatabaseUtils {
                         'awayteamid' => $row['awayteamid'],
                         'playerid' => $row['playerid'],
                         'playername' => $row['playername'],
-                        'teamid' => $row['teamid']
+                        'teamid' => $row['teamid'], 
+                        'count' => $value['matchid']
                     );
                 }
             }

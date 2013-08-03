@@ -1510,8 +1510,8 @@ function updateSuspensionList(array)
     addSuspensionTable(array.threeYellow,'3 gule kort');
     addSuspensionTable(array.fiveYellow,'5 gule kort');
     addSuspensionTable(array.sevenYellow,'7 gule kort');
-    addSuspensionTable(array.nineYellow,'9 gule kort');
-    $('#suspensionText').html('Suspensjonslisten er under testing! Feil eller mangler? <a href="mailto:kontakt@fotballsentralen.com">Rapporter<a>. ');
+    addSuspensionTable(array.moreYellow);
+    $('#suspensionText').html('');
     $('#suspensionText').show();
     
     $('#suspensionTable').show();
@@ -1590,7 +1590,7 @@ function addSuspensionTable(array, reason)
         $('#suspensionTable').append('<tr class='+(i % 2 == 0 ? 'odd' : 'even')+'>'+
             '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
             '<td>'+getTeamLink(array[i].teamid,(array[i].teamid == array[i].hometeamid ? array[i].homename : array[i].awayname))+'</td>'+
-            '<td>'+reason+'</td>'+
+            '<td>'+(reason !== undefined ? reason : array[i].count + ' gule kort') +'</td>'+
             '<td>'+getPreviewLinkText(array[i].matchid, array[i].homename+' - '+array[i].awayname)+'</td>'+
             '<td>'+getDateString(array[i].dateofmatch)+'</td>'+
         '</tr>');

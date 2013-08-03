@@ -80,6 +80,7 @@ echo '<br/>';
 
 
 echo 'Latest Observer update: ' . $db->getLatestObserverDate() . ' <br/>';
+echo 'Latest mail sent: ' . $db->getLatestMailSent() . ' <br/>';
 $db->printTable($clicktable,'clicktable');
 $db->printTable($dailyClick,'daily clicks');
 $db->printTable($uniqueVisitors,'unique visitors');

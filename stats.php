@@ -81,6 +81,7 @@ echo '<br/>';
 
 echo 'Latest Observer update: ' . $db->getLatestObserverDate() . ' <br/>';
 echo 'Latest mail sent: ' . $db->getLatestMailSent() . ' <br/>';
+echo 'Latest league update: ' . $db->getLatestLeagueUpdate() . ' <br/>';
 $db->printTable($clicktable,'clicktable');
 $db->printTable($dailyClick,'daily clicks');
 $db->printTable($uniqueVisitors,'unique visitors');

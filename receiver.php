@@ -55,7 +55,7 @@ if(isset($_POST['action'])){
         echo json_encode($dbTeam->getEventInfoTotalTeam($_POST['eventtype'],200,$_POST['season'],$_POST['leagueid']));
     }
     if($_POST['action'] == 'getPlayerInfo'){
-        $events = $dbPlayer->getPlayerInfo($_POST['playerid'],$_POST['season'],$_POST['from']);
+        $events = $dbPlayer->getPlayerInfo($_POST['playerid'],$_POST['season'],$_POST['from'],$_POST['teamid']);
         echo json_encode($events);
     }
     if($_POST['action'] == 'getLeagueInfo'){

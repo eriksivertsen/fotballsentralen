@@ -852,23 +852,26 @@ function updateTeamPlayers(teamidarray)
     $('#teamplayerinfo').append('</tbody>');
     $('#teamplayerinfo').tablesorter({widgets: ['zebra']});
     $('#team_players_used').html(players_used);
-        
+}
+function selectPlayerTeam(){
+    getPlayerTeam(playeridselected, $('#teamSelect').val());
+}
+function getPlayerTeam(playerid,teamid){
+    getPlayerFull(playerid,'',teamid);
 }
 function getPlayer(playerid){
-    getPlayerFull(playerid,'');
+    getPlayerFull(playerid,'',0);
 }
 function getPlayerSearch(playerid){
-    getPlayerFull(playerid,'search');
+    getPlayerFull(playerid,'search',0);
 }
-
-
-function getPlayerFull(playerid,fromString)
+function getPlayerFull(playerid,fromString,teamid)
 {
     if(!allowClicks){
         return;
     }
     playeridselected = playerid;
-    history.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected);
+    history.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected+(teamid == 0 ? '' : '&team_id='+teamid));
     startLoad();
     $('#player').show();
 
@@ -877,7 +880,7 @@ function getPlayerFull(playerid,fromString)
         url: "receiver.php",
         dataType: "json",
         timeout: timeout,
-        data: {action: "getPlayerInfo", playerid: playerid, season: season, from: fromString},
+        data: {action: "getPlayerInfo", playerid: playerid, season: season, from: fromString, teamid: teamid},
         error: function () {
             stopLoad()
         },
@@ -887,6 +890,20 @@ function getPlayerFull(playerid,fromString)
                 $('#noData').show();
                 return;
             }
+            if(json.teams.length == 1){
+                $('#teamSelect').hide();
+            }else{
+                $('#teamSelect').empty();
+                $('#teamSelect').append('<option value=0>Alle lag</option>');
+                for(var team in json.teams){
+                    $('#teamSelect').append('<option value='+json.teams[team].teamid+'>'+json.teams[team].teamname+'</option>');
+                }
+                if(teamid != 0){
+                    $('#teamSelect').val(teamid);
+                }
+                $('#teamSelect').show();
+            }
+            
             $('#noData').hide();
             $('#playerinfo').empty();
             var array = json.playerinfo;
@@ -1654,6 +1671,7 @@ function startLoad()
     $('#preview_weather').hide();
     $('[id^="transfer_"]').hide();
     $('[id^="report_"]').hide();
+    $('#teamSelect').hide();
     
     
     $("html").css("cursor", "progress");

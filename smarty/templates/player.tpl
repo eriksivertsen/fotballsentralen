@@ -40,7 +40,9 @@
     </table>
     <br/>
     <br/>
-    <br/>
+    <select id="teamSelect" style="margin: 20px" onchange="selectPlayerTeam()">
+        <option value="0">Alle lag</option>
+    </select>
 <table id="playerinfo" class="tablesorter playerinfo"></table>
 <center><text id="noData" style="font-size: 9pt">Ingen data denne sesongen!</text></center>
 <ul id="ranking" class="ranking" style="margin-left:15px;"></ul>

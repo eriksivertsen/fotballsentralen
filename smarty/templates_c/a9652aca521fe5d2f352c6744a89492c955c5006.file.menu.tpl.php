@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-07-05 16:55:44
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-03 13:23:38
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1373028692,
+      1 => 1375534521,
       2 => 'file',
     ),
   ),
@@ -78,57 +78,57 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <div class="menubody">
             <center>
                 <ul id="jMenu">
-                    <li><a class="fNiv" href="#" onclick="getTeam(0,0)">Hjem</a></li>                        
+                    <li><a class="fNiv" href="#" onclick="getTeam(0,0);return false;">Hjem</a></li>                        
                     
-                    <li><a class="fNiv" href="#" onclick="getTeam(1,0)">Tippeligaen</a>
+                    <li><a class="fNiv" href="#" onclick="getTeam(1,0);return false;">Tippeligaen</a>
                         <ul id="tippeligaen" style="display: none;"></ul>
                     </li>
 
-                    <li><a class="fNiv" href="#" onclick="getTeam(2,0)">Adeccoligaen</a>
+                    <li><a class="fNiv" href="#" onclick="getTeam(2,0);return false;">Adeccoligaen</a>
                         <ul id="1div" style="display: none;"></ul>
                     </li>
 
-                    <li><a class="fNiv" href="#" onclick="getTeam(8,0)">2. divisjon</a>
+                    <li><a class="fNiv" href="#" onclick="getTeam(8,0);return false;">2. divisjon</a>
                         <ul>
                             <li class="arrow"></li>
-                            <li><a href="#" onclick="getTeam(3,0)">Avdeling 1</a>
+                            <li><a href="#" onclick="getTeam(3,0);return false;">Avdeling 1</a>
                                 <ul id="2div1" style="display: none;"></ul>
                             </li>
-                            <li><a href="#" onclick="getTeam(4,0)">Avdeling 2</a>
+                            <li><a href="#" onclick="getTeam(4,0);return false;">Avdeling 2</a>
                                 <ul id="2div2" style="display: none;"></ul>
                             </li>
-                            <li><a href="#" onclick="getTeam(5,0)">Avdeling 3</a>
+                            <li><a href="#" onclick="getTeam(5,0);return false;">Avdeling 3</a>
                                 <ul id="2div3" style="display: none;"></ul>
                             </li>
-                            <li><a href="#" onclick="getTeam(6,0)">Avdeling 4</a>
+                            <li><a href="#" onclick="getTeam(6,0);return false;">Avdeling 4</a>
                                 <ul id="2div4" style="display: none;"></ul>
                             </li>
                         </ul>
                     </li>
-                    <li><a class="fNiv" href="#" onclick="getPopulare()">Populære</a></li>
-                    <li><a class="fNiv" href="#" onclick="getPreviewMatches()">Forhåndsstoff</a></li>
+                    <li><a class="fNiv" href="#" onclick="getPopulare();return false;">Populære</a></li>
+                    <li><a class="fNiv" href="#" onclick="getPreviewMatches();return false;">Forhåndsstoff</a></li>
                     
                     <li><a class="fNiv" href="#">Annet</a>
                         <ul>
-                            <li><a href="#" onclick="getReferee()">Dommere</a></li>
-                            <li><a href="#" onclick="getTransfers()">Overganger</a></li>
+                            <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>
+                            <li><a href="#" onclick="getTransfers();return false;">Overganger</a></li>
                             <li><a href="#">Topplister</a>
                                 <ul>
-                                    <li><a href="#" onclick="getTotalPlayerMinutes()">Spilleminutter</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(10,0)">Toppscorer</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(8,0)">Straffemål</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(4,0)">Spillemål</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(9,0)">Selvmål</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(2,0)">Gule&nbspkort</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(3,0)">Rødt&nbspkort&nbsp(direkte)</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(1,0)">Rødt&nbspkort&nbsp(to&nbspgule)</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(6,0)">Byttet&nbspinn</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(7,0)">Byttet&nbsput</a></li>
+                                    <li><a href="#" onclick="getTotalPlayerMinutes();return false;">Spilleminutter</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(10,0);return false;">Toppscorer</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(8,0);return false;">Straffemål</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(4,0);return false;">Spillemål</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(9,0);return false;">Selvmål</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(2,0);return false;">Gule&nbspkort</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(3,0);return false;">Rødt&nbspkort&nbsp(direkte)</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(1,0);return false;">Rødt&nbspkort&nbsp(to&nbspgule)</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(6,0);return false;">Byttet&nbspinn</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(7,0);return false;">Byttet&nbsput</a></li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
-                    <li><a class="fNiv" href="#" onclick="getSuspensionList(134365)">Suspensjonsliste</a></li>
+                    <li><a class="fNiv" href="#" onclick="getSuspensionList(134365);return false;">Suspensjonsliste</a></li>
                     
                     
                 </ul>

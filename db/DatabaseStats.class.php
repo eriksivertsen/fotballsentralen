@@ -165,12 +165,20 @@ class DatabaseStats {
         }
         return $data;
     }
-    
-    
-    
     public function getLatestMailSent()
     {
         $q = "SELECT MAX(lastupdate) as max FROM match_observe WHERE mailsent = 1";
+        $data = '';
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data = $row['max'];
+        }
+        return $data;
+    }
+    public function getLatestLeagueUpdate()
+    {
+        $q = "SELECT MAX(lastupdate) as max FROM leaguetable";
         $data = '';
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))

@@ -520,6 +520,7 @@ class DatabaseUtils {
         JOIN refereetable t 
             ON t.`refereeid` = m.`refereeid` 
             WHERE t.refereeid != -1
+            AND e.ignore = 0 
         GROUP BY t.`refereeid` ";
         
          $data = array();
@@ -601,6 +602,7 @@ class DatabaseUtils {
         JOIN refereetable t 
             ON t.`refereeid` = m.`refereeid` 
             WHERE t.refereeid = {$refereeid}
+            AND e.ignore = 0
         GROUP BY m.`matchid` ORDER BY m.dateofmatch DESC";
             
            // echo $q;

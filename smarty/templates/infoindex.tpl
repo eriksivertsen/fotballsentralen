@@ -162,7 +162,6 @@
             </div>
 
             <div id="suspensionList">
-                <text id="suspensionText" style="margin-left:20px"></text>
                 <br/>
                 <select id="suspensionSelect" style="margin: 20px" onchange="selectSuspendedLeague()">
                     <option value="134365">Tippeligaen</option>

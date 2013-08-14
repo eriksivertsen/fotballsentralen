@@ -346,7 +346,7 @@ function getTransfers()
     }
     startLoad();
     history.pushState("", "Title", 'index.php?page=transfers');
-    $('#transfer_text').html('Kun interne overganger/lån i Norge. ');
+    $('#transfer_text').html('Kun interne overganger/lån i Norge. Spilleren må være i tropp for at overgang skal registreres. ');
     
     $('[id^="transfer_"]').show();
     $.ajax({

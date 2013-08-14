@@ -5,7 +5,7 @@ class DatabasePlayer {
     public function getPlayerInfo($playerid,$season,$from,$teamid)
     {
         if(isset($from) && !empty($from)){
-            DatabaseUtils::setPlayerSearchHit($playerid);
+            DatabaseUtils::setPlayerHitFrom($playerid,$from);
         }else{
             DatabaseUtils::setPlayerHit($playerid);
         }

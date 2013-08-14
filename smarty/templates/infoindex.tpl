@@ -45,7 +45,7 @@
                 }
                 else if(page == 'transfers'){
                     getTransfers();
-                }
+                }                
                 else if(page == 'preview'){
                     if(matchid != ''){
                         getPreview(matchid);

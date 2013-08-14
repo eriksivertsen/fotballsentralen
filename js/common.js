@@ -15,6 +15,7 @@ var opts = {
         top: 'auto', // Top position relative to parent in px
         left: 'auto' // Left position relative to parent in px
     };
+var lastVisit;
 var spinner;
 var allowClick;
 var playeridselected;
@@ -51,6 +52,11 @@ function selectSeason()
     }
     if($('#playerminutes').is(":visible")){
         getTotalPlayerMinutes();
+    }
+}
+function setLastVisit(last_visit){
+    if(lastVisit == undefined){
+        lastVisit = last_visit;
     }
 }
 function setSeason(season_){
@@ -209,6 +215,7 @@ function getPreviewMatches(){
         }
     });
 }
+
 function getPreview(matchid)
 {
     if(!allowClicks){
@@ -863,7 +870,7 @@ function getPlayer(playerid){
     getPlayerFull(playerid,'',0);
 }
 function getPlayerSearch(playerid){
-    getPlayerFull(playerid,'search',0);
+    getPlayerFull(playerid,'player_search',0);
 }
 function getPlayerFull(playerid,fromString,teamid)
 {

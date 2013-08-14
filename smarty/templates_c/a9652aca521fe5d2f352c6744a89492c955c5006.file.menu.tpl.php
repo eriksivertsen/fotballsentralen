@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-03 13:23:38
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-14 11:07:41
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1375534521,
+      1 => 1376478459,
       2 => 'file',
     ),
   ),
@@ -107,7 +107,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </li>
                     <li><a class="fNiv" href="#" onclick="getPopulare();return false;">Populære</a></li>
                     <li><a class="fNiv" href="#" onclick="getPreviewMatches();return false;">Forhåndsstoff</a></li>
-                    
                     <li><a class="fNiv" href="#">Annet</a>
                         <ul>
                             <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>

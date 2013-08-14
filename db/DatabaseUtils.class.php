@@ -97,9 +97,9 @@ class DatabaseUtils {
     {
         DatabaseUtils::setHit($id,'match');
     }
-    public function setPlayerSearchHit($id)
+    public function setPlayerHitFrom($id,$from)
     {
-        DatabaseUtils::setHit($id,'player_search');
+        DatabaseUtils::setHit($id,$from);
     }
     public function setTeamSearchHit($id)
     {

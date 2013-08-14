@@ -81,7 +81,6 @@
                     </li>
                     <li><a class="fNiv" href="#" onclick="getPopulare();return false;">Populære</a></li>
                     <li><a class="fNiv" href="#" onclick="getPreviewMatches();return false;">Forhåndsstoff</a></li>
-                    
                     <li><a class="fNiv" href="#">Annet</a>
                         <ul>
                             <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>

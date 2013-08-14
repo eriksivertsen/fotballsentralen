@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-05 11:46:55
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-09 22:47:29
          compiled from "smarty\templates\player.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2302350a8208dbc1742-06689911%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2fd8608f4a45b10a71bf952fa500cc4388128b60' => 
     array (
       0 => 'smarty\\templates\\player.tpl',
-      1 => 1375703179,
+      1 => 1376088339,
       2 => 'file',
     ),
   ),

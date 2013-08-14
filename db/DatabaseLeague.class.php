@@ -188,7 +188,7 @@ class DatabaseLeague {
         
         $orderby = 'points';
         $index = $orderby;
-        if(($leagueid == 0 || $leagueid == 8) && $teamid == 0){
+        if(($leagueid == 0 || $leagueid == '3,4,5,6') && $teamid == 0){
             $orderby = 'pointavg DESC, played';
             $index = 'pointavg';
         }

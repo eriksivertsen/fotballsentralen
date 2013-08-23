@@ -272,7 +272,7 @@ class DatabaseTeam {
             echo 'not supported';
             return;
         }
-         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid " .
+         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, unix_timestamp(m.dateofmatch) as timestamp, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid " .
             "FROM matchtable m  " .
             "JOIN leaguetable l ON m.`leagueid` = l.`leagueid` " .
             "JOIN teamtable home ON m.`hometeamid` = home.`teamid` " .
@@ -297,7 +297,8 @@ class DatabaseTeam {
                 'awayname' => $row['awayname'],
                 'result' => $row['result'],
                 'dateofmatch' => $row['dateofmatch1'],
-                'teamwonid' => $row['teamwonid']
+                'teamwonid' => $row['teamwonid'],
+                'timestamp' => $row['timestamp']
             );
         }
         return $data;
@@ -811,7 +812,7 @@ class DatabaseTeam {
     
     public function getTeamToLeague($teamid,$season)
     {
-        $q = "SELECT t.teamid,t.teamname, l.java_variable,c1.url as c1url, c2.url as c2url, t.surface FROM teamtable t 
+        $q = "SELECT t.teamid,t.teamname, l.java_variable,l.leaguename,c1.url as c1url, c2.url as c2url, t.surface FROM teamtable t 
             JOIN matchtable m ON m.hometeamid = t.teamid
             JOIN leaguetable l ON l.leagueid = m.leagueid
             LEFT JOIN city_weatherurl c1 ON c1.city = t.city
@@ -837,6 +838,7 @@ class DatabaseTeam {
                 'teamid' => $row['teamid'],
                 'teamname' => $row['teamname'],
                 'leagueid' => $row['java_variable'],
+                'leaguename' => $row['leaguename'],
                 'weatherurl' => $url,
                 'surface' => $row['surface']
             );

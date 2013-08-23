@@ -89,6 +89,7 @@ if(isset($_POST['action'])){
     }
     
     if($_POST['action'] == 'getSuspensionList'){
+        $dbUtils->setHit($_POST['leagueid'],'suspension');
         echo json_encode($dbUtils->getSuspList($_POST['leagueid']));
     }
     if($_POST['action'] == 'getSearchArray'){

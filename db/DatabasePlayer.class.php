@@ -103,7 +103,8 @@ class DatabasePlayer {
         
         $q2 = "SELECT p.`playerid`,pt.`playername` as playername, p.minutesplayed AS `minutes played`, p.start AS `start`,
         home.teamid as homeid, away.teamid as awayid, pt.shirtnumber,
-        home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid
+        home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
+        unix_timestamp(m.dateofmatch) as timestamp
         FROM playtable p 
         JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = {$season}
         JOIN matchtable m ON p.matchid = m.matchid
@@ -143,6 +144,7 @@ class DatabasePlayer {
                 $data[$row['matchid']]['awayid'] = $row['awayid'];
                 $data[$row['matchid']]['result'] = $row['result'];
                 $data[$row['matchid']]['dateofmatch'] = $row['dateofmatch'];
+                $data[$row['matchid']]['timestamp'] = $row['timestamp'];
                 $data[$row['matchid']]['matchid'] = $row['matchid'];
                 $data[$row['matchid']]['playername'] = $row['playername'];
                 $data[$row['matchid']]['number'] = $row['shirtnumber'];

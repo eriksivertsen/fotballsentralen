@@ -136,7 +136,7 @@ class DatabaseLeague {
         GROUP BY m.awayteamid 
         ORDER BY points DESC,
             mf DESC) away ON home.teamid = away.teamid GROUP BY teamid ORDER BY $orderby DESC, mf DESC, goals DESC LIMIT $limit";
-
+        //echo $q;
          $data = array();
        
         $result = mysql_query($q);

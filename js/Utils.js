@@ -1,3 +1,28 @@
+var month = new Array(12);
+    
+month[0]="jan";
+month[1]="feb";
+month[2]="mars";
+month[3]="april";
+month[4]="mai";
+month[5]="juni";
+month[6]="juli";
+month[7]="aug";
+month[8]="sep";
+month[9]="okt";
+month[10]="nov";
+month[11] = "des";
+
+var weekday=new Array(7);
+
+weekday[0]="Søndag";
+weekday[1]="Mandag";
+weekday[2]="Tirsdag";
+weekday[3]="Onsdag";
+weekday[4]="Torsdag";
+weekday[5]="Fredag";
+weekday[6]="Lørdag";
+
 
 function getTippeligaen(){return 1;}
 function getAdeccoligaen(){return 2;}
@@ -236,29 +261,20 @@ function getLeagueName(leagueid)
 function getDateString(date)
 {
     return date;
-    //var jdate = new Date(date);
-    //alert(jdate);
-    //alert(date);
-   // var monthNames = [ "jan", "feb", "mars", "april", "mai", "juni", "juli", "aug", "sep", "okt", "nov", "des" ];
-    //return jdate.getDate() + ". "+monthNames[jdate.getMonth()] + " " +jdate.getFullYear() + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes());
 }
 
+function getDateStringMilli(milli)
+{
+    var jdate = new Date();
+    jdate.setTime(milli * 1000);
+    // + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes()
+    return getDoubleDigit(jdate.getDate()) + ". "+month[jdate.getMonth()] + " " +jdate.getFullYear();
+}
 function getMatchDateString(milliseconds)
 {
     var date = new Date();
     date.setTime(milliseconds);
-    var weekday=new Array(7);
-    
-    weekday[0]="Søndag";
-    weekday[1]="Mandag";
-    weekday[2]="Tirsdag";
-    weekday[3]="Onsdag";
-    weekday[4]="Torsdag";
-    weekday[5]="Fredag";
-    weekday[6]="Lørdag";
-
-    var n = weekday[date.getDay()];
-    return n + ' ' + getDoubleDigit(date.getHours()) + ":" + getDoubleDigit(date.getMinutes());
+    return weekday[date.getDay()] + ' ' + getDoubleDigit(date.getHours()) + ":" + getDoubleDigit(date.getMinutes());
 }
 
 function getDoubleDigit(digit){

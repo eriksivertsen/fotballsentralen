@@ -1,7 +1,7 @@
 <html>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <head>
-        
+        <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-flot-8760ee7/excanvas.min.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery-1.8.2.js"></script>  
         <script type="text/javascript" src="js/jquery-ui.js"></script>  
         <script type="text/javascript" src="js/jquery.tablesorter.js"></script> 
@@ -13,6 +13,7 @@
         <script type="text/javascript" src="js/overlib/overlib.js"></script>
         <script type="text/javascript" src="js/jquery.eventCalendar.min.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.js"></script>
+        <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.time.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
         
         <script type="text/javascript" src="js/common.js"></script>

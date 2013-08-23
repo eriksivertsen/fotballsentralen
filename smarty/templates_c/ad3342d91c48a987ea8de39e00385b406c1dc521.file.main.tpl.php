@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-07-27 10:12:02
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-21 11:21:10
          compiled from "smarty\templates\main.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2243450b0caef60c5f3-55980832%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'ad3342d91c48a987ea8de39e00385b406c1dc521' => 
     array (
       0 => 'smarty\\templates\\main.tpl',
-      1 => 1374919921,
+      1 => 1377083980,
       2 => 'file',
     ),
   ),
@@ -26,7 +26,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_50b0caef6b72a5_70578752')) {function content_50b0caef6b72a5_70578752($_smarty_tpl) {?><html>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <head>
-        
+        <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-flot-8760ee7/excanvas.min.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery-1.8.2.js"></script>  
         <script type="text/javascript" src="js/jquery-ui.js"></script>  
         <script type="text/javascript" src="js/jquery.tablesorter.js"></script> 
@@ -38,6 +38,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <script type="text/javascript" src="js/overlib/overlib.js"></script>
         <script type="text/javascript" src="js/jquery.eventCalendar.min.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.js"></script>
+        <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.time.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
         
         <script type="text/javascript" src="js/common.js"></script>

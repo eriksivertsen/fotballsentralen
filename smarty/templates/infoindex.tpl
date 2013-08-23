@@ -82,10 +82,8 @@
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
-                               
-            });
-            
-           
+               
+});
             
         </script> 
         

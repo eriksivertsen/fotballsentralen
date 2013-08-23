@@ -393,7 +393,7 @@ class DatabaseUtils {
             $value = $value['matchid'];
             $event = $value['eventtype'];
             
-            $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) as date,m.*,home.`teamname` AS homename, away.`teamname` AS awayname,p.*
+            $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) as date,m.*,home.`teamname` AS homename, away.`teamname` AS awayname,p.*, unix_timestamp(m.dateofmatch) as timestamp 
             FROM matchtable m 
             JOIN matchtable c ON c.`matchid` = {$value} AND m.leagueid = {$leagueid}
             JOIN playertable p ON p.`playerid` = {$key} AND p.year = {$year}
@@ -418,12 +418,12 @@ class DatabaseUtils {
                         'playerid' => $row['playerid'],
                         'playername' => $row['playername'],
                         'teamid' => $row['teamid'],
-                        'eventtype' => $event
+                        'eventtype' => $event,
+                        'timestamp' => $row['timestamp']
                     );
                 }
             }
         }
-       
         return array (
             'threeYellow' => DatabaseUtils::getSuspendedFromArray($threeYellow,$year),
             'fiveYellow' => DatabaseUtils::getSuspendedFromArray($fiveYellow,$year),
@@ -437,11 +437,14 @@ class DatabaseUtils {
     {
         $retVal = array();
         foreach($suspendedArray as $key => $value){
-            
+            $count = 0;
+            if(isset($value['count'])){
+                $count =  $value['count'];
+            }
             $leagueid = $value['leagueid'];
             $value = $value['matchid'];
             
-            $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) as date,m.*,home.`teamname` AS homename, away.`teamname` AS awayname,p.*
+            $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) as date,m.*,home.`teamname` AS homename, away.`teamname` AS awayname,p.*, unix_timestamp(m.dateofmatch) as timestamp 
             FROM matchtable m 
             JOIN matchtable c ON c.`matchid` = {$value} and m.leagueid = {$leagueid}
             JOIN playertable p ON p.`playerid` = {$key} and p.year = {$year}
@@ -465,7 +468,8 @@ class DatabaseUtils {
                         'playerid' => $row['playerid'],
                         'playername' => $row['playername'],
                         'teamid' => $row['teamid'], 
-                        'count' => $value['matchid']
+                        'count' => $count,
+                        'timestamp' => $row['timestamp']
                     );
                 }
             }

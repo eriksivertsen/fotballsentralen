@@ -962,7 +962,7 @@ function getPlayerFull(playerid,fromString,teamid)
             var owngoal = 0;
 
             for (var i=0; i<array.length; i++) {
-                $('#playerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getDateString(array[i].dateofmatch)+'</td>'+
+                $('#playerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
                     '<td>'+getTeamLink(array[i].homeid,array[i].hometeamname)+'</td>'+
                     '<td>'+getTeamLink(array[i].awayid,array[i].awayteamname)+'</td>'+
                     '<td>'+getMatchResultLink(array[i].matchid,array[i].result)+'</td>'+
@@ -1149,7 +1149,7 @@ function getTeamInfoFull(teamid,fromPage)
             
             updateTeamInfoTable(array);
             updateBreadcrumb(0, teamid, array.teamtoleague);
-            updateLeagueTable(array.leaguetable,$('#team_leaguetable'),'Tabell', teamid);
+            updateLeagueTable(array.leaguetable,$('#team_leaguetable'),array.teamtoleague[0].leaguename, teamid);
             
             $('#rankingteam').append('<h4>Lagranking i Norge</h4>');
             updateTeamRankList(array.yellowred,1); 
@@ -1419,7 +1419,7 @@ function updateMatches(array,tablename,header,preview,arraylast5lineup)
         
         tablename.append(
             '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
-            '<td>'+getDateString(array[i].dateofmatch)+'</td>'+
+            '<td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
             '<td>'+getTeamLink(array[i].homeid,array[i].homename)+'</td>'+
             '<td>'+getTeamLink(array[i].awayid,array[i].awayname)+'</td>'+
             '<td>'+(i == 0 && preview ? getPreviewLinkText(array[i].matchid, 'Preview') : matchResultLink )+'</td>'+
@@ -1491,7 +1491,7 @@ function updateAllMatches(array, scorers, selectedteamid)
         
         tablename.append(
             '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
-            '<td>'+getDateString(array[i].dateofmatch)+'</td>'+
+            '<td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
             '<td>'+getTeamLink(array[i].homeid,array[i].homename)+'</td>'+
             '<td>'+getTeamLink(array[i].awayid,array[i].awayname)+'</td>'+
             '<td>'+getMatchResultLink(array[i].matchid, array[i].result)+'</td>'+
@@ -1616,7 +1616,7 @@ function addSuspensionTable(array, reason)
             '<td>'+getTeamLink(array[i].teamid,(array[i].teamid == array[i].hometeamid ? array[i].homename : array[i].awayname))+'</td>'+
             '<td>'+(reason !== undefined ? reason : array[i].count + ' gule kort') +'</td>'+
             '<td>'+getPreviewLinkText(array[i].matchid, array[i].homename+' - '+array[i].awayname)+'</td>'+
-            '<td>'+getDateString(array[i].dateofmatch)+'</td>'+
+            '<td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
         '</tr>');
     }
     $('#suspensionTable').tablesorter({widgets: ['zebra']});

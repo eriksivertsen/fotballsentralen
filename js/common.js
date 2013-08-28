@@ -326,10 +326,10 @@ function updateSuspensions(array, teamid, team){
             suspArray.push(getPlayerLink(value3['playerid'],value3['playername']) + ' (7 gule)');
         }
     }
-    for(var key4 in array.nineYellow){
-        var value4 = array.nineYellow[key4];
+    for(var key4 in array.moreYellow){
+        var value4 = array.moreYellow[key4];
         if(value4['teamid'] == teamid){
-            suspArray.push(getPlayerLink(value4['playerid'],value4['playername']) + ' (9 gule)');
+            suspArray.push(getPlayerLink(value4['playerid'],value4['playername']) + ' ('+value4['count']+' gule)');
         }
     }
     var susp = suspArray.join('<br/>');
@@ -994,6 +994,7 @@ function getPlayerFull(playerid,fromString,teamid)
                 totgoals += parseInt(array[i].penalty);
                 
             }
+            console.log('1');
             $('#playerinfo').append('<tr><td><b>Totalt</b></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>'+
             '<td><b>'+start+'</b></td><td><b>'+minutes+'</b></td><td><b>'+subbedin+'</b></td><td><b>'+subbedoff+'</b></td><td><b>'+goals+'</b></td><td><b>'+penalty+'</b></td><td><b>'+owngoal+'</b></td><td><b>'+yellow+'</b></td><td><b>'+red+'</b></td></tr>');
             $('#playerinfo').append('</tbody>');
@@ -1004,6 +1005,7 @@ function getPlayerFull(playerid,fromString,teamid)
                 $('#player_totalgoals_text').html('Clean sheets:');
                 $('#player_totalgoals').html(json.cleansheets);
             }
+            console.log('2');
             
            
             $('#player_winpercentage').html(json.winpercentage + ' %');
@@ -1022,7 +1024,7 @@ function getPlayerFull(playerid,fromString,teamid)
                 $('#similar').hide();
                 $('#similarplayers').hide();
             }
-            
+            console.log('3');
             $('#playerinfo').show();
             getEventRankPlayer(json);  
             stopLoad();
@@ -1061,9 +1063,12 @@ function getLeagueInfo(leagueid,teamid)
     leagueidselected = leagueid;
     if(leagueid == getAndreDivAll()){
         history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
+        $('#news_'+getAndreDiv()).show();
     }else{
         history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
+        $('#news_'+leagueidselected).show();
     }
+    
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -1107,6 +1112,7 @@ function getLeagueInfo(leagueid,teamid)
             updateEventTable(json.subin,$('#subsin'),6);
             updateEventTable(json.yellow, $('#yellowcard'), 2);
             updatePlayerMinutes(json.minutes);
+            
             updateBreadcrumb(leagueid, teamid, null);
             stopLoad();
         }
@@ -1678,6 +1684,7 @@ function startLoad()
     $('#preview_weather').hide();
     $('[id^="transfer_"]').hide();
     $('[id^="report_"]').hide();
+    $('[id^="news_"]').hide();
     $('#teamSelect').hide();
     
     

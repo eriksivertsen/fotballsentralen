@@ -15,7 +15,8 @@ class DatabaseStats {
             m.`matchid`,
             home.`teamname` AS hometeam,
             away.`teamname` AS awayteam,
-            l.leaguename
+            l.leaguename as leaguename,
+            l1.leaguename as leaguename2 
             FROM clicktable trending 
             LEFT JOIN playertable p ON p.`playerid` = trending.clicked_id AND p.year = 2012
             LEFT JOIN playertable p1 ON p1.`playerid` = trending.clicked_id AND p1.year = 2013
@@ -24,6 +25,7 @@ class DatabaseStats {
             LEFT JOIN teamtable home ON m.`hometeamid` = home.`teamid`
             LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
             LEFT JOIN leaguetable l on l.java_variable = trending.clicked_id
+            LEFT JOIN leaguetable l1 ON l1.`leagueid` = trending.clicked_id
         ORDER by trending.time DESC LIMIT 100";
         
         $data = array();
@@ -65,6 +67,14 @@ class DatabaseStats {
                     'type' => $row['clicktype'],
                     'matchid' => $row['clicked_id'],
                     'name' => $row['leaguename'],
+                    'time' => $row['time'],
+                    'ip' => $row['ip']
+                );
+            }else if($row['clicktype']=='suspension'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'matchid' => $row['clicked_id'],
+                    'name' => $row['leaguename2'],
                     'time' => $row['time'],
                     'ip' => $row['ip']
                 );

@@ -41,7 +41,7 @@ class DatabaseUtils {
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
-            $data[] = array(
+            $data['searcharray'][] = array(
                 'label' => $row['playername'],
                 'id' => $row['playerid'],
                 'type' => 'player'
@@ -54,14 +54,89 @@ class DatabaseUtils {
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
-            $data[] = array(
+            $data['searcharray'][] = array(
                 'label' => $row['teamname'],
                 'id' => $row['teamid'],
                 'type' => 'team'
            );
         }
+        $data['latestresults'] = DatabaseUtils::getLatestMatches(2013);
         return $data;
     }
+    
+    public function getLatestMatches($season)
+    {
+        $q = "SELECT m.`matchid`, home.`teamid` as homeid ,home.`teamname` as homename,away.`teamid` as awayid,away.`teamname` as awayname, m.`result`,UNIX_TIMESTAMP(m.`dateofmatch`) as timestamp, l.java_variable " .
+            "FROM matchtable m  " .
+            "JOIN leaguetable l ON l.`leagueid` = m.`leagueid` " .
+            "JOIN teamtable home ON home.`teamid` = m.`hometeamid` " .
+            "JOIN teamtable away ON away.`teamid` = m.`awayteamid` " .
+            "WHERE m.`result` NOT LIKE '- : -' " .
+            "AND l.year = {$season} " .
+            "ORDER BY m.`dateofmatch` DESC " .
+            "LIMIT 15";
+            
+        
+        $data = array();
+        $result = mysql_query($q);
+        
+        while($row = mysql_fetch_array($result))
+        {
+            $data[$row['java_variable']][] = array(
+                'matchid' => $row['matchid'],
+                'homeid' => $row['homeid'],
+                'homename' => $row['homename'],
+                'awayid' => $row['awayid'],
+                'awayname' => $row['awayname'],
+                'result' => $row['result'],
+                'timestamp' => $row['timestamp']
+            );
+            $data['0'][] = array(
+                'matchid' => $row['matchid'],
+                'homeid' => $row['homeid'],
+                'homename' => $row['homename'],
+                'awayid' => $row['awayid'],
+                'awayname' => $row['awayname'],
+                'result' => $row['result'],
+                'timestamp' => $row['timestamp']
+            );
+        }
+        $data['8'] = DatabaseUtils::getLatestMatchesSecondDiv($season);
+        return $data;
+    }
+    
+    public function getLatestMatchesSecondDiv($season)
+    {
+        $q = "SELECT m.`matchid`, home.`teamid` as homeid ,home.`teamname` as homename,away.`teamid` as awayid,away.`teamname` as awayname, m.`result`,UNIX_TIMESTAMP(m.`dateofmatch`) as timestamp, l.java_variable " .
+            "FROM matchtable m  " .
+            "JOIN leaguetable l ON l.`leagueid` = m.`leagueid` " .
+            "JOIN teamtable home ON home.`teamid` = m.`hometeamid` " .
+            "JOIN teamtable away ON away.`teamid` = m.`awayteamid` " .
+            "WHERE m.`result` NOT LIKE '- : -' " .
+            "AND l.year = {$season} " .
+            "AND l.java_variable IN (3,4,5,6) " .
+            "ORDER BY m.`dateofmatch` DESC " .
+            "LIMIT 15";
+            
+        
+        $data = array();
+        $result = mysql_query($q);
+        
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'matchid' => $row['matchid'],
+                'homeid' => $row['homeid'],
+                'homename' => $row['homename'],
+                'awayid' => $row['awayid'],
+                'awayname' => $row['awayname'],
+                'result' => $row['result'],
+                'timestamp' => $row['timestamp']
+            );
+        }
+        return $data;
+    }
+    
     public function setTeamHit($id)
     {
         if(!in_array($_SERVER['HTTP_HOST'], self::$whitelist) && !in_array($_SERVER['REMOTE_ADDR'], self::$whitelist)){
@@ -293,8 +368,6 @@ class DatabaseUtils {
         "ORDER BY SUM(p.minutesplayed) DESC " .
         "LIMIT " . $limit;
 
-        //echo $q;
-        
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))

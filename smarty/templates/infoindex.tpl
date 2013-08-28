@@ -16,7 +16,7 @@
         }(document, 'script', 'facebook-jssdk'));
         
             $(document).ready(function() {
-               
+            
                 var player_id = '{$player_id}';
                 var team_id = '{$team_id}';
                 var season = '{$season}';
@@ -82,8 +82,9 @@
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
-               
-});
+        });
+        
+
             
         </script> 
         
@@ -98,7 +99,6 @@
         <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
         {/if}
         <div class="indexbody">
-            
             <div id="welcometext" style="font-size: 10pt; margin-left:16px;margin-right:20px; background-color: #8dbdd8 ">
                 <b>Velkommen til FotballSentralen.com!</b>
                 <br/>

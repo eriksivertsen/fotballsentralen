@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-14 11:07:41
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-28 19:39:07
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1376478459,
+      1 => 1377718745,
       2 => 'file',
     ),
   ),
@@ -59,7 +59,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     success: function(json) {                       
                         
                         $('#tags').autocomplete({
-                            source:json,
+                            source:json.searcharray,
                             select: function( event, ui ) { 
                                 if(ui.item.type == 'player'){
                                     getPlayerSearch(ui.item.id);
@@ -68,6 +68,18 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                                 }
                             }
                         });
+                        
+                        for(var league in json.latestresults){
+                            for(var match in json.latestresults[league]){
+                                var m = json.latestresults[league][match];
+                                $('#js-news_'+league).append('<li class="news-item">'+getDateStringMilli(m.timestamp) + ': ' + getTeamLink(m.homeid, m.homename)+' - ' + getTeamLink(m.awayid,m.awayname)+' ' + getMatchResultLink(m.matchid, m.result) +'</a></li>');
+                            }
+                            $('#js-news_'+league).ticker({
+                                titleText: 'Siste resultater', 
+                                speed: 0.20
+                            });  
+                        }
+                           
                     }
                 });
                 

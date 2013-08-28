@@ -33,7 +33,7 @@
                     success: function(json) {                       
                         
                         $('#tags').autocomplete({
-                            source:json,
+                            source:json.searcharray,
                             select: function( event, ui ) { 
                                 if(ui.item.type == 'player'){
                                     getPlayerSearch(ui.item.id);
@@ -42,6 +42,18 @@
                                 }
                             }
                         });
+                        
+                        for(var league in json.latestresults){
+                            for(var match in json.latestresults[league]){
+                                var m = json.latestresults[league][match];
+                                $('#js-news_'+league).append('<li class="news-item">'+getDateStringMilli(m.timestamp) + ': ' + getTeamLink(m.homeid, m.homename)+' - ' + getTeamLink(m.awayid,m.awayname)+' ' + getMatchResultLink(m.matchid, m.result) +'</a></li>');
+                            }
+                            $('#js-news_'+league).ticker({
+                                titleText: 'Siste resultater', 
+                                speed: 0.20
+                            });  
+                        }
+                           
                     }
                 });
                 

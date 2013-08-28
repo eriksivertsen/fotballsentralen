@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-21 11:21:10
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-26 14:29:26
          compiled from "smarty\templates\main.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2243450b0caef60c5f3-55980832%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'ad3342d91c48a987ea8de39e00385b406c1dc521' => 
     array (
       0 => 'smarty\\templates\\main.tpl',
-      1 => 1377083980,
+      1 => 1377527350,
       2 => 'file',
     ),
   ),
@@ -28,6 +28,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <head>
         <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-flot-8760ee7/excanvas.min.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery-1.8.2.js"></script>  
+        
         <script type="text/javascript" src="js/jquery-ui.js"></script>  
         <script type="text/javascript" src="js/jquery.tablesorter.js"></script> 
         <script type="text/javascript" src="js/jMenu.jquery.js"></script>
@@ -40,11 +41,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.time.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
+        <script type="text/javascript" src="js/news/jquery.ticker.js"></script>
         
         <script type="text/javascript" src="js/common.js"></script>
         <script type="text/javascript" src="js/Utils.js"></script>
         
         <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="css/ticker-style.css" rel="stylesheet" type="text/css" />
         
         <link rel="stylesheet" href="css/smoothness/jquery-ui-1.9.2.custom.css" >
         

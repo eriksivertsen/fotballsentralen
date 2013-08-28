@@ -24,7 +24,46 @@
 </div>
 
 <div align="center">
-    
+    <div id="news_0">
+        <ul id="js-news_0" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_1">
+        <ul id="js-news_1" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_2">
+        <ul id="js-news_2" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_3">
+        <ul id="js-news_3" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_4">
+        <ul id="js-news_4" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_5">
+        <ul id="js-news_5" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_6">
+        <ul id="js-news_6" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_8">
+        <ul id="js-news_8" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
      <div id="overall" class="category">
         <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
         <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-07-28 11:04:34
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-28 19:36:36
          compiled from "smarty\templates\events.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:6705519c9f3b113720-42590549%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '97909604d98e0a50eafe6000722a870744d61ea0' => 
     array (
       0 => 'smarty\\templates\\events.tpl',
-      1 => 1375009472,
+      1 => 1377718594,
       2 => 'file',
     ),
   ),
@@ -45,7 +45,46 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 </div>
 
 <div align="center">
-    
+    <div id="news_0">
+        <ul id="js-news_0" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_1">
+        <ul id="js-news_1" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_2">
+        <ul id="js-news_2" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_3">
+        <ul id="js-news_3" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_4">
+        <ul id="js-news_4" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_5">
+        <ul id="js-news_5" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_6">
+        <ul id="js-news_6" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
+    <div id="news_8">
+        <ul id="js-news_8" class="js-hidden">
+            <li class="news-item"> </li>
+        </ul>
+    </div>
      <div id="overall" class="category">
         <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
         <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>

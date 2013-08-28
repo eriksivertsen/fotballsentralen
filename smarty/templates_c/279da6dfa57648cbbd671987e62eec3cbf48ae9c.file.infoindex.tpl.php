@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-21 11:32:44
+<?php /* Smarty version Smarty-3.1.12, created on 2013-08-28 19:36:36
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1377084676,
+      1 => 1377718560,
       2 => 'file',
     ),
   ),
@@ -47,7 +47,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         }(document, 'script', 'facebook-jssdk'));
         
             $(document).ready(function() {
-               
+            
                 var player_id = '<?php echo $_smarty_tpl->tpl_vars['player_id']->value;?>
 ';
                 var team_id = '<?php echo $_smarty_tpl->tpl_vars['team_id']->value;?>
@@ -120,8 +120,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
-               
-});
+        });
+        
+
             
         </script> 
         
@@ -136,7 +137,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
         <?php }?>
         <div class="indexbody">
-            
             <div id="welcometext" style="font-size: 10pt; margin-left:16px;margin-right:20px; background-color: #8dbdd8 ">
                 <b>Velkommen til FotballSentralen.com!</b>
                 <br/>

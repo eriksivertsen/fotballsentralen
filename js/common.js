@@ -279,7 +279,7 @@ function getPreview(matchid)
             var prevMatches = [];
             for(var k in json.previousmatches){
                 var prevMatch = json.previousmatches[k];
-                
+                //TODO: Add surface to prevmatches.
                 if(prevMatch.teamwonid == prevMatch.hometeamid){
                     var matchInfo = prevMatch.dateofmatch + ': <b>'+ prevMatch.homename + '</b> - ' +  prevMatch.awayname + ' ' + prevMatch.result; 
                 }else if(prevMatch.teamwonid == prevMatch.awayteamid){
@@ -994,7 +994,6 @@ function getPlayerFull(playerid,fromString,teamid)
                 totgoals += parseInt(array[i].penalty);
                 
             }
-            console.log('1');
             $('#playerinfo').append('<tr><td><b>Totalt</b></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>'+
             '<td><b>'+start+'</b></td><td><b>'+minutes+'</b></td><td><b>'+subbedin+'</b></td><td><b>'+subbedoff+'</b></td><td><b>'+goals+'</b></td><td><b>'+penalty+'</b></td><td><b>'+owngoal+'</b></td><td><b>'+yellow+'</b></td><td><b>'+red+'</b></td></tr>');
             $('#playerinfo').append('</tbody>');
@@ -1005,7 +1004,6 @@ function getPlayerFull(playerid,fromString,teamid)
                 $('#player_totalgoals_text').html('Clean sheets:');
                 $('#player_totalgoals').html(json.cleansheets);
             }
-            console.log('2');
             
            
             $('#player_winpercentage').html(json.winpercentage + ' %');
@@ -1024,7 +1022,6 @@ function getPlayerFull(playerid,fromString,teamid)
                 $('#similar').hide();
                 $('#similarplayers').hide();
             }
-            console.log('3');
             $('#playerinfo').show();
             getEventRankPlayer(json);  
             stopLoad();
@@ -1326,17 +1323,11 @@ function updatePreviewTable(array,team)
     var lastlineup = getLineupArray(array.lastlineup);
     
     $(prefix + 'surface').html(array.teamtoleague[0].surface);
-    
     $(prefix + 'lineup').html(getOverlibLineup('Foretrukken 11er. Kamper startet i parantes.', lineup, 'Lag'));
     $(prefix + 'lastlineup').html(getOverlibLineup('Siste lagoppstilling mot ' + array.lastlineup[0].teamname,lastlineup, 'Siste lag'));
-
-    
     $(prefix + 'suspensions').html('Ingen');
-    
     $(prefix + 'over3').html(array.overgoals.over3+'%');
-    
     $(prefix + 'over4').html(array.overgoals.over4+'%');
-
 }
 
 function updateEventTable(array,table,eventtype)
@@ -1439,7 +1430,7 @@ function updateMatches(array,tablename,header,preview,arraylast5lineup)
 }
 function updateLatestMatches(array, arraylast5lineup)
 {
-    updateMatches(array, $('#team_latestmatches'), 'Siste 5 kamper', false, arraylast5lineup);
+    updateMatches(array, $('#team_latestmatches'), ' kamper', false, arraylast5lineup);
 }
 function updateNextMatches(array)
 {
@@ -1555,7 +1546,11 @@ function updateTeamInfoTable(array)
     }
    // $('#team_leagueposition').html(array.currentposition + '.plass (totalt) - '+array.currentpositionhome+'.plass (hjemme) - '+array.currentpositionaway+'.plass (borte)');
     
-    setTeamLogo( $('#team_logo'),array.teamtoleague[0].teamid);
+    if(array.realteamid == -1){
+        setTeamLogo( $('#team_logo'),array.teamtoleague[0].teamid);
+    }else{
+        setTeamLogo( $('#team_logo'),array.realteamid);
+    }
     
     if(array.topscorer.length != 0){ 
         $('#team_topscorer').html(getPlayerLink(array.topscorer[0].playerid,array.topscorer[0].playername)+' - ' +array.topscorer[0].events+' mål');

@@ -323,11 +323,11 @@ function getOverlibStreakString(matches,teamid)
     var matchString = [];
     for(var key in matches){
         if(matches[key].teamwonid == matches[key].homeid){
-            var matchInfo = matches[key].dateofmatch + '<br/><b>'+ matches[key].homename + '</b> - ' +  matches[key].awayname + ' ' + matches[key].result; 
+            var matchInfo = matches[key].dateofmatch + '<br/> ('+matches[key].surface+') <br/> <b>'+ matches[key].homename + '</b> - ' +  matches[key].awayname + ' ' + matches[key].result; 
         }else if(matches[key].teamwonid == matches[key].awayid){
-            matchInfo = matches[key].dateofmatch + '<br/>'+ matches[key].homename + ' - <b>' +  matches[key].awayname + '</b> ' + matches[key].result; 
+            matchInfo = matches[key].dateofmatch + '<br/> ('+matches[key].surface+') <br/> '+ matches[key].homename + ' - <b>' +  matches[key].awayname + '</b> ' + matches[key].result; 
         }else{
-            matchInfo = matches[key].dateofmatch + '<br/>'+ matches[key].homename + ' - ' +  matches[key].awayname + ' ' + matches[key].result; 
+            matchInfo = matches[key].dateofmatch + '<br/> ('+matches[key].surface+') <br/> '+ matches[key].homename + ' - ' +  matches[key].awayname + ' ' + matches[key].result; 
         }
 
         if(matches[key].teamwonid == teamid){

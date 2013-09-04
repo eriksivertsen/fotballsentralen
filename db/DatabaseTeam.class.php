@@ -54,7 +54,8 @@ class DatabaseTeam {
             'mostusedplayers' => self::getMostUsedLineup($teamid, $season),
             'lastlineup' => self::getLineup($teamid, $season, $latestMatches[0]['matchid']),
             'last5lineup' => self::getLastFiveLineups($teamid,$season,$latestMatches),
-            'leaguetable' => DatabaseLeague::getLeagueTable($season, $teamtoleague[0]['leagueid'])
+            'leaguetable' => DatabaseLeague::getLeagueTable($season, $teamtoleague[0]['leagueid']),
+            'realteamid' => self::getSecondTeamId($teamid)
            
          );
         return $events;
@@ -238,6 +239,16 @@ class DatabaseTeam {
         }
         return $lineupArray;
     }
+    public function getSecondTeamId($teamid){
+        $q = "SELECT teamid FROM team_secondteam WHERE second_teamid = {$teamid}";
+        $realteamid = -1;
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $realteamid = $row['teamid'];
+        }
+        return $realteamid;
+    }
     public function getLatestMatches($teamid,$type){
         return self::getMatches('latest',$type,$teamid,5);
     }
@@ -272,7 +283,7 @@ class DatabaseTeam {
             echo 'not supported';
             return;
         }
-         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, unix_timestamp(m.dateofmatch) as timestamp, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid " .
+         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, unix_timestamp(m.dateofmatch) as timestamp, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid, home.surface " .
             "FROM matchtable m  " .
             "JOIN leaguetable l ON m.`leagueid` = l.`leagueid` " .
             "JOIN teamtable home ON m.`hometeamid` = home.`teamid` " .
@@ -298,7 +309,8 @@ class DatabaseTeam {
                 'result' => $row['result'],
                 'dateofmatch' => $row['dateofmatch1'],
                 'teamwonid' => $row['teamwonid'],
-                'timestamp' => $row['timestamp']
+                'timestamp' => $row['timestamp'],
+                'surface' => $row['surface']
             );
         }
         return $data;

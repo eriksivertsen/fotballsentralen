@@ -60,7 +60,6 @@ class DatabaseUtils {
                 'type' => 'team'
            );
         }
-        $data['latestresults'] = DatabaseUtils::getLatestMatches(2013);
         return $data;
     }
     
@@ -76,7 +75,6 @@ class DatabaseUtils {
             "ORDER BY m.`dateofmatch` DESC " .
             "LIMIT 15";
             
-        
         $data = array();
         $result = mysql_query($q);
         
@@ -102,10 +100,17 @@ class DatabaseUtils {
             );
         }
         $data['8'] = DatabaseUtils::getLatestMatchesSecondDiv($season);
+        $matchIds = array();
+        foreach($data as $key => $val){
+            foreach($val as $match){
+                $matchIds[] = $match['matchid'];
+            }
+        }
+        $data['scorers'] = DatabaseUtils::getGoalScoreresMatch($matchIds);
         return $data;
     }
     
-    public function getLatestMatchesSecondDiv($season)
+    private function getLatestMatchesSecondDiv($season)
     {
         $q = "SELECT m.`matchid`, home.`teamid` as homeid ,home.`teamname` as homename,away.`teamid` as awayid,away.`teamname` as awayname, m.`result`,UNIX_TIMESTAMP(m.`dateofmatch`) as timestamp, l.java_variable " .
             "FROM matchtable m  " .
@@ -323,6 +328,14 @@ class DatabaseUtils {
         
     public function getEventInfoTotalJSON($eventtype, $limit, $season, $leagueid)
     {
+        if($leagueid == '8'){
+            $leagueid = '3,4,5,6';
+        }
+        // Clean sheet hack
+        if($eventtype == 11){
+            return self::getCleanSheetsPlayer($season,$leagueid);
+        }
+        
         $q = 
         "SELECT t.playerid,t.playername,tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
         "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " . $season . " " .
@@ -356,6 +369,10 @@ class DatabaseUtils {
     }
     public function getTotalPlayerminutes($season,$limit, $leagueid)
     {
+        if($leagueid == 8){
+            $leagueid = '3,4,5,6';
+        }
+        
         $q = "SELECT pp.playerid,pp.playername,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played` FROM playtable p " . 
         "JOIN matchtable m ON m.matchid = p.matchid " .
         "JOIN playertable pp ON pp.playerid = p.playerid AND p.teamid = pp.teamid AND pp.year = ". $season . " " . 
@@ -563,6 +580,7 @@ class DatabaseUtils {
         WHERE e.`matchid` IN ($matchids)
         AND e.`eventtype` IN (4, 8, 9)
         AND e.ignore = 0 
+        GROUP BY e.`playerid`,e.`minute`
         ORDER BY e.minute ASC";
         
         //echo $q;
@@ -720,5 +738,249 @@ class DatabaseUtils {
             $total = $row['s'];
         }
         return $total;
+    }    
+    
+    public function getCleanSheetsPlayer($season, $leagueid){
+        
+        $q="SELECT 
+    p.playerid,
+    goalkeeper.`playername`,
+    p.`teamid`,
+    t.`teamname`,
+    COUNT(*) AS `event count`
+    FROM
+    (SELECT 
+        p.`playerid`,
+        p.`playername` 
+    FROM
+        playertable p 
+        LEFT JOIN playertable_altom pa 
+        ON pa.`playerid` = p.`playerid_altom` 
+        LEFT JOIN playertable_nifs pn 
+        ON pn.`playerid` = p.`playerid_nifs` 
+    WHERE (
+        p.is_goalkeeper = 1 
+        OR pa.`position` LIKE 'Keeper' 
+        OR pn.`position` LIKE 'Keeper' 
+        OR p.`shirtnumber` = 1
+        ) 
+        AND p.`playerid` != - 1 
+    GROUP BY p.`playerid`) AS goalkeeper 
+    JOIN playtable p 
+        ON p.`playerid` = goalkeeper.playerid 
+        AND p.`start` = 1 
+    JOIN matchtable m 
+        ON m.`matchid` = p.`matchid` 
+    JOIN leaguetable l 
+        ON l.`leagueid` = m.`leagueid` 
+        JOIN teamtable t ON t.`teamid` = p.`teamid`
+    WHERE (
+        (m.hometeamid = p.`teamid` AND m.awayscore = 0 ) 
+        OR ( m.awayteamid = p.`teamid` AND m.homescore = 0 )
+    ) 
+    AND l.`year` = {$season}  ".
+    ($leagueid == 0 ? "" : " AND l.java_variable IN ( {$leagueid} )") .
+    "GROUP BY p.`playerid` ORDER BY COUNT(*) Desc";
+  
+    $data = array();   
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'playerid' => $row['playerid'],
+                'playername' => $row['playername'],
+                'eventcount'=> $row['event count'],
+                'teamid' => $row['teamid'],
+                'teamname' => $row['teamname']
+            );
+        }
+        return $data;
+    }
+    
+    public function getCleanSheetsTeam($season, $leagueid){
+        //TODO::: This sql is baaaaaad
+        $q= "SELECT home.teamid as teamid1, SUM(IF(home.c_home IS NULL,0,home.c_home) + IF(away.c_away IS NULL,0,away.c_away)) AS total_c, home.java_variable, t.teamname FROM 
+            (SELECT 
+            m.`hometeamid` AS teamid,
+            COUNT(*) AS c_home,
+            l.`java_variable`
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON m.leagueid = l.leagueid 
+            WHERE l.year = {$season} 
+            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            AND m.awayscore = 0 
+            GROUP BY m.`hometeamid` ) AS home
+            left JOIN 
+            (SELECT 
+            m.awayteamid AS teamid,
+            COUNT(*) AS c_away,
+            l.`java_variable`
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON m.leagueid = l.leagueid 
+            WHERE l.year = {$season}  
+            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            AND m.homescore = 0 
+            GROUP BY m.`awayteamid`) AS away ON home.teamid = away.teamid JOIN teamtable t on home.teamid = t.teamid  ".
+            ($leagueid == 0 ? "" : " WHERE home.java_variable IN ({$leagueid}) ") . " GROUP BY home.teamid order by total_c desc" ;
+            
+        $data = array();   
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'teamid' => $row['teamid1'],
+                'teamname' => $row['teamname'],
+                'eventcount' => $row['total_c']
+           );
+        }
+        return $data;
+    }
+    public function getCleanSheetRank($teamid,$season) {
+        
+        //This sql is prob. so bad that it hurts
+        mysql_query("SET @rownum = 0, @rank = 1, @prev_val = NULL;");
+        
+        $q="SELECT 
+                rank,
+            `event count` 
+            FROM
+            (SELECT 
+        @rownum := @rownum + 1 AS ROW,
+        @rank := IF(
+        @prev_val != t.`event count`,
+        @rownum,
+        @rank
+        ) AS rank,
+        @prev_val := t.`event count` AS `event count`,
+        t.teamid 
+    FROM
+        (SELECT 
+        home.teamid as teamid,
+        SUM(IF(home.c_home IS NULL,0,home.c_home) + IF(away.c_away IS NULL,0,away.c_away)) AS `event count`,
+        home.java_variable,
+        t.teamname 
+        FROM
+        (SELECT 
+            m.`hometeamid` AS teamid,
+            COUNT(*) AS c_home,
+            l.`java_variable` 
+        FROM
+            matchtable m 
+            JOIN leaguetable l 
+            ON m.leagueid = l.leagueid 
+        WHERE l.year = {$season} 
+            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            AND m.awayscore = 0 
+        GROUP BY m.`hometeamid`) AS home 
+        left JOIN 
+            (SELECT 
+            m.awayteamid AS teamid,
+            COUNT(*) AS c_away,
+            l.`java_variable` 
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON m.leagueid = l.leagueid 
+            WHERE l.year = {$season} 
+            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            AND m.homescore = 0 
+            GROUP BY m.`awayteamid`) AS away 
+            ON home.teamid = away.teamid 
+        JOIN teamtable t 
+            on home.teamid = t.teamid 
+        GROUP BY home.teamid  ORDER BY `event count` desc) as t,
+        (SELECT @rownum := 0) r) AS showRank 
+            WHERE teamid = {$teamid}";
+            
+        $data = array();   
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'rank' => $row['rank'],
+                'count' => $row['event count']
+            );
+        }
+        return $data;
+    }
+    public function getCleanSheetPlayerRank($playerid,$season){
+        
+        //This sql is prob. so bad that it hurts
+        mysql_query("SET @rownum = 0, @rank = 1, @prev_val = NULL;");
+        
+        $q = "SELECT rank,
+            `event count` 
+            FROM
+            (SELECT 
+        @rownum := @rownum + 1 AS ROW,
+        @rank := IF(
+        @prev_val != t.`event count`,
+        @rownum,
+        @rank
+        ) AS rank,
+        @prev_val := t.`event count` AS `event count`,
+        t.playerid 
+            FROM (SELECT 
+        p.playerid,
+        goalkeeper.`playername`,
+        p.`teamid`,
+        t.`teamname`,
+        COUNT(*) AS `event count`
+        FROM
+        (SELECT 
+            p.`playerid`,
+            p.`playername` 
+        FROM
+            playertable p 
+            LEFT JOIN playertable_altom pa 
+            ON pa.`playerid` = p.`playerid_altom` 
+            LEFT JOIN playertable_nifs pn 
+            ON pn.`playerid` = p.`playerid_nifs` 
+        WHERE (
+            p.is_goalkeeper = 1 
+            OR pa.`position` LIKE 'Keeper' 
+            OR pn.`position` LIKE 'Keeper' 
+            OR p.`shirtnumber` = 1
+            ) 
+            AND p.`playerid` != - 1 
+        GROUP BY p.`playerid`) AS goalkeeper 
+        JOIN playtable p 
+            ON p.`playerid` = goalkeeper.playerid 
+            AND p.`start` = 1 
+        JOIN matchtable m 
+            ON m.`matchid` = p.`matchid` 
+        JOIN leaguetable l 
+            ON l.`leagueid` = m.`leagueid` 
+            JOIN teamtable t ON t.`teamid` = p.`teamid`
+        WHERE (
+            (
+            m.hometeamid = p.`teamid` 
+            AND m.awayscore = 0
+            ) 
+            OR (
+            m.awayteamid = p.`teamid` 
+            AND m.homescore = 0
+            )
+        ) 
+        AND l.`year` = {$season} 
+        GROUP BY p.`playerid`  ORDER BY `event count` desc) AS t,
+        (SELECT @rownum := 0) r) AS showRank 
+            WHERE playerid = {$playerid}";
+            
+         $data = array();   
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'rank' => $row['rank'],
+                'count' => $row['event count']
+            );
+        }
+        return $data;
+            
     }
 }

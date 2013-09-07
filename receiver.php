@@ -95,6 +95,9 @@ if(isset($_POST['action'])){
     if($_POST['action'] == 'getSearchArray'){
         echo json_encode($dbUtils->getSearchArray());
     }
+    if($_POST['action'] == 'getLatestMatches'){
+        echo json_encode($dbUtils->getLatestMatches($_POST['season']));
+    }
     if($_POST['action'] == 'getMatchesOneWeek'){
         echo json_encode($dbPreview->getMatchesOneWeek());
     }

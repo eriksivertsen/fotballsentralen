@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-06-05 10:52:42
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-07 08:04:28
          compiled from "smarty\templates\allevents.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2463751af145612af00-72046140%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '453b95cdd79bacf5f3ed3534e6c64df36da8b373' => 
     array (
       0 => 'smarty\\templates\\allevents.tpl',
-      1 => 1370429560,
+      1 => 1378541057,
       2 => 'file',
     ),
   ),
@@ -19,7 +19,33 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_51af1456132d27_61389948',
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_51af1456132d27_61389948')) {function content_51af1456132d27_61389948($_smarty_tpl) {?> <center>
+<?php if ($_valid && !is_callable('content_51af1456132d27_61389948')) {function content_51af1456132d27_61389948($_smarty_tpl) {?><center>
+<div>
+    <select id="allEventsSelectType" style="margin: 4px" onchange="selectTotalEventsType()">
+        <option value="12">Spilleminutter</option>
+        <option value="10">Toppscorer</option>
+        <option value="8">Straffemål</option>
+        <option value="11">Clean sheets</option>
+        <option value="4">Spillemål</option>
+        <option value="9">Selvmål</option>
+        <option value="2">Gule kort</option>
+        <option value="3">Rødt kort (direkte)</option>
+        <option value="1">Rødt kort (to gule)</option>
+        <option value="6">Byttet inn</option>
+        <option value="7">Byttet ut</option>
+    </select>
+    <br/>
+    <select id="allEventsSelect" style="margin: 4px" onchange="selectTotalEvents()">
+        <option value="0">Norge</option>
+        <option value="1">Tippeligaen</option>
+        <option value="2">Adeccoligaen</option>
+        <option value="8">2.divisjon</option>
+        <option value="3">2.div avdeling 1</option>
+        <option value="4">2.div avdeling 2</option>
+        <option value="5">2.div avdeling 3</option>
+        <option value="6">2.div avdeling 4</option>
+    </select> 
+</div>
     <div id="radio">
         <input id="teamradio" type="radio" value="team" name="type" onclick="getEventsTotalTeamSelected()"></input>
         <label for="teamradio"><text style="font-size:10pt">Lag</text></label>
@@ -29,4 +55,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <div style="text-align: -moz-center">
         <table id="allEvents" class="tablesorter" style="width:auto;table-layout: fixed;"></table>
     </div>
+    
+     <div id="playerminutes">
+        <center> 
+            <div style="text-align: -moz-center">
+                <table id="playerminutes_table" class="tablesorter" style="width:auto;table-layout: fixed;"></table>
+            </div>
+        </center>
+    </div>
+    
 </center><?php }} ?>

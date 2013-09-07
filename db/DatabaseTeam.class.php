@@ -24,6 +24,7 @@ class DatabaseTeam {
             'subout' => self::getEventRankTeam($teamid,7,$season),
             'penalty' => self::getEventRankTeam($teamid,8,$season),
             'owngoal' => self::getEventRankTeam($teamid,9,$season),
+            'cleeansheetrank' => DatabaseUtils::getCleanSheetRank($teamid,$season),
             'teamplayer' => self::getTeamPlayerJSON($teamid ,$season),
             'scoringminute' => self::getGoalsScoringMinute($teamid,$season),
             'concededminute' => self::getGoalsConcededMinute($teamid,$season),
@@ -758,6 +759,13 @@ class DatabaseTeam {
     
     public function getEventInfoTotalTeam($eventtype, $limit, $season, $leagueid)
     {
+        if($leagueid == '8'){
+            $leagueid = '3,4,5,6';
+        }
+        // Clean sheet hack
+        if($eventtype == 11){
+            return DatabaseUtils::getCleanSheetsTeam($season,$leagueid);
+        }
         $q = 
         "SELECT tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
         "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " .$season . " " . 
@@ -788,6 +796,9 @@ class DatabaseTeam {
     
     public function getEventInfoJSON($teamid,$leagueid,$eventtype,$season)
     {          
+        if($leagueid == '8'){
+            $leagueid = '3,4,5,6';
+        }
         $q = 
         "SELECT t.playerid,t.playername,tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
         "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " . $season . " " .

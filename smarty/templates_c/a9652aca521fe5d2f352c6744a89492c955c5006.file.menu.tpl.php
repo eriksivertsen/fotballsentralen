@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-28 19:39:07
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-07 07:19:50
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1377718745,
+      1 => 1378538388,
       2 => 'file',
     ),
   ),
@@ -82,6 +82,37 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                            
                     }
                 });
+                $.ajax({
+                    type: "POST",
+                    url: "receiver.php",
+                    dataType: "json",
+                    timeout: timeout,
+                    data: {
+                        action: "getLatestMatches",
+                        season: $('#season').val()
+                    },
+                    error: function () {
+                        stopLoad()
+                    },
+                    success: function(json) {
+                        var scorerarray = json.scorers;
+                        for(var league in json){
+                            for(var match in json[league]){
+                                var m = json[league][match];
+                                $('#js-news_'+league).append('<li class="news-item">'+getDateStringMilliNoYear(m.timestamp) + ': ' 
+                                    + getTeamLink(m.homeid, m.homename)+' - ' + getTeamLink(m.awayid,m.awayname)+' ' 
+                                    + getMatchResultLink(m.matchid, m.result) + " | " 
+                                    + getScorerString(m.matchid,scorerarray) +'</a></li>');
+                            }
+                            $('#js-news_'+league).ticker({
+                                titleText: 'Kamper', 
+                                speed: 0.20,
+                                pauseOnItems: 2500
+                            });  
+                        }
+                           
+                    }
+                });
                 
             });
         </script> 
@@ -128,6 +159,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                                     <li><a href="#" onclick="getTotalPlayerMinutes();return false;">Spilleminutter</a></li>
                                     <li><a href="#" onclick="getEventsTotal(10,0);return false;">Toppscorer</a></li>
                                     <li><a href="#" onclick="getEventsTotal(8,0);return false;">Straffemål</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(11,0);return false;">Clean sheets</a></li>
                                     <li><a href="#" onclick="getEventsTotal(4,0);return false;">Spillemål</a></li>
                                     <li><a href="#" onclick="getEventsTotal(9,0);return false;">Selvmål</a></li>
                                     <li><a href="#" onclick="getEventsTotal(2,0);return false;">Gule&nbspkort</a></li>

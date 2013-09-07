@@ -285,5 +285,5 @@ class DatabaseLeague {
            
         }
         return $average;  
-    } 
+    }
 }

@@ -29,9 +29,38 @@ var timeout = 15000; //ms
 
 function selectSuspendedLeague()
 {
-    var league = $('#suspensionSelect').val()
+    var league = $('#suspensionSelect').val();
     getSuspensionList(league);
 }
+
+function selectTotalEvents()
+{
+    leagueidselected = $('#allEventsSelect').val();
+    if(eventselected == 12){
+        getTotalPlayerMinutes();
+    }else{
+        selectEvents();
+    }
+}
+
+function selectEvents(){
+    if($('#playerradio').is(':checked')){
+        getEventsTotalSelected();
+    }else{
+        getEventsTotalTeamSelected();
+    }
+}
+
+function selectTotalEventsType()
+{
+    eventselected = $('#allEventsSelectType').val();
+    if(eventselected == 12){
+        getTotalPlayerMinutes();
+    }else{
+        selectEvents();
+    }
+}
+
 function selectSeason()
 {
     //only possible when in HOME 
@@ -506,7 +535,7 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
         $('#breadcrumbs').append('<li><a href="#" onclick="getTeam(0,0)">Norge</a></li>');
         $("#breadcrumbs").breadcrumbs("home");
         $('#league_name').html('Norge');
-         document.title = title;
+        document.title = title;
         return;
     }
    
@@ -632,7 +661,7 @@ function getTotalPlayerMinutes(){
     if(!allowClicks){
         return;
     }
-    
+    eventselected = 12;
     startLoad();
     
     if(leagueidselected == 0){
@@ -657,7 +686,7 @@ function getTotalPlayerMinutes(){
            
             var array = json;
             $('#playerminutes_table').empty();
-            $('#playerminutes_table').append('<caption class="tableheader" onclick="getTotalPlayerMinutes()">Spilleminutter&nbsp'+season+'</caption>');
+            $('#playerminutes_table').append('<caption class="tableheader" onclick="getTotalPlayerMinutes()">Spilleminutter&nbspi&nbsp'+ getLeagueName(leagueidselected)+',&nbsp' + season+'</caption>');
             for (var i=0; i<array.length; i++) {
                 
                 $('#playerminutes_table').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
@@ -665,9 +694,12 @@ function getTotalPlayerMinutes(){
                     '<td>'+array[i].minutesplayed+'</td></tr>');
             }
             stopLoad();
-            
+            $('#allEventsSelectType').val(12);
+            $('#allEventsSelectType').show();
+            $('#allEventsSelect').show();
             $('#playerminutes').show();
             $('#playerminutes_table').show();
+            $('#events').show();
         }
     });
     
@@ -678,17 +710,21 @@ function getEventsTotal(eventtype,leagueid)
     if(!allowClicks){
         return;
     }
+    $('#allEventsSelectType').val(eventtype);
+    $('#allEventsSelect').val(leagueid);
+    
+    leagueidselected = leagueid;
+    eventselected = eventtype;
     
     if(eventtype == 10){
         // topscorer hack
         eventtype = '4,8';
     }
     
-    eventselected = eventtype;
-    leagueidselected = leagueid;
     $('#playerradio').prop('checked',true);
     
     startLoad();
+    
     var tableheader = getEventFromId(eventtype);
     if(leagueid == 0){
         updateBreadcrumbSpecific('Norge', 'getTeam(0,0)', tableheader, 'getEventsTotal('+eventtype+','+leagueid+')');
@@ -723,6 +759,8 @@ function getEventsTotal(eventtype,leagueid)
                     '<td>'+array[i].eventcount+'</td></tr>');
             }
             stopLoad();
+            $('#allEventsSelectType').show();
+            $('#allEventsSelect').show();
             $('#allEvents').show();
             $('#events').show();
             $('#radio').show();
@@ -736,7 +774,10 @@ function getEventsTotalTeam(eventtype, leagueid)
     }
     eventselected = eventtype;
     leagueidselected = leagueid;
-
+    
+    $('#allEventsSelectType').val(eventtype);
+    $('#allEventsSelect').val(leagueid);
+    
     if(eventtype == 10){
         eventtype = '4,8';
         // goal hack
@@ -744,7 +785,6 @@ function getEventsTotalTeam(eventtype, leagueid)
     $('#teamradio').prop('checked',true);
     
     startLoad();
-
     var tableheader = getEventFromId(eventtype);
     if(leagueid == 0){
         updateBreadcrumbSpecific('Norge', 'getTeam(0,0)', tableheader, 'getEventsTotalTeam('+eventtype+','+leagueid+')');
@@ -776,6 +816,8 @@ function getEventsTotalTeam(eventtype, leagueid)
                     '<td>'+array[i].eventcount+'</td></tr>');
             }
             stopLoad();
+            $('#allEventsSelectType').show();
+            $('#allEventsSelect').show();
             $('#allEvents').show();
             $('#events').show();
             $('#radio').show();
@@ -1042,7 +1084,7 @@ function getEventRankPlayer(array)
     updatePlayerRank(array.owngoal,9);
     updatePlayerRank(array.subin,6);
     updatePlayerRank(array.subout,7);
-    
+    updatePlayerRank(array.cleansheetrank,11);
 }
 
 function updatePlayerRank(array, eventtype)
@@ -1163,6 +1205,7 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.goal,4);
             updateTeamRankList(array.subin,6);
             updateTeamRankList(array.subout,7);
+            updateTeamRankList(array.cleeansheetrank, 11);
 
             updateTeamPlayers(array.teamplayer);
             if($('#season').val() == '2013'){
@@ -1448,7 +1491,6 @@ function updateAllMatches(array, scorers, selectedteamid)
     //tablename.append('<tr><th style="width: 20%"><th style="width: 40%"><th style="width: 40%"><th style="width: 10%"></tr>');
     tablename.append('<tbody>');
     for (var i=0; i<array.length; i++) {
-        
         var scorerArray = [];
         var scorer = scorers[array[i].matchid];
         if(scorer !== undefined){
@@ -1681,6 +1723,8 @@ function startLoad()
     $('[id^="report_"]').hide();
     $('[id^="news_"]').hide();
     $('#teamSelect').hide();
+    $('#allEventsSelect').hide();
+    $('#allEventsSelectType').hide();
     
     
     $("html").css("cursor", "progress");

@@ -18,6 +18,7 @@ class DatabasePlayer {
             'subout' => self::getEventRankPlayer($playerid,7,$season),
             'penalty' => self::getEventRankPlayer($playerid,8,$season),
             'owngoal' => self::getEventRankPlayer($playerid,9,$season),
+            'cleansheetrank' => DatabaseUtils::getCleanSheetPlayerRank($playerid,$season),
             'playerinfo' => self::getPlayerInfoJSON($playerid,$season,$teamid),
             'playertoleague' => self::getPlayerToLeague($playerid,$season),
             'playingminutes' => self::getPlayingMinutes($playerid, $season,$teamid),

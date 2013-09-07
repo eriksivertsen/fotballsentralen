@@ -126,13 +126,6 @@
             <div id="events">
                {include file="allevents.tpl"}
             </div>
-            <div id="playerminutes">
-                <center> 
-                    <div style="text-align: -moz-center">
-                        <table id="playerminutes_table" class="tablesorter" style="width:auto;table-layout: fixed;"></table>
-                    </div>
-                </center>
-            </div>
             <table id="populare" align="center" width="100%">
                 <tr>
                     <td><table id="trending" class="tablesorter playerinfo" style="float:left; "></table></td>

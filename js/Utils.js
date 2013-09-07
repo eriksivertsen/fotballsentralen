@@ -210,6 +210,7 @@ function getEventFromId(eventid)
     if(eventid == '4,8'){
         eventid = 10;
     }
+    eventid = parseInt(eventid);
     switch(eventid)
     {
         case 1:
@@ -229,7 +230,11 @@ function getEventFromId(eventid)
         case 9:
             return 'Selvmål';
         case 10:
-            return 'Toppscorer'
+            return 'Toppscorer';
+        case 11:
+            return 'Clean&nbspsheets';
+        case 12:
+            return 'Spilleminutter';
     }
 }
 function getLeagueName(leagueid)
@@ -270,6 +275,14 @@ function getDateStringMilli(milli)
     // + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes()
     return getDoubleDigit(jdate.getDate()) + ". "+month[jdate.getMonth()] + " " +jdate.getFullYear();
 }
+function getDateStringMilliNoYear(milli)
+{
+    var jdate = new Date();
+    jdate.setTime(milli * 1000);
+    // + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes()
+    return getDoubleDigit(jdate.getDate()) + ". "+month[jdate.getMonth()];
+}
+
 function getMatchDateString(milliseconds)
 {
     var date = new Date();
@@ -354,4 +367,41 @@ function getHistoryBack(haystack, needle, selectedid)
         }
     }
     return -1;
+}
+
+function getScorerString(matchid, scorerarray)
+{
+    var scorerArray = [];
+    var scorer = scorerarray[matchid];
+    if(scorer !== undefined){
+        for(var player in scorer){
+            var p = scorer[player];
+            var eventtype = p.eventtype;
+
+            var playerArr = p.playername.split(" ");
+            var playername = playerArr[playerArr.length-1];
+
+            if(eventtype != 9){
+                if(scorerArray[p.playerid] != undefined){
+                    scorerArray[p.playerid] += ', '+ p.minute + '\'';
+                }else{
+                    scorerArray[p.playerid] = getPlayerLink(p.playerid, playername) + ' ('+p.minute+'\'';
+                }
+            }
+            if(eventtype == 9){
+                playername = 'Selvmål ';
+                if(scorerArray[p.playerid] != undefined){
+                    scorerArray[p.playerid] += ', '+ p.minute + '\'';
+                }else{
+                    scorerArray[p.playerid] = playername + ' ('+p.minute+'\'';
+                }
+            }
+        }
+    }
+    var scorerstring = '';
+    for(var s in scorerArray){
+        scorerArray[s] += ') ';
+        scorerstring += scorerArray[s];
+    }
+    return scorerstring;
 }

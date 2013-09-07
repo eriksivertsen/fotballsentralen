@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-28 19:36:36
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-07 08:04:28
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1377718560,
+      1 => 1378541050,
       2 => 'file',
     ),
   ),
@@ -167,13 +167,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <div id="events">
                <?php echo $_smarty_tpl->getSubTemplate ("allevents.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
-            </div>
-            <div id="playerminutes">
-                <center> 
-                    <div style="text-align: -moz-center">
-                        <table id="playerminutes_table" class="tablesorter" style="width:auto;table-layout: fixed;"></table>
-                    </div>
-                </center>
             </div>
             <table id="populare" align="center" width="100%">
                 <tr>

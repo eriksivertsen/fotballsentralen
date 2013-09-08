@@ -72,8 +72,8 @@ class DatabaseUtils {
             "JOIN teamtable away ON away.`teamid` = m.`awayteamid` " .
             "WHERE m.`result` NOT LIKE '- : -' " .
             "AND l.year = {$season} " .
-            "ORDER BY m.`dateofmatch` DESC " .
-            "LIMIT 15";
+            "AND m.`dateofmatch` > NOW() - INTERVAL 7 DAY " .
+            "ORDER BY m.`dateofmatch` DESC ";
             
         $data = array();
         $result = mysql_query($q);

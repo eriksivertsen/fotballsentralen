@@ -38,5 +38,4 @@ if(isset($_GET['season'])){
 $smarty->assign('contents',$smarty->fetch('infoindex.tpl'));
 $smarty->display('main.tpl');
 
-echo microtime();
 ?>

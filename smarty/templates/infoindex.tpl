@@ -1,8 +1,6 @@
 <html>
     <head>     
         <title>FotballSentralen.com</title>
-        
-        
         <script type="text/javascript">
             
             !function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){ js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
@@ -21,63 +19,6 @@
                    controlHash();
                 });
             
-                var player_id = '{$player_id}';
-                var team_id = '{$team_id}';
-                var season = '{$season}';
-                var league_id = '{$league_id}';
-                var matchid = '{$matchid}';
-                var refereeid = '{$refereeid}';
-                var page = '{$page}';
-                
-                
-                if(season != '') {
-                    setSeason(season);
-                }
-                if(player_id != ''){
-                    getPlayer(player_id);
-                }
-                else if(team_id != '') {
-                    getTeam(0,team_id);
-                }
-                else if(league_id != '' && page == '') {
-                    getTeam(league_id,0);
-                }
-                else if(page == 'populare'){
-                    getPopulare();
-                }
-                else if(page == 'suspension'){
-                    getSuspensionList(league_id);
-                }
-                else if(page == 'transfers'){
-                    getTransfers();
-                }                
-                else if(page == 'preview'){
-                    if(matchid != ''){
-                        getPreview(matchid);
-                    }else{
-                        getPreviewMatches();
-                    }
-                }
-                else if(page == 'report' && matchid != ''){
-                    getReport(matchid);
-                }
-                else if(page == 'referee'){
-                    if(refereeid == ''){
-                        getReferee();
-                    }else{
-                        getRefereeId(refereeid);
-                    }
-                }
-                else if(page == 'match'){
-                    getMatch(matchid);
-                }
-                else{
-                    getTeam(0,0);
-                }
-
-                if(league_id == '' && team_id == '' && player_id == '' && page == ''){
-                    $('#welcometext').show();
-                }
                 controlHash();
                 
                 //Hover arrows functions
@@ -111,6 +52,12 @@
 //            }
             
             var paramArray =  window.location.hash.split("/");
+            if(paramArray == ''){
+                setSeason(2013);
+                getTeam(0, 0);
+                return;
+            }
+            setSeason(paramArray[1]);
             var type = paramArray[2];
             var id = paramArray[3];
             var specialid = paramArray[4];

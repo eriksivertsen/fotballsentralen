@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-09 12:21:52
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-09 12:36:24
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1378729311,
+      1 => 1378730183,
       2 => 'file',
     ),
   ),
@@ -19,12 +19,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_50ad1bad24f056_48494864',
   'variables' => 
   array (
-    'player_id' => 0,
-    'team_id' => 0,
-    'season' => 0,
-    'league_id' => 0,
-    'matchid' => 0,
-    'refereeid' => 0,
     'page' => 0,
   ),
   'has_nocache_code' => false,
@@ -32,8 +26,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_50ad1bad24f056_48494864')) {function content_50ad1bad24f056_48494864($_smarty_tpl) {?><html>
     <head>     
         <title>FotballSentralen.com</title>
-        
-        
         <script type="text/javascript">
             
             !function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){ js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
@@ -52,70 +44,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                    controlHash();
                 });
             
-                var player_id = '<?php echo $_smarty_tpl->tpl_vars['player_id']->value;?>
-';
-                var team_id = '<?php echo $_smarty_tpl->tpl_vars['team_id']->value;?>
-';
-                var season = '<?php echo $_smarty_tpl->tpl_vars['season']->value;?>
-';
-                var league_id = '<?php echo $_smarty_tpl->tpl_vars['league_id']->value;?>
-';
-                var matchid = '<?php echo $_smarty_tpl->tpl_vars['matchid']->value;?>
-';
-                var refereeid = '<?php echo $_smarty_tpl->tpl_vars['refereeid']->value;?>
-';
-                var page = '<?php echo $_smarty_tpl->tpl_vars['page']->value;?>
-';
-                
-                
-                if(season != '') {
-                    setSeason(season);
-                }
-                if(player_id != ''){
-                    getPlayer(player_id);
-                }
-                else if(team_id != '') {
-                    getTeam(0,team_id);
-                }
-                else if(league_id != '' && page == '') {
-                    getTeam(league_id,0);
-                }
-                else if(page == 'populare'){
-                    getPopulare();
-                }
-                else if(page == 'suspension'){
-                    getSuspensionList(league_id);
-                }
-                else if(page == 'transfers'){
-                    getTransfers();
-                }                
-                else if(page == 'preview'){
-                    if(matchid != ''){
-                        getPreview(matchid);
-                    }else{
-                        getPreviewMatches();
-                    }
-                }
-                else if(page == 'report' && matchid != ''){
-                    getReport(matchid);
-                }
-                else if(page == 'referee'){
-                    if(refereeid == ''){
-                        getReferee();
-                    }else{
-                        getRefereeId(refereeid);
-                    }
-                }
-                else if(page == 'match'){
-                    getMatch(matchid);
-                }
-                else{
-                    getTeam(0,0);
-                }
-
-                if(league_id == '' && team_id == '' && player_id == '' && page == ''){
-                    $('#welcometext').show();
-                }
                 controlHash();
                 
                 //Hover arrows functions
@@ -149,6 +77,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 //            }
             
             var paramArray =  window.location.hash.split("/");
+            if(paramArray == ''){
+            console.log('length is null');
+                setSeason(2013);
+                getTeam(0, 0);
+                return;
+            }
+            setSeason(paramArray[1]);
             var type = paramArray[2];
             var id = paramArray[3];
             var specialid = paramArray[4];

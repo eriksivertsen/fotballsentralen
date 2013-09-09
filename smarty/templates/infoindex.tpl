@@ -17,6 +17,10 @@
         
             $(document).ready(function() {
             
+                $(window).on('hashchange', function() {
+                   controlHash();
+                });
+            
                 var player_id = '{$player_id}';
                 var team_id = '{$team_id}';
                 var season = '{$season}';
@@ -24,6 +28,7 @@
                 var matchid = '{$matchid}';
                 var refereeid = '{$refereeid}';
                 var page = '{$page}';
+                
                 
                 if(season != '') {
                     setSeason(season);
@@ -63,6 +68,9 @@
                         getRefereeId(refereeid);
                     }
                 }
+                else if(page == 'match'){
+                    getMatch(matchid);
+                }
                 else{
                     getTeam(0,0);
                 }
@@ -70,6 +78,7 @@
                 if(league_id == '' && team_id == '' && player_id == '' && page == ''){
                     $('#welcometext').show();
                 }
+                controlHash();
                 
                 //Hover arrows functions
                 
@@ -82,10 +91,85 @@
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
+                
+                
         });
         
-
+        function controlHash()
+        {
+//            var str = window.location.href;
+//            var indexOf = str.indexOf('index.php?');
+//            var indexOfHash = str.indexOf('#');
+//            if(indexOf != -1 && indexOfHash != -1){
+//                var params = str.substring(indexOf+10,indexOfHash);
+//                var array = params.split("&");
+//                for(var val in array){
+//                    var obj = array[val].split("=");
+//                    type = obj[0].split("_")[0];
+//                    id = obj[1];
+//                }
+//            }
             
+            var paramArray =  window.location.hash.split("/");
+            var type = paramArray[2];
+            var id = paramArray[3];
+            var specialid = paramArray[4];
+                   
+            if(type == 'player'){
+                if(id != playeridselected || type != typeselected){
+                    getPlayer(id);
+                }
+            }
+            if(type == 'events'){
+                if(id != eventselected || type != typeselected){
+                    getEventsTotal(id,leagueidselected);
+                }
+            }
+            if(type == 'eventsteam'){
+                if(id != eventselected || type != typeselected){
+                    getEventsTotalTeam(id,leagueidselected);
+                }
+            }
+            if(type == 'team'){
+                if(id != teamidselected || type != typeselected ){
+                    getTeamInfo(id,0);
+                }
+            }
+            if(type == 'league'){
+                if(id != leagueidselected || type != typeselected){
+                    getTeam(id,0);
+                }
+            }
+            if(type == 'page'){
+                if(id == 'populare'){
+                    getPopulare();
+                }
+                else if(id == 'suspension'){
+                    getSuspensionList(specialid);
+                }
+                else if(id == 'transfers'){
+                    getTransfers();
+                }                
+                else if(id == 'preview'){
+                    if(specialid != undefined){
+                        getPreview(specialid);
+                    }else{
+                        getPreviewMatches();
+                    }
+                }
+                else if(id == 'referee'){
+                    if(specialid == undefined){
+                        getReferee();
+                    }else{
+                        getRefereeId(specialid);
+                    }
+                }
+                else if(id == 'match'){
+                    getMatch(specialid);
+                }
+            }
+        }
+        
         </script> 
         
     </head>
@@ -145,6 +229,10 @@
             </div>
             <div id="preview">
                 {include file="preview.tpl"}
+            </div>
+            
+            <div id="match_main">
+                {include file="match.tpl"}
             </div>
             
             <div id="referee">

@@ -22,6 +22,7 @@ var playeridselected;
 var teamidselected;
 var leagueidselected;
 var eventselected;
+var typeselected;
 
 var title = 'FotballSentralen.com';
 var season = 2013;
@@ -149,9 +150,8 @@ function getPopulare()
         return;
     }
     startLoad();
-    history.pushState("", "Title", 'index.php?page=populare');
-    
-    //$.History.trigger('/page=populare');
+    //history.pushState("", "Title", 'index.php?page=populare');
+    window.location.hash = '/'+season+'/page/populare';
     
     $("#populare").show();
     $.ajax({
@@ -179,7 +179,8 @@ function getSuspensionList(leagueid)
         return;
     }
     startLoad();
-    history.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
+    //history.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
+    window.location.hash = '/'+season+'/page/suspension/'+leagueid;
     $('#suspensionSelect').show();
     $.ajax({
         type: "POST",
@@ -203,7 +204,8 @@ function getPreviewMatches(){
     if(!allowClicks){
         return;
     }
-    history.pushState("", "Title", 'index.php?page=preview');
+    //history.pushState("", "Title", 'index.php?page=preview');
+    window.location.hash = '/'+season+'/page/preview';
     startLoad();
     $('#preview').show();
     $('#preview_table').hide();
@@ -251,7 +253,9 @@ function getPreview(matchid)
         return;
     }
     startLoad();
-    history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
+    //history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
+    window.location.hash = '/'+season+'/page/preview/'+matchid;
+    
     $('#preview').show();
     $('#preview_table').show();
     $('#preview_matches').hide();
@@ -374,7 +378,8 @@ function getTransfers()
         return;
     }
     startLoad();
-    history.pushState("", "Title", 'index.php?page=transfers');
+    //history.pushState("", "Title", 'index.php?page=transfers');
+    window.location.hash = '/'+season+'/page/transfers';
     $('#transfer_text').html('Kun interne overganger/lån i Norge. Spilleren må være i tropp for at overgang skal registreres. ');
     
     $('[id^="transfer_"]').show();
@@ -410,7 +415,8 @@ function getReferee()
         return;
     }
     startLoad();
-    history.pushState("", "Title", 'index.php?page=referee');
+    //history.pushState("", "Title", 'index.php?page=referee');
+    window.location.hash = '/'+season+'/page/referee';
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -443,7 +449,8 @@ function getRefereeId(refereeid)
         return;
     }
     startLoad();
-    history.pushState("", "Title", 'index.php?page=referee&referee_id='+refereeid);
+    //history.pushState("", "Title", 'index.php?page=referee&referee_id='+refereeid);
+    window.location.hash = '/'+season+'/page/referee/'+refereeid;
     $('#referee').show();
     $('#referee_table_specific').empty();
     $.ajax({
@@ -716,6 +723,8 @@ function getEventsTotal(eventtype,leagueid)
     leagueidselected = leagueid;
     eventselected = eventtype;
     
+    window.location.hash = '/'+season+'/events/'+eventtype;
+    
     if(eventtype == 10){
         // topscorer hack
         eventtype = '4,8';
@@ -774,6 +783,8 @@ function getEventsTotalTeam(eventtype, leagueid)
     }
     eventselected = eventtype;
     leagueidselected = leagueid;
+    
+    window.location.hash = '/'+season+'/eventsteam/'+eventtype;
     
     $('#allEventsSelectType').val(eventtype);
     $('#allEventsSelect').val(leagueid);
@@ -920,7 +931,8 @@ function getPlayerFull(playerid,fromString,teamid)
         return;
     }
     playeridselected = playerid;
-    history.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected+(teamid == 0 ? '' : '&team_id='+teamid));
+    window.location.hash = '/'+season+'/player/'+playerid;
+   // history.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected+(teamid == 0 ? '' : '&team_id='+teamid));
     startLoad();
     $('#player').show();
 
@@ -1101,10 +1113,12 @@ function getLeagueInfo(leagueid,teamid)
     startLoad();
     leagueidselected = leagueid;
     if(leagueid == getAndreDivAll()){
-        history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
+        //history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
+        window.location.hash = '/'+season+'/league/'+getAndreDiv();
         $('#news_'+getAndreDiv()).show();
     }else{
-        history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
+        //history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
+        window.location.hash = '/'+season+'/league/'+leagueid;
         $('#news_'+leagueidselected).show();
     }
     
@@ -1169,10 +1183,8 @@ function getTeamInfoFull(teamid,fromPage)
         return;
     }
     teamidselected = teamid;    
-    //$.History.go('index.php?season='+season+'&team_id='+teamidselected);
-    history.pushState("", "Title", 'index.php?season='+season+'&team_id='+teamidselected);
-    //$.History.go('/season='+season+'&team_id='+teamidselected);
-    //$.History.trigger('/season='+season+'&team_id='+teamidselected);
+   // history.pushState("", "Title", 'index.php?season='+season+'&team_id='+teamidselected);
+    window.location.hash = '/'+season+'/team/'+teamid;
     startLoad();
     
     $.ajax({
@@ -1473,7 +1485,7 @@ function updateMatches(array,tablename,header,preview,arraylast5lineup)
 }
 function updateLatestMatches(array, arraylast5lineup)
 {
-    updateMatches(array, $('#team_latestmatches'), ' kamper', false, arraylast5lineup);
+    updateMatches(array, $('#team_latestmatches'), 'Siste 5 kamper', false, arraylast5lineup);
 }
 function updateNextMatches(array)
 {
@@ -1720,7 +1732,7 @@ function startLoad()
     $('#event_table').hide();
     $('#preview_weather').hide();
     $('[id^="transfer_"]').hide();
-    $('[id^="report_"]').hide();
+    $('[id^="match_"]').hide();
     $('[id^="news_"]').hide();
     $('#teamSelect').hide();
     $('#allEventsSelect').hide();
@@ -1731,6 +1743,106 @@ function startLoad()
     spinner = new Spinner(opts).spin();
     $('#loader').append(spinner.el);
     allowClicks = false;
+}
+
+function getMatch(matchid)
+{
+    if(!allowClicks){
+        return;
+    }
+   // history.pushState("", "Title", 'index.php?page=match&matchid='+matchid);
+   window.location.hash = '/'+season+'/page/match/'+matchid;
+    startLoad();
+    $.ajax({
+        type: "POST",
+        url: "receiver.php",
+        dataType: "json",
+        timeout: timeout,
+        data: {action: "getMatch", matchid: matchid},
+        error: function () {
+            stopLoad()
+        },
+        success: function(json) {
+            
+            var array = json;
+            updateMatchTable(array);
+            updateMatchEvents(array.events);
+            stopLoad();
+            
+            $('[id^="match_"]').show();
+        }
+    }); 
+}
+
+function updateMatchTable(array)
+{   
+    var string = array.streak;
+    console.log(string);
+    array = array.events[0];
+    var prefix = '#matches_';
+    
+    $(prefix +'table').empty();
+    $(prefix +'table').append(
+        '<tr>'+
+            '<td align="center"><img src="images/logos/'+array.homeid+'.png" onclick="getTeam(0,'+array.homeid+')" style="cursor: pointer;float: bottom; vertical-align: middle;"></td>'+
+            '<td align="center"></td>'+
+            '<td align="center"><img src="images/logos/'+array.awayid+'.png" onclick="getTeam(0,'+array.awayid+')" style="cursor: pointer;float: bottom; vertical-align: middle;"></td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td align="center"><h4>'+getTeamLink(array.homeid,array.homename)+'</td>'+
+            '<td align="center"></td>'+
+            '<td align="center"><h4>'+getTeamLink(array.awayid,array.awayname)+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td align="center"><h1>'+array.homescore+'</h1></td>'+
+            '<td align="center"></td>'+
+            '<td align="center"><h1>'+array.awayscore+'</h1></td>'+
+        '</tr>');
+}
+function updateMatchEvents(array)
+{
+    
+    for(var eventa in array){
+        var event = array[eventa];
+        var img = '<img src="images/events/'+getEventtype(event.eventtype)+'" style="margin-left:3px;margin-right:3px"></img>';
+        if(event.teamid == event.homeid){
+            var homeOut = '';
+            if(event.eventtype == 6 || event.eventtype == 7){
+                homeOut = getPlayerLastnameLink(event.playeroutid,event.playeroutname) +' (ut) / ' + getPlayerLastnameLink(event.playerinid,event.playerinname) +' (inn) ';
+            }else{
+                homeOut = getPlayerLink(event.playerid,event.playername);
+                if(event.eventtype == 8){
+                    homeOut += ' (straffe)';
+                }
+            }
+            // Home event
+            $('#matches_table').append(
+            '<tr>'+
+            '<td align="center">'+homeOut+'</td>'+
+            '<td align="center">'+event.minute+'\' ' + img+'</td>'+
+            '<td align="center"></td>'+
+            '</tr>');
+        
+        }else{
+            // Away event
+            var awayOut = '';
+            if(event.eventtype == 6 || event.eventtype == 7){
+                awayOut += getPlayerLastnameLink(event.playeroutid,event.playeroutname) +' (ut) / ' + getPlayerLastnameLink(event.playerinid,event.playerinname) +' (inn) ';
+            }else{
+                awayOut += getPlayerLink(event.playerid,event.playername);
+                if(event.eventtype == 8){
+                    awayOut += ' (straffe)';
+                }
+            }
+            // Home event
+            $('#matches_table').append(
+            '<tr>'+
+            '<td align="center"></td>'+
+            '<td align="center">'+event.minute+'\' ' + img +'</td>'+
+            '<td align="center">'+awayOut+'</td>'+
+            '</tr>');
+        }
+    }
 }
 
 function stopLoad()

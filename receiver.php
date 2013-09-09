@@ -110,6 +110,9 @@ if(isset($_POST['action'])){
     if($_POST['action'] == 'setExternalMatchHit'){
         $dbUtils->setExternalMatchHit($_POST['matchid']);
     }
+    if($_POST['action'] == 'getMatch'){
+        echo json_encode($dbUtils->getMatch($_POST['matchid']));
+    }
 }
 
 

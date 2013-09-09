@@ -177,6 +177,10 @@ class DatabaseUtils {
     {
         DatabaseUtils::setHit($id,'match');
     }
+    public function setInternalMatchHit($id)
+    {
+        DatabaseUtils::setHit($id,'match_internal');
+    }
     public function setPlayerHitFrom($id,$from)
     {
         DatabaseUtils::setHit($id,$from);
@@ -981,6 +985,93 @@ class DatabaseUtils {
             );
         }
         return $data;
+    }
+    public function getMatch($matchid)
+    {
+        DatabaseUtils::setInternalMatchHit($matchid);
+        
+        $q = "SELECT e.*,p.`playername`,m.teamwonid, m.homescore,m.awayscore, home.`teamname` AS homename, away.`teamname` AS awayname,home.`teamid` AS homeid, away.`teamid` AS awayid
+        FROM eventtable e 
+        JOIN leaguetable l ON l.`leagueid` = e.`leagueid`
+        JOIN matchtable m ON m.`matchid` = e.`matchid`
+        JOIN teamtable home ON home.`teamid` = m.`hometeamid`
+        JOIN teamtable away ON away.`teamid` = m.`awayteamid`
+        JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`year` = l.`year` AND p.`teamid` = e.`teamid`
+        WHERE e.`matchid` = $matchid
+        AND e.`ignore` = 0
+        ORDER BY e.`minute` ASC, e.`eventid` ASC";
             
+        $data = array();   
+        $result = mysql_query($q);
+        
+        $playerInId = 0;
+        $playerInName = '';
+        $playerOutId = 0;
+        $playerOutName = '';
+        $teamWonId = -1;
+        
+        while($row = mysql_fetch_array($result))
+        {
+            $teamWonId = $row['teamwonid'];
+            $event = $row['eventtype'];
+            if($event == 6){
+                $playerInId = $row['playerid'];
+                $playerInName = $row['playername'];
+            }else if($event == 7){
+                $playerOutId = $row['playerid'];
+                $playerOutName = $row['playername'];
+            }
+            
+            if(($event == 7 || $event == 6) && $playerInId != 0 && $playerOutId != 0){
+                $data['events'][] = array(
+                    'matchid' => $row['matchid'],
+                    'homescore' => $row['homescore'],
+                    'awayscore' => $row['awayscore'],
+                    'teamid' => $row['teamid'],
+                    'homeid' => $row['homeid'],
+                    'homename' => $row['homename'],
+                    'awayid' => $row['awayid'],
+                    'awayname' => $row['awayname'],
+                    'playerid' => $row['playerid'],
+                    'playername' => $row['playername'],
+                    'eventtype' => $row['eventtype'],
+                    'minute' => $row['minute'],
+                    'playerinid' => $playerInId,
+                    'playerinname' => $playerInName,
+                    'playeroutid' => $playerOutId,
+                    'playeroutname' => $playerOutName
+                );
+              
+                $playerInId = 0;
+                $playerInName = '';
+                $playerOutId = 0;
+                $playerOutName = '';
+            
+            }else if($event != 6 && $event != 7){
+                
+                
+                $data['events'][] = array(
+                    'matchid' => $row['matchid'],
+                    'homescore' => $row['homescore'],
+                    'awayscore' => $row['awayscore'],
+                    'teamid' => $row['teamid'],
+                    'homeid' => $row['homeid'],
+                    'homename' => $row['homename'],
+                    'awayid' => $row['awayid'],
+                    'awayname' => $row['awayname'],
+                    'playerid' => $row['playerid'],
+                    'playername' => $row['playername'],
+                    'eventtype' => $row['eventtype'],
+                    'minute' => $row['minute']
+                );
+            }
+        }
+        $type = 'away';
+        if($teamWonId == $data['events'][0]['homeid']){
+            $type = 'home';
+        }
+        
+        $data['streak'] = DatabaseTeam::getStreakString($teamWonId,$type);
+        return $data;
     }
 }

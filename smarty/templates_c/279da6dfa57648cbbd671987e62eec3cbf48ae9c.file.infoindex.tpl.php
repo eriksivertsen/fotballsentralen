@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-07 08:04:28
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-09 12:21:52
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1378541050,
+      1 => 1378729311,
       2 => 'file',
     ),
   ),
@@ -48,6 +48,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         
             $(document).ready(function() {
             
+                $(window).on('hashchange', function() {
+                   controlHash();
+                });
+            
                 var player_id = '<?php echo $_smarty_tpl->tpl_vars['player_id']->value;?>
 ';
                 var team_id = '<?php echo $_smarty_tpl->tpl_vars['team_id']->value;?>
@@ -62,6 +66,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 ';
                 var page = '<?php echo $_smarty_tpl->tpl_vars['page']->value;?>
 ';
+                
                 
                 if(season != '') {
                     setSeason(season);
@@ -101,6 +106,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                         getRefereeId(refereeid);
                     }
                 }
+                else if(page == 'match'){
+                    getMatch(matchid);
+                }
                 else{
                     getTeam(0,0);
                 }
@@ -108,6 +116,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 if(league_id == '' && team_id == '' && player_id == '' && page == ''){
                     $('#welcometext').show();
                 }
+                controlHash();
                 
                 //Hover arrows functions
                 
@@ -120,10 +129,85 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
+                
+                
         });
         
-
+        function controlHash()
+        {
+//            var str = window.location.href;
+//            var indexOf = str.indexOf('index.php?');
+//            var indexOfHash = str.indexOf('#');
+//            if(indexOf != -1 && indexOfHash != -1){
+//                var params = str.substring(indexOf+10,indexOfHash);
+//                var array = params.split("&");
+//                for(var val in array){
+//                    var obj = array[val].split("=");
+//                    type = obj[0].split("_")[0];
+//                    id = obj[1];
+//                }
+//            }
             
+            var paramArray =  window.location.hash.split("/");
+            var type = paramArray[2];
+            var id = paramArray[3];
+            var specialid = paramArray[4];
+                   
+            if(type == 'player'){
+                if(id != playeridselected || type != typeselected){
+                    getPlayer(id);
+                }
+            }
+            if(type == 'events'){
+                if(id != eventselected || type != typeselected){
+                    getEventsTotal(id,leagueidselected);
+                }
+            }
+            if(type == 'eventsteam'){
+                if(id != eventselected || type != typeselected){
+                    getEventsTotalTeam(id,leagueidselected);
+                }
+            }
+            if(type == 'team'){
+                if(id != teamidselected || type != typeselected ){
+                    getTeamInfo(id,0);
+                }
+            }
+            if(type == 'league'){
+                if(id != leagueidselected || type != typeselected){
+                    getTeam(id,0);
+                }
+            }
+            if(type == 'page'){
+                if(id == 'populare'){
+                    getPopulare();
+                }
+                else if(id == 'suspension'){
+                    getSuspensionList(specialid);
+                }
+                else if(id == 'transfers'){
+                    getTransfers();
+                }                
+                else if(id == 'preview'){
+                    if(specialid != undefined){
+                        getPreview(specialid);
+                    }else{
+                        getPreviewMatches();
+                    }
+                }
+                else if(id == 'referee'){
+                    if(specialid == undefined){
+                        getReferee();
+                    }else{
+                        getRefereeId(specialid);
+                    }
+                }
+                else if(id == 'match'){
+                    getMatch(specialid);
+                }
+            }
+        }
+        
         </script> 
         
     </head>
@@ -187,6 +271,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </div>
             <div id="preview">
                 <?php echo $_smarty_tpl->getSubTemplate ("preview.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
+            </div>
+            
+            <div id="match_main">
+                <?php echo $_smarty_tpl->getSubTemplate ("match.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
             </div>
             

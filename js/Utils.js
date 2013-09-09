@@ -35,7 +35,11 @@ function getAndreDiv4(){return 6;}
 function getAndreDivAll(){
     return getAndreDiv1() + ','+getAndreDiv2() + ','+getAndreDiv3() + ','+getAndreDiv4();
 }
-
+function getPlayerLastnameLink(playerid,playername){
+    var playernameArray = playername.split(" ");
+    playername = playernameArray[playernameArray.length - 1];
+    return getPlayerLink(playerid,playername);
+}
 function getPlayerLink(playerid,playername)
 {
     return '<a href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>'
@@ -55,14 +59,14 @@ function getLeagueLink(leagueid)
 function getMatchLink(matchid,hometeam,awayteam)
 {
     if(matchid !== undefined && hometeam !== undefined && awayteam !== undefined){
-        return getMatchLinkText(matchid,hometeam+' - ' + awayteam);
+        return getMatchLinkTextInternal(matchid,hometeam+' - ' + awayteam);
     }
     return '';
 }
 function getMatchResultLink(matchid,result)
 {
     if(matchid !== undefined){
-        return getMatchLinkText(matchid,result);
+        return getMatchLinkTextInternal(matchid,result);
     }
     return '';
 }
@@ -72,6 +76,12 @@ function getMatchHref(matchid){
 function getMatchLinkText(matchid,text){
     if(matchid !== undefined){
         return '<a target="blank" href='+getMatchHref(matchid)+' onclick="setExternalMatchHit('+matchid+')">'+text+'</a>';
+    }
+    return '';
+}
+function getMatchLinkTextInternal(matchid,text){
+    if(matchid !== undefined){
+        return '<a href="#" onclick="getMatch('+matchid+');return false;">'+text+'</a>'
     }
     return '';
 }
@@ -107,7 +117,7 @@ function getOverlib(overlibtext, value)
 }
 function getOverlibMatchLink(overlibtext, value, link, matchid)
 {
-    return '<a target="blank" href=\"'+link+'\" onmouseover="return overlib(\''+overlibtext+'\', WIDTH, 350);" onmouseout="return nd();" onclick="setExternalMatchHit('+matchid+')">'+value+'</a>';
+    return '<a href="#" onmouseover="return overlib(\''+overlibtext+'\', WIDTH, 350);" onmouseout="return nd();" onclick="getMatch('+matchid+');return false;">'+value+'</a>';
 }
 function getOverlibWidth(overlibtext, value, width)
 {
@@ -305,6 +315,21 @@ function setTeamLogo(id,teamid){
         id.attr("src",'images/logos/blank.png');
     });
     id.show();
+}
+function getEventtype(eventtype){
+    var eventName = '';
+    if(eventtype == 4 || eventtype == 8 || eventtype == 9){
+        eventName = 'goal16';
+    }else if(eventtype == 6 || eventtype == 7){
+        eventName = 'sub16';
+    }else if(eventtype == 1){
+        eventName = 'yellowred16';
+    }else if(eventtype == 2){
+        eventName = 'yellow16';
+    }else if(eventtype == 3){
+        eventName = 'red16';
+    }
+    return eventName+'.png';
 }
 function setExternalMatchHit(matchid)
 {

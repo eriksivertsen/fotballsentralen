@@ -131,8 +131,8 @@ class DatabaseTeam {
             $where = "m.`awayteamid` = $teamid";
             $typestring = 'borte';
         }
-        $q = "SELECT * FROM matchtable m WHERE ($where) 
-        AND m.`result` NOT LIKE '- : -' ORDER BY m.`dateofmatch` ASC";
+        $q = "SELECT m.*, home.teamname as homename, away.teamname as awayname FROM matchtable m JOIN teamtable home on home.teamid = m.hometeamid JOIN teamtable away ON away.teamid = m.awayteamid 
+        WHERE ($where) AND m.`result` NOT LIKE '- : -' ORDER BY m.`dateofmatch` ASC";
         
         $wins = 0;
         $loss = 0;
@@ -143,11 +143,17 @@ class DatabaseTeam {
         $lossMatchId = 0;
         $winMatchId = 0;
         
+        $homeName = '';
+        $awayName = '';
+        
         $string = '';
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
             $winId = $row['teamwonid'];
+            $homeName = $row['homename'];
+            $awayName = $row['awayname'];
+            
             if($winId == $teamid){
                 $wins++;
                 $withoutloss++;
@@ -175,13 +181,13 @@ class DatabaseTeam {
         }
         if($withoutloss > $withoutwin){
             //positive
-            $string = 'Har ikke tapt på ' . $withoutloss . ' ' .($typestring != '' ? $typestring : '' ). 'kamper. ';
-            if($wins >= $draws){
-                 $string .= 'Har ' . $wins . ' seire på rad. ';
+            if($wins >= $withoutloss){
+                $string = 'Med seieren over '.$awayName.' tok ' .$homeName.' sin ' . $wins . ' seier på rad '.$typestring. '.';
             }else{
-                 $string .= 'Har ' . $draws . ' uavgjort på rad. ';
+                $string = 'Har ikke tapt på ' . $withoutloss . ' ' .($typestring != '' ? $typestring : '' ). 'kamper. ';
             }
-            $string .= 'Siste tap: ' . $lossMatchId;
+            
+            //$string .= 'Siste tap: ' . $lossMatchId;
         }else{
             //negative
             $string = 'Har ikke vunnet på ' . $withoutwin . ' ' .($typestring != '' ? $typestring : '' ). 'kamper. ';
@@ -190,7 +196,7 @@ class DatabaseTeam {
             }else{
                 $string .= 'Har ' . $draws . ' uavgjort på rad';
             }
-            $string .= 'Siste seier: ' . $winMatchId;
+            //$string .= 'Siste seier: ' . $winMatchId;
         }
         return $string;
     }

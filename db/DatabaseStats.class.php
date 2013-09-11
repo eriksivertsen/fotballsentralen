@@ -54,7 +54,7 @@ class DatabaseStats {
                     'time' => $row['time'],
                     'ip' => $row['ip']
                 );
-            }else if($row['clicktype']=='preview'){
+            }else if($row['clicktype']=='preview' || $row['clicktype'] == 'match_internal'){
                 $data[] = array(
                     'type' => $row['clicktype'],
                     'matchid' => $row['clicked_id'],

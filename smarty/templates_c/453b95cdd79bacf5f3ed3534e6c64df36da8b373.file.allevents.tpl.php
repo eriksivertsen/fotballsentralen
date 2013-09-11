@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-07 08:04:28
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-10 15:08:08
          compiled from "smarty\templates\allevents.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2463751af145612af00-72046140%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '453b95cdd79bacf5f3ed3534e6c64df36da8b373' => 
     array (
       0 => 'smarty\\templates\\allevents.tpl',
-      1 => 1378541057,
+      1 => 1378824989,
       2 => 'file',
     ),
   ),
@@ -22,10 +22,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_51af1456132d27_61389948')) {function content_51af1456132d27_61389948($_smarty_tpl) {?><center>
 <div>
     <select id="allEventsSelectType" style="margin: 4px" onchange="selectTotalEventsType()">
-        <option value="12">Spilleminutter</option>
+        <option value="11">Spilleminutter</option>
         <option value="10">Toppscorer</option>
         <option value="8">Straffemål</option>
-        <option value="11">Clean sheets</option>
+        <option value="12">Clean sheets</option>
         <option value="4">Spillemål</option>
         <option value="9">Selvmål</option>
         <option value="2">Gule kort</option>

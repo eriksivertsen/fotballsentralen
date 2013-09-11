@@ -69,11 +69,17 @@
             }
             if(type == 'events'){
                 if(id != eventselected || type != typeselected){
+                    if(leagueidselected == '' || leagueidselected == undefined){
+                        leagueidselected = 0;
+                    }
                     getEventsTotal(id,leagueidselected);
                 }
             }
             if(type == 'eventsteam'){
                 if(id != eventselected || type != typeselected){
+                    if(leagueidselected == '' || leagueidselected == undefined){
+                        leagueidselected = 0;
+                    }
                     getEventsTotalTeam(id,leagueidselected);
                 }
             }

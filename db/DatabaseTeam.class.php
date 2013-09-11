@@ -119,7 +119,7 @@ class DatabaseTeam {
         }
         return $count;
     }
-    public function getStreakString($teamid,$type = '')
+    public function getStreakString($teamid,$matchid,$type = '')
     {
         $where = "m.`hometeamid` = $teamid OR m.`awayteamid` = $teamid";
         $typestring = '';
@@ -178,15 +178,25 @@ class DatabaseTeam {
                 $withoutwin++;
                 $lossMatchId = $row['matchid'];
             }
+            
+            if($row['matchid'] == $matchid){
+                break;
+            }
         }
         if($withoutloss > $withoutwin){
             //positive
             if($wins >= $withoutloss){
-                $string = 'Med seieren over '.$awayName.' tok ' .$homeName.' sin ' . $wins . ' seier på rad '.$typestring. '.';
+                if($wins == 1){
+                    $string = 'Med seieren over '.$awayName.' tok ' .$homeName.' sin første seier på '.$typestring. 'bane siden sist!';
+                }else{
+                    $string = 'Med seieren over '.$awayName.' tok ' .$homeName.' sin ' . $wins . ' seier på rad '.$typestring. '.';
+                }
             }else{
-                $string = 'Har ikke tapt på ' . $withoutloss . ' ' .($typestring != '' ? $typestring : '' ). 'kamper. ';
+                    $string = 'Har ikke tapt på ' . $withoutloss . ' ' .($typestring != '' ? $typestring : '' ). 'kamper';
+                if($wins >= $draws){
+                    $string .= ', og har ' .$wins. ' seire på rad.';
+                }
             }
-            
             //$string .= 'Siste tap: ' . $lossMatchId;
         }else{
             //negative
@@ -203,7 +213,7 @@ class DatabaseTeam {
     
     public function getLineup($teamid,$season,$matchid)
     {
-        $q = "SELECT pt.playerid, SUBSTRING_INDEX(pt.`playername`,' ',-1) AS lastname,pta.`position` as apos ,ptn.`position` as npos, 
+        $q = "SELECT pt.playerid, pt.shirtnumber,pt.is_goalkeeper, SUBSTRING_INDEX(pt.`playername`,' ',-1) AS lastname,pt.playername as fullname, pta.`position` as apos ,ptn.`position` as npos, 
             t1.teamname as t1name,t2.teamname as t2name,t1.teamid as t1id ,t2.teamid as t2id
             FROM playtable p 
             JOIN matchtable m ON m.`matchid` = p.`matchid`
@@ -217,6 +227,7 @@ class DatabaseTeam {
             AND l.year = $season
             AND p.start = 1
             AND p.matchid = $matchid
+            ORDER BY is_goalkeeper DESC
             LIMIT 11";
         
         $data = array();
@@ -234,6 +245,9 @@ class DatabaseTeam {
                 'playerid' => $row['playerid'],
                 'playername' => $row['lastname'],
                 'position' => $pos,
+                'fullname' => $row['fullname'],
+                'shirtnumber' => $row['shirtnumber'],
+                'is_goalkeeper' => $row['is_goalkeeper'],
                 'teamname' => ($teamid == $row['t1id'] ? $row['t2name'] : $row['t1name'] )
             );
         }
@@ -769,7 +783,7 @@ class DatabaseTeam {
             $leagueid = '3,4,5,6';
         }
         // Clean sheet hack
-        if($eventtype == 11){
+        if($eventtype == 12){
             return DatabaseUtils::getCleanSheetsTeam($season,$leagueid);
         }
         $q = 

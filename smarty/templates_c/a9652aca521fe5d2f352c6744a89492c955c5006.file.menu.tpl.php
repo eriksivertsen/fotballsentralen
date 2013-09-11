@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-07 07:19:50
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-10 15:08:08
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1378538388,
+      1 => 1378825004,
       2 => 'file',
     ),
   ),
@@ -159,7 +159,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                                     <li><a href="#" onclick="getTotalPlayerMinutes();return false;">Spilleminutter</a></li>
                                     <li><a href="#" onclick="getEventsTotal(10,0);return false;">Toppscorer</a></li>
                                     <li><a href="#" onclick="getEventsTotal(8,0);return false;">Straffemål</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(11,0);return false;">Clean sheets</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(12,0);return false;">Clean sheets</a></li>
                                     <li><a href="#" onclick="getEventsTotal(4,0);return false;">Spillemål</a></li>
                                     <li><a href="#" onclick="getEventsTotal(9,0);return false;">Selvmål</a></li>
                                     <li><a href="#" onclick="getEventsTotal(2,0);return false;">Gule&nbspkort</a></li>

@@ -103,7 +103,7 @@ class DatabasePlayer {
         ORDER BY m.dateofmatch DESC";
         
         $q2 = "SELECT p.`playerid`,pt.`playername` as playername, p.minutesplayed AS `minutes played`, p.start AS `start`,
-        home.teamid as homeid, away.teamid as awayid, pt.shirtnumber,
+        home.teamid as homeid, away.teamid as awayid, pt.shirtnumber, pt.is_goalkeeper,
         home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
         unix_timestamp(m.dateofmatch) as timestamp
         FROM playtable p 
@@ -149,6 +149,7 @@ class DatabasePlayer {
                 $data[$row['matchid']]['matchid'] = $row['matchid'];
                 $data[$row['matchid']]['playername'] = $row['playername'];
                 $data[$row['matchid']]['number'] = $row['shirtnumber'];
+                $data[$row['matchid']]['is_goalkeeper'] = $row['is_goalkeeper'];
             }
         }
         $json = array();

@@ -178,7 +178,42 @@ function getLineupArray(array){
             midfielders.push(playername);
         }else if(pos == 'Forsvar'){
             defenders.push(playername);
-        }else if(pos == 'Keeper'){
+        }else if(pos == 'Keeper' || array[player].shirtnumber == '1' || array[player].is_goalkeeper == 1){
+            goalkeeper.push(playername);
+        }else{
+            unknowns.push(playername);
+        }
+    }
+    all.push(goalkeeper);
+    all.push(defenders);
+    all.push(midfielders);
+    all.push(attackers);
+    all.push(unknowns);
+    return all;
+}
+function getLineupArrayFullnameLink(array){
+    
+    var all = [];
+    var attackers = [];
+    var defenders = [];
+    var midfielders = [];
+    var goalkeeper= [];
+    var unknowns = [];
+    
+    for(var player in array){
+        
+        var playername = getPlayerLink(array[player].playerid, array[player].fullname);
+        if(array[player].starts != undefined){
+            playername += ' ('+array[player].starts+')';
+        }
+        var pos = array[player].position;
+        if(pos == 'Angrep'){
+            attackers.push(playername);
+        }else if(pos == 'Midtbane'){
+            midfielders.push(playername);
+        }else if(pos == 'Forsvar'){
+            defenders.push(playername);
+        }else if(pos == 'Keeper' || array[player].shirtnumber == '1' || array[player].is_goalkeeper == 1){
             goalkeeper.push(playername);
         }else{
             unknowns.push(playername);
@@ -241,9 +276,9 @@ function getEventFromId(eventid)
             return 'Selvmål';
         case 10:
             return 'Toppscorer';
-        case 11:
-            return 'Clean&nbspsheets';
         case 12:
+            return 'Clean&nbspsheets';
+        case 11:
             return 'Spilleminutter';
     }
 }
@@ -377,21 +412,6 @@ function getOverlibStreakString(matches,teamid)
         }
     }
     return matchString;
-}
-
-function getHistoryBack(haystack, needle, selectedid)
-{
-    var needleLength = needle.length;
-    var found = haystack.indexOf(needle);
-    if(found > 0){
-        var id = haystack.substr(found+needleLength);
-        if(id !== selectedid){
-            return id;
-        }else{
-            return -1;
-        }
-    }
-    return -1;
 }
 
 function getScorerString(matchid, scorerarray)

@@ -133,7 +133,7 @@
                                     <li><a href="#" onclick="getTotalPlayerMinutes();return false;">Spilleminutter</a></li>
                                     <li><a href="#" onclick="getEventsTotal(10,0);return false;">Toppscorer</a></li>
                                     <li><a href="#" onclick="getEventsTotal(8,0);return false;">Straffemål</a></li>
-                                    <li><a href="#" onclick="getEventsTotal(11,0);return false;">Clean sheets</a></li>
+                                    <li><a href="#" onclick="getEventsTotal(12,0);return false;">Clean sheets</a></li>
                                     <li><a href="#" onclick="getEventsTotal(4,0);return false;">Spillemål</a></li>
                                     <li><a href="#" onclick="getEventsTotal(9,0);return false;">Selvmål</a></li>
                                     <li><a href="#" onclick="getEventsTotal(2,0);return false;">Gule&nbspkort</a></li>

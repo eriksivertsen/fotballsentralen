@@ -273,11 +273,12 @@ class DatabaseUtils {
             (SELECT 
             c.clicked_id,
             c.clicktype,
-            c.ip 
+            c.ip,
+            count(*) as antall
             FROM
             clicktable c 
             WHERE c.time > NOW() - INTERVAL 24 HOUR  
-            AND c.`clicktype` IN ('player','team','preview')
+            AND c.`clicktype` IN ('player','team','preview','match_internal')
             GROUP BY clicktype,
             clicked_id,
             ip 
@@ -290,7 +291,7 @@ class DatabaseUtils {
             LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
             GROUP BY trending.clicked_id,
             trending.clicktype 
-            ORDER BY COUNT(*) DESC 
+            ORDER BY trending.antall DESC 
             LIMIT 10";
         
         $data = array();
@@ -316,7 +317,7 @@ class DatabaseUtils {
                     'teamid' => $row['clicked_id'],
                     'teamname' => $row['teamname']
                 );
-            }else if($row['clicktype']=='preview'){
+            }else if($row['clicktype']=='preview' || $row['clicktype']=='match_internal'){
                 $data[] = array(
                     'type' => $row['clicktype'],
                     'matchid' => $row['clicked_id'],
@@ -336,7 +337,7 @@ class DatabaseUtils {
             $leagueid = '3,4,5,6';
         }
         // Clean sheet hack
-        if($eventtype == 11){
+        if($eventtype == 12){
             return self::getCleanSheetsPlayer($season,$leagueid);
         }
         
@@ -1003,6 +1004,8 @@ class DatabaseUtils {
             
         $data = array();   
         $result = mysql_query($q);
+        $homeId = 0;
+        $awayId = 0;
         
         $playerInId = 0;
         $playerInName = '';
@@ -1014,6 +1017,9 @@ class DatabaseUtils {
         {
             $teamWonId = $row['teamwonid'];
             $event = $row['eventtype'];
+            $homeId = $row['homeid'];
+            $awayId = $row['awayid'];
+            
             if($event == 6){
                 $playerInId = $row['playerid'];
                 $playerInName = $row['playername'];
@@ -1070,8 +1076,11 @@ class DatabaseUtils {
         if($teamWonId == $data['events'][0]['homeid']){
             $type = 'home';
         }
-        
-        $data['streak'] = DatabaseTeam::getStreakString($teamWonId,$type);
+        $data['homelineup'] = DatabaseTeam::getLineup($homeId, 2013, $matchid);
+        $data['awaylineup'] = DatabaseTeam::getLineup($awayId, 2013, $matchid);
+        $data['streak'] = DatabaseTeam::getStreakString($teamWonId,$matchid,$type);
+        $data['homerealteamid'] = DatabaseTeam::getSecondTeamId($homeId);
+        $data['awayrealteamid'] = DatabaseTeam::getSecondTeamId($awayId);
         return $data;
     }
 }

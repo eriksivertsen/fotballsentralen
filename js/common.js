@@ -254,6 +254,7 @@ function getPreview(matchid)
     }
     startLoad();
     //history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
+    
     window.location.hash = '/'+season+'/page/preview/'+matchid;
     
     $('#preview').show();
@@ -514,12 +515,12 @@ function getTeam(leagueid,teamid)
 function updateBreadcrumbSpecific(first,onclickfirst,second,onclicksecond,third,onclickthird){
     $('#breadcrumbs').empty();
     $('#breadcrumbs').append('<li><a href="#" onclick="'+onclickfirst+'">'+first+'</a></li>');
-    document.title = first + " | " + title;
+    document.title = first.replace("&nbsp"," ") + " | " + title;
     if(second != undefined && onclicksecond != undefined){
-        document.title = second + " | "+title;
+        document.title = second.replace("&nbsp"," ") + " | " + title;
         $('#breadcrumbs').append('<li><a href="#" onclick="'+onclicksecond+'">'+second+'</a></li>');
         if(third != undefined && onclickthird != undefined){
-            document.title = third + " | "+title;
+            document.title = third.replace("&nbsp"," ") + " | " + title;
             $('#breadcrumbs').append('<li><a href="#" onclick="'+onclickthird+'">'+third+'</a></li>');
         }
     }
@@ -668,7 +669,7 @@ function getTotalPlayerMinutes(){
     if(!allowClicks){
         return;
     }
-    eventselected = 12;
+    eventselected = 11;
     startLoad();
     
     if(leagueidselected == 0){
@@ -1054,9 +1055,10 @@ function getPlayerFull(playerid,fromString,teamid)
             $("#playerinfo").tablesorter({widgets: ['zebra']});
             $('#player_totalgoals_text').html('Mål:');
             $('#player_totalgoals').html(totgoals);
-            if(json.info[0].position == 'Keeper' || array[0].number == '1'){
+            if(json.info[0].position == 'Keeper' || array[0].number == '1' || json.info[0].is_goalkeeper == 1){
                 $('#player_totalgoals_text').html('Clean sheets:');
                 $('#player_totalgoals').html(json.cleansheets);
+                $('#player_position').html('Keeper');
             }
             
            
@@ -1273,7 +1275,10 @@ function updatePopulareTables(array)
             $('#trending').append('<tr class='+(k % 2 == 0 ? 'odd' : '')+'><td style="width:300px;">'+getTeamLink(value.teamid, value.teamname)+'</td></tr>');
         }
         if(value.type == 'preview'){
-            $('#trending').append('<tr class='+(k % 2 == 0 ? 'odd' : '')+'><td style="width:300px;">'+getPreviewLinkText(value.matchid, value.hometeam  + ' - ' +value.awayteam)+'</td></tr>');
+            $('#trending').append('<tr class='+(k % 2 == 0 ? 'odd' : '')+'><td style="width:300px;">'+getPreviewLinkText(value.matchid,  'Preview: '+value.hometeam  + ' - ' +value.awayteam)+'</td></tr>');
+        }
+        if(value.type == 'match_internal'){
+            $('#trending').append('<tr class='+(k % 2 == 0 ? 'odd' : '')+'><td style="width:300px;">'+getMatchLinkTextInternal(value.matchid, value.hometeam  + ' - ' +value.awayteam)+'</td></tr>');
         }
         
     }
@@ -1751,7 +1756,7 @@ function getMatch(matchid)
         return;
     }
    // history.pushState("", "Title", 'index.php?page=match&matchid='+matchid);
-   window.location.hash = '/'+season+'/page/match/'+matchid;
+    window.location.hash = '/'+season+'/page/match/'+matchid;
     startLoad();
     $.ajax({
         type: "POST",
@@ -1767,6 +1772,7 @@ function getMatch(matchid)
             var array = json;
             updateMatchTable(array);
             updateMatchEvents(array.events);
+            updateBreadcrumbSpecific('Kamp', '',array.events[0].homename+' - '+array.events[0].awayname,'getMatch('+matchid+')');
             stopLoad();
             
             $('[id^="match_"]').show();
@@ -1776,17 +1782,45 @@ function getMatch(matchid)
 
 function updateMatchTable(array)
 {   
-    var string = array.streak;
-    console.log(string);
-    array = array.events[0];
     var prefix = '#matches_';
-    
     $(prefix +'table').empty();
+    
+    var string = array.streak;
+    //console.log(string);
+    
+    var hlineup = getLineupArrayFullnameLink(array.homelineup);
+    var alineup =  getLineupArrayFullnameLink(array.awaylineup);
+    var sortedLineup = Array();
+    var sortedLineupAway = Array();
+    
+    for (var p in hlineup){
+        var pos = hlineup[p];
+        for(var pa in pos){
+            sortedLineup.push(pos[pa]);
+        }
+    }
+    for (var p1 in alineup){
+        var pos1 = alineup[p1];
+        for(var pa1 in pos1){
+            sortedLineupAway.push(pos1[pa1]);
+        }
+    }
+    var homeid = array.events[0].homeid;
+    var awayid = array.events[0].awayid;
+    if(array.homerealteamid != -1){
+        homeid = array.homerealteamid;
+    }
+    if(array.awayrealteamid == -1){
+        awayid = array.awayrealteamid;
+    }
+    
+    array = array.events[0];
+    
     $(prefix +'table').append(
         '<tr>'+
-            '<td align="center"><img src="images/logos/'+array.homeid+'.png" onclick="getTeam(0,'+array.homeid+')" style="cursor: pointer;float: bottom; vertical-align: middle;"></td>'+
+            '<td align="center"><img src="images/logos/'+homeid+'.png" onclick="getTeam(0,'+array.homeid+')" style="cursor: pointer;float: bottom; vertical-align: middle;"></td>'+
             '<td align="center"></td>'+
-            '<td align="center"><img src="images/logos/'+array.awayid+'.png" onclick="getTeam(0,'+array.awayid+')" style="cursor: pointer;float: bottom; vertical-align: middle;"></td>'+
+            '<td align="center"><img src="images/logos/'+awayid+'.png" onclick="getTeam(0,'+array.awayid+')" style="cursor: pointer;float: bottom; vertical-align: middle;"></td>'+
         '</tr>'+
         '<tr>'+
             '<td align="center"><h4>'+getTeamLink(array.homeid,array.homename)+'</td>'+
@@ -1798,10 +1832,20 @@ function updateMatchTable(array)
             '<td align="center"></td>'+
             '<td align="center"><h1>'+array.awayscore+'</h1></td>'+
         '</tr>');
+    
+    for(var play in sortedLineup){
+        $(prefix +'table').append('<tr>'+
+                '<td align="center">'+sortedLineup[play]+'</td>'+
+                '<td align="center"></td>'+
+                '<td align="center">'+sortedLineupAway[play]+'</td>'+
+            '</tr>');
+    }
+    $(prefix +'table').append('<tr><td>&nbsp</td></tr><tr><td>&nbsp</td></tr>');
+   
+    
 }
 function updateMatchEvents(array)
 {
-    
     for(var eventa in array){
         var event = array[eventa];
         var img = '<img src="images/events/'+getEventtype(event.eventtype)+'" style="margin-left:3px;margin-right:3px"></img>';

@@ -1,10 +1,10 @@
 <center>
 <div>
     <select id="allEventsSelectType" style="margin: 4px" onchange="selectTotalEventsType()">
-        <option value="12">Spilleminutter</option>
+        <option value="11">Spilleminutter</option>
         <option value="10">Toppscorer</option>
         <option value="8">Straffemål</option>
-        <option value="11">Clean sheets</option>
+        <option value="12">Clean sheets</option>
         <option value="4">Spillemål</option>
         <option value="9">Selvmål</option>
         <option value="2">Gule kort</option>

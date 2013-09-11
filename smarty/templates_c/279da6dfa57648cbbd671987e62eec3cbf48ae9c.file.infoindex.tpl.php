@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-09 12:36:24
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-09 13:09:06
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1378730183,
+      1 => 1378732103,
       2 => 'file',
     ),
   ),
@@ -78,7 +78,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
-            console.log('length is null');
                 setSeason(2013);
                 getTeam(0, 0);
                 return;
@@ -95,11 +94,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             }
             if(type == 'events'){
                 if(id != eventselected || type != typeselected){
+                    if(leagueidselected == '' || leagueidselected == undefined){
+                        leagueidselected = 0;
+                    }
                     getEventsTotal(id,leagueidselected);
                 }
             }
             if(type == 'eventsteam'){
                 if(id != eventselected || type != typeselected){
+                    if(leagueidselected == '' || leagueidselected == undefined){
+                        leagueidselected = 0;
+                    }
                     getEventsTotalTeam(id,leagueidselected);
                 }
             }

@@ -1805,12 +1805,16 @@ function updateMatchTable(array)
             sortedLineupAway.push(pos1[pa1]);
         }
     }
-    var homeid = array.events[0].homeid;
-    var awayid = array.events[0].awayid;
-    if(array.homerealteamid != -1){
+    var homeid = 0;
+    var awayid = 0;
+    if(array.homerealteamid == -1){
+        homeid = array.events[0].homeid;
+    }else{
         homeid = array.homerealteamid;
     }
     if(array.awayrealteamid == -1){
+        awayid = array.events[0].awayid;
+    }else{
         awayid = array.awayrealteamid;
     }
     

@@ -37,7 +37,7 @@ function selectSuspendedLeague()
 function selectTotalEvents()
 {
     leagueidselected = $('#allEventsSelect').val();
-    if(eventselected == 12){
+    if(eventselected == 11){
         getTotalPlayerMinutes();
     }else{
         selectEvents();
@@ -55,7 +55,7 @@ function selectEvents(){
 function selectTotalEventsType()
 {
     eventselected = $('#allEventsSelectType').val();
-    if(eventselected == 12){
+    if(eventselected == 11){
         getTotalPlayerMinutes();
     }else{
         selectEvents();
@@ -702,7 +702,7 @@ function getTotalPlayerMinutes(){
                     '<td>'+array[i].minutesplayed+'</td></tr>');
             }
             stopLoad();
-            $('#allEventsSelectType').val(12);
+            $('#allEventsSelectType').val(11);
             $('#allEventsSelectType').show();
             $('#allEventsSelect').show();
             $('#playerminutes').show();

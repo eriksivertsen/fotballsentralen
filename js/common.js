@@ -93,7 +93,7 @@ function setSeason(season_){
     season = season_;
     $('#season').val(season_);
 }
-function nextSeason() {
+function next() {
     var season_ = parseInt(season);
     if($('#season').val() != '2013'){
         $('#season').val(''+(season_+1));
@@ -101,7 +101,7 @@ function nextSeason() {
     }
 }
 
-function previousSeason() {
+function previous() {
     var season_ = parseInt(season);
     if($('#season').val() != '2011'){
         $('#season').val(''+(season_-1));
@@ -152,6 +152,7 @@ function getPopulare()
     startLoad();
     //history.pushState("", "Title", 'index.php?page=populare');
     window.location.hash = '/'+season+'/page/populare';
+    $('#feedback_page').val('Populære');
     
     $("#populare").show();
     $.ajax({
@@ -181,6 +182,7 @@ function getSuspensionList(leagueid)
     startLoad();
     //history.pushState("", "Title", 'index.php?page=suspension&league_id='+leagueid);
     window.location.hash = '/'+season+'/page/suspension/'+leagueid;
+    $('#feedback_page').val('Suspensjonsliste');
     $('#suspensionSelect').show();
     $.ajax({
         type: "POST",
@@ -206,7 +208,9 @@ function getPreviewMatches(){
     }
     //history.pushState("", "Title", 'index.php?page=preview');
     window.location.hash = '/'+season+'/page/preview';
+    $('#feedback_page').val('Forhåndsstoff oversikt');
     startLoad();
+    
     $('#preview').show();
     $('#preview_table').hide();
     $.ajax({
@@ -256,6 +260,7 @@ function getPreview(matchid)
     //history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
     
     window.location.hash = '/'+season+'/page/preview/'+matchid;
+    $('#feedback_page').val('Forhåndsstoff');
     
     $('#preview').show();
     $('#preview_table').show();
@@ -292,9 +297,9 @@ function getPreview(matchid)
             var overlibString = 'Snitt gule kort: '+json.refereestats.yellowpr+'<br/>Snitt røde kort: '+json.refereestats.redpr+' <br/>Kamper: '+json.refereestats.matches;
             
             if(json.refereestats.matches != undefined){
-                $('#preview_referee').html(getOverlibLink(overlibString,'Dommer: ' + json.referee, 'index.php?page=referee&referee_id='+json.refereeid+''));
+                $('#preview_referee').html(getOverlibLink(overlibString,'Dommer: ' + json.referee, '#/'+season+'/page/referee/'+json.refereeid+''));
             }else{
-                $('#preview_referee').html(getOverlibLink('Ingen tidligere kamper!','Dommer: ' + json.refereename, 'index.php?page=referee&referee_id='+json.refereeid+''));
+                $('#preview_referee').html(getOverlib('Dommer ikke funnet!','Dommer: Ukjent'));
             }
             
             $('#preview_officallink').html(getMatchLinkText(matchid,'Offisielle lag/tropper'));
@@ -381,6 +386,7 @@ function getTransfers()
     startLoad();
     //history.pushState("", "Title", 'index.php?page=transfers');
     window.location.hash = '/'+season+'/page/transfers';
+    $('#feedback_page').val('Overganger');
     $('#transfer_text').html('Kun interne overganger/lån i Norge. Spilleren må være i tropp for at overgang skal registreres. ');
     
     $('[id^="transfer_"]').show();
@@ -418,6 +424,7 @@ function getReferee()
     startLoad();
     //history.pushState("", "Title", 'index.php?page=referee');
     window.location.hash = '/'+season+'/page/referee';
+    $('#feedback_page').val('Dommeroversikt');
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -452,6 +459,8 @@ function getRefereeId(refereeid)
     startLoad();
     //history.pushState("", "Title", 'index.php?page=referee&referee_id='+refereeid);
     window.location.hash = '/'+season+'/page/referee/'+refereeid;
+    $('#feedback_page').val('Dommer');
+    
     $('#referee').show();
     $('#referee_table_specific').empty();
     $.ajax({
@@ -677,6 +686,7 @@ function getTotalPlayerMinutes(){
     }else{
         updateBreadcrumbSpecific('Norge', 'getTeam(0,0)', ''+getLeagueName(leagueidselected),'getTeam('+leagueidselected+',0)','Spilleminutter', 'getTotalPlayerMinutes()');
     }
+    $('#feedback_page').val('Spilleminutter');
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -725,6 +735,7 @@ function getEventsTotal(eventtype,leagueid)
     eventselected = eventtype;
     
     window.location.hash = '/'+season+'/events/'+eventtype;
+    $('#feedback_page').val('Toppliste spiller ' + eventtype);
     
     if(eventtype == 10){
         // topscorer hack
@@ -786,6 +797,7 @@ function getEventsTotalTeam(eventtype, leagueid)
     leagueidselected = leagueid;
     
     window.location.hash = '/'+season+'/eventsteam/'+eventtype;
+    $('#feedback_page').val('Toppliste lag ' + eventtype);
     
     $('#allEventsSelectType').val(eventtype);
     $('#allEventsSelect').val(leagueid);
@@ -936,7 +948,7 @@ function getPlayerFull(playerid,fromString,teamid)
    // history.pushState("", "Title", 'index.php?season='+season+'&player_id='+playeridselected+(teamid == 0 ? '' : '&team_id='+teamid));
     startLoad();
     $('#player').show();
-
+    $('#feedback_page').val('Spilleroversikt')
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -1098,7 +1110,7 @@ function getEventRankPlayer(array)
     updatePlayerRank(array.owngoal,9);
     updatePlayerRank(array.subin,6);
     updatePlayerRank(array.subout,7);
-    updatePlayerRank(array.cleansheetrank,11);
+    updatePlayerRank(array.cleansheetrank,12);
 }
 
 function updatePlayerRank(array, eventtype)
@@ -1124,6 +1136,7 @@ function getLeagueInfo(leagueid,teamid)
         $('#news_'+leagueidselected).show();
     }
     
+    $('#feedback_page').val('Ligaoversikt');
     $.ajax({
         type: "POST",
         url: "receiver.php",
@@ -1187,6 +1200,7 @@ function getTeamInfoFull(teamid,fromPage)
     teamidselected = teamid;    
    // history.pushState("", "Title", 'index.php?season='+season+'&team_id='+teamidselected);
     window.location.hash = '/'+season+'/team/'+teamid;
+    $('#feedback_page').val('Lagoversikt');
     startLoad();
     
     $.ajax({
@@ -1216,17 +1230,24 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.penalty,8);
             updateTeamRankList(array.owngoal,9);
             updateTeamRankList(array.yellow,2);
+            var matchcount = array.allmatches.length;
+            
+            $('#team_yellowcard').html(array.yellow[0].count + getPerMatch(array.yellow[0].count,matchcount));
+            
+            var redCards = parseInt((array.red[0] != undefined ? array.red[0].count : 0));
+            var yellowRed = parseInt((array.yellowred[0] != undefined ? array.yellowred[0].count : 0));
+            var totalRed = redCards + yellowRed;
+            $('#team_redcard').html(''+totalRed + getPerMatch(totalRed,matchcount));
             updateTeamRankList(array.goal,4);
             updateTeamRankList(array.subin,6);
             updateTeamRankList(array.subout,7);
-            updateTeamRankList(array.cleeansheetrank, 11);
+            updateTeamRankList(array.cleansheetrank, 12);
 
             updateTeamPlayers(array.teamplayer);
             if($('#season').val() == '2013'){
                 updateLatestMatches(array.latestmatches, array.last5lineup);
                 updateNextMatches(array.nextmatches);
             }
-            
             updateAllMatches(array.allmatches, array.goalscorers, teamid);
             updateGoalPie(array.scoringminute,$("#scoringminute"), 'scored');
             updateGoalPie(array.concededminute, $("#concededminute"), 'conceded');
@@ -1237,6 +1258,14 @@ function getTeamInfoFull(teamid,fromPage)
         }
     }); 
     //history.href = "?team_id="+teamid;
+}
+function getPerMatch(events, match)
+{
+    if(events != undefined && match != undefined)
+    {
+        return ' (' +(parseInt(events) / parseInt(match)).toFixed(2) +')';
+    }
+    return '';
 }
 function updateTeamRankList(array, eventtype)
 {
@@ -1359,6 +1388,8 @@ function updatePreviewTable(array,team)
         //$(prefix +'streak').html(array.homestreak);
         $(prefix + 'over3ha').html(array.overgoalshome.over3+'%');
         $(prefix + 'over4ha').html(array.overgoalshome.over4+'%');
+        $(prefix + 'goalsscored').html(array.scoringhomeaway[0].total_home+' av '+array.scoringhomeaway[0].total+' (' +array.scoringhomeaway[0].percentage_home+'%)');
+        $(prefix + 'conceded').html(array.concededhomeaway[0].total_home+' av '+array.concededhomeaway[0].total+' (' +array.concededhomeaway[0].percentage_home+'%)');
         $(prefix + 'position').html(array.currentpositionhome+'. plass');
         var homeString = getOverlibStreakString(array.latestmatcheshome, array.teamtoleague[0].teamid);
         $(prefix + 'lastfive_home').html(homeString.join('-'));
@@ -1370,6 +1401,8 @@ function updatePreviewTable(array,team)
         //$(prefix +'streak').html(array.awaystreak);
         $(prefix + 'over3ha').html(array.overgoalsaway.over3+'%');
         $(prefix + 'over4ha').html(array.overgoalsaway.over4+'%');
+        $(prefix + 'goalsscored').html(array.scoringhomeaway[0].total_away+' av '+array.scoringhomeaway[0].total+' (' +array.scoringhomeaway[0].percentage_away+'%)');
+        $(prefix + 'conceded').html(array.concededhomeaway[0].total_away+' av '+array.concededhomeaway[0].total+' (' +array.concededhomeaway[0].percentage_away+'%)');
         $(prefix + 'position').html(array.currentpositionaway+'. plass');
         var awayString = getOverlibStreakString(array.latestmatchesaway, array.teamtoleague[0].teamid);
         $(prefix + 'lastfive_away').html(awayString.join('-'));
@@ -1388,6 +1421,10 @@ function updatePreviewTable(array,team)
     $(prefix + 'suspensions').html('Ingen');
     $(prefix + 'over3').html(array.overgoals.over3+'%');
     $(prefix + 'over4').html(array.overgoals.over4+'%');
+    $(prefix + 'firsthalf_g').html(array.scoringpercentagehalfs[0].firsthalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_first+'%)');
+    $(prefix + 'firsthalf_c').html(array.concededpercentagehalfs[0].first_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_first+'%)');
+    $(prefix + 'secondhalf_g').html(array.scoringpercentagehalfs[0].secondhalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_second+'%)');
+    $(prefix + 'secondhalf_c').html(array.concededpercentagehalfs[0].second_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_second+'%)');
 }
 
 function updateEventTable(array,table,eventtype)
@@ -1633,12 +1670,18 @@ function updateTeamInfoTable(array)
     }else{
         $('#team_red').html('');
     }
+    var matchcount = array.allmatches.length;
+    
     if(array.scoringminute.length != 0){
-        $('#team_scored').html(array.scoringminute.total);
+        $('#team_scored').html(array.scoringminute.total + getPerMatch(array.scoringminute.total, matchcount));
     }
+    
     if(array.concededminute.length != 0){
-        $('#team_conceded').html(array.concededminute.total);
+        $('#team_conceded').html(array.concededminute.total + getPerMatch(array.concededminute.total, matchcount));
     }
+//    if(array.scoringminute.length != 0){
+//        $('#team_yellowcard').html(array.scoringminute.total);
+//    }
     if(array.homestats.length != 0){
         var stat = array.homestats[0]
         $('#team_home').html(stat.points +' poeng: '+stat.wins +'-'+stat.draws+'-'+stat.loss+ ' (' + stat.goals+'-'+stat.conceded+')');
@@ -1649,7 +1692,7 @@ function updateTeamInfoTable(array)
     }
 
     if(array.cleansheets.length != 0){
-        $('#team_cleansheets').html(array.cleansheets);
+        $('#team_cleansheets').html(array.cleansheets + getPerMatch(array.cleansheets, matchcount));
     }else{
         $('#team_cleansheets').html('0');
     }
@@ -1757,6 +1800,7 @@ function getMatch(matchid)
     }
    // history.pushState("", "Title", 'index.php?page=match&matchid='+matchid);
     window.location.hash = '/'+season+'/page/match/'+matchid;
+    $('#feedback_page').val('Kamprapport');
     startLoad();
     $.ajax({
         type: "POST",
@@ -1786,12 +1830,12 @@ function updateMatchTable(array)
     $(prefix +'table').empty();
     
     var string = array.streak;
-    //console.log(string);
+    console.log(string);
     
     var hlineup = getLineupArrayFullnameLink(array.homelineup);
     var alineup =  getLineupArrayFullnameLink(array.awaylineup);
-    var sortedLineup = Array();
-    var sortedLineupAway = Array();
+    var sortedLineup = new Array();
+    var sortedLineupAway = new Array();
     
     for (var p in hlineup){
         var pos = hlineup[p];
@@ -1836,15 +1880,14 @@ function updateMatchTable(array)
             '<td align="center"></td>'+
             '<td align="center"><h1>'+array.awayscore+'</h1></td>'+
         '</tr>');
-    
-    for(var play in sortedLineup){
+    for (var i = 0; i < sortedLineup.length; i++) {
         $(prefix +'table').append('<tr>'+
-                '<td align="center">'+sortedLineup[play]+'</td>'+
+                '<td align="center">'+sortedLineup[i]+'</td>'+
                 '<td align="center"></td>'+
-                '<td align="center">'+sortedLineupAway[play]+'</td>'+
+                '<td align="center">'+sortedLineupAway[i]+'</td>'+
             '</tr>');
     }
-    $(prefix +'table').append('<tr><td>&nbsp</td></tr><tr><td>&nbsp</td></tr>');
+    $(prefix +'table').append('</tr><tr><td>&nbsp</td></tr><tr><td></td><td>'+getMatchLinkText(array.matchid,'Offisiell kamprapport')+'</td></tr><tr><td>&nbsp</td></tr>');
    
     
 }

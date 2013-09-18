@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-21 11:32:44
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-14 08:38:41
          compiled from "smarty\templates\team.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:17686519c9f3b2cd230-75441698%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '41140c1a05ff8499ae74082b8b528f19487df6c6' => 
     array (
       0 => 'smarty\\templates\\team.tpl',
-      1 => 1377084684,
+      1 => 1379147918,
       2 => 'file',
     ),
   ),
@@ -47,12 +47,24 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <td><text id="team_players_used"></text></td>
         </tr>
         <tr>
-            <td>Mål for/mot:</td>
-            <td><text id="team_scored"></text> - <text id="team_conceded"></td>
+            <td>Mål scoret:</td>
+            <td><text id="team_scored"></text></td>
+        </tr>
+        <tr>
+            <td>Mål sluppet inn:</td>
+            <td><text id="team_conceded"></td>
         </tr>
         <tr>
             <td>Clean sheets:</td>
             <td><text id="team_cleansheets"></text></td>
+        </tr>
+        <tr>
+            <td>Gule kort:</td>
+            <td><text id="team_yellowcard"></text></td>
+        </tr>
+        <tr>
+            <td>Røde kort:</td>
+            <td><text id="team_redcard"></text></td>
         </tr>
         <tr>
             <td>Over 2.5 mål:</td>

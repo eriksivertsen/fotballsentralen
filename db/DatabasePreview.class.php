@@ -10,9 +10,9 @@ class DatabasePreview {
         $teamArray = self::getMatchInfo($matchid);
         $refereeStats = DatabaseUtils::getRefereeStats($year);
         $refereeStatsSpec = (isset($refereeStats[$teamArray['refereeid']]) ? $refereeStats[$teamArray['refereeid']] : array());
-        $fsscore = self::getFSScore($teamArray['leagueid']);
-        $homeTeamInfo = DatabaseTeam::getTeamInfo($teamArray['hometeamid'],$year,'');
-        $awayTeamInfo = DatabaseTeam::getTeamInfo($teamArray['awayteamid'],$year,'');
+        //$fsscore = self::getFSScore($teamArray['leagueid']);
+        $homeTeamInfo = DatabaseTeam::getTeamInfo($teamArray['hometeamid'],$year);
+        $awayTeamInfo = DatabaseTeam::getTeamInfo($teamArray['awayteamid'],$year);
         $suspensions = DatabaseUtils::getSuspList($teamArray['leagueid']);
         
         $retVal = array(

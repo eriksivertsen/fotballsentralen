@@ -42,11 +42,17 @@ function getPlayerLastnameLink(playerid,playername){
 }
 function getPlayerLink(playerid,playername)
 {
+    if(playerid == -1){
+        return playername;
+    }
     return '<a href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>'
     //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
 function getTeamLink(teamid,teamname)
 {
+    if(teamid == -1){
+        return teamname;
+    }
     return '<a href="#" onclick="getTeam(0,'+teamid+');return false;">'+teamname+'</a>'
     //return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
 }
@@ -214,7 +220,8 @@ function getLineupArrayFullnameLink(array){
         }else if(pos == 'Forsvar'){
             defenders.push(playername);
         }else if(pos == 'Keeper' || array[player].shirtnumber == '1' || array[player].is_goalkeeper == 1){
-            goalkeeper.push(playername);
+            if(goalkeeper.length == 0)
+             goalkeeper.push(playername);
         }else{
             unknowns.push(playername);
         }
@@ -450,3 +457,4 @@ function getScorerString(matchid, scorerarray)
     }
     return scorerstring;
 }
+

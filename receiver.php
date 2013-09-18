@@ -113,6 +113,9 @@ if(isset($_POST['action'])){
     if($_POST['action'] == 'getMatch'){
         echo json_encode($dbUtils->getMatch($_POST['matchid']));
     }
+    if($_POST['action'] == 'submitFeedback'){
+        $dbUtils->submitFeedback($_POST['name'],$_POST['mail'],$_POST['page'],$_POST['msg'],$_POST['rating']);
+    }
 }
 
 

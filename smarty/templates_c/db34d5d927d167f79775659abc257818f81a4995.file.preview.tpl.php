@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-06-29 08:54:58
+<?php /* Smarty version Smarty-3.1.12, created on 2013-09-18 11:41:10
          compiled from "smarty\templates\preview.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:1765751963eaa16a358-42013132%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'db34d5d927d167f79775659abc257818f81a4995' => 
     array (
       0 => 'smarty\\templates\\preview.tpl',
-      1 => 1372495432,
+      1 => 1379504423,
       2 => 'file',
     ),
   ),
@@ -73,12 +73,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         </tr>
         <tr>
             <td align="center"><text id="preview_home_form"></text></td>
-            <td align="center">Hjemme/borte statistikk</td>
+            <td align="center">Statistikk (hjemme/borte)</td>
             <td align="center"><text id="preview_away_form"></text></td>
         </tr>
         <tr>
             <td align="center"><text id="preview_home_position"></text></td>
-            <td align="center">Hjemme/bortetabell</td>
+            <td align="center">Tabellposisjon (hjemme/borte)</td>
             <td align="center"><text id="preview_away_position"></text></td>
         </tr>
         <tr>
@@ -88,7 +88,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         </tr>
         <tr>
             <td align="center"><text id="preview_home_lastfive_home"></text></td>
-            <td align="center">Siste fem kamper hjemme/borte</td>
+            <td align="center">Siste fem kamper (hjemme/borte)</td>
             <td align="center"><text id="preview_away_lastfive_away"></text></td>
         </tr>
         <tr>
@@ -98,8 +98,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         </tr>
         <tr>
             <td align="center"><text id="preview_home_over3"></text></td>
-            <td align="center">Over 2.5 mål (totalt)</td>
+            <td align="center">Over 2.5 mål</td>
             <td align="center"><text id="preview_away_over3"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_over4"></text></td>
+            <td align="center">Over 3.5 mål</td>
+            <td align="center"><text id="preview_away_over4"></text></td>
         </tr>
         <tr>
             <td align="center"><text id="preview_home_over3ha"></text></td>
@@ -107,16 +112,40 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <td align="center"><text id="preview_away_over3ha"></text></td>
         </tr>
         <tr>
-            <td align="center"><text id="preview_home_over4"></text></td>
-            <td align="center">Over 3.5 mål (totalt)</td>
-            <td align="center"><text id="preview_away_over4"></text></td>
-        </tr>
-        <tr>
             <td align="center"><text id="preview_home_over4ha"></text></td>
             <td align="center">Over 3.5 mål (hjemme/borte)</td>
             <td align="center"><text id="preview_away_over4ha"></text></td>
         </tr>
-        
+        <tr>
+            <td align="center"><text id="preview_home_goalsscored"></text></td>
+            <td align="center">Mål scoret (hjemme/borte)</td>
+            <td align="center"><text id="preview_away_goalsscored"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_conceded"></text></td>
+            <td align="center">Mål sluppet inn (hjemme/borte)</td>
+            <td align="center"><text id="preview_away_conceded"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_firsthalf_g"></text></td>
+            <td align="center">Mål scoret første omgang</td>
+            <td align="center"><text id="preview_away_firsthalf_g"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_firsthalf_c"></text></td>
+            <td align="center">Mål sluppet inn første omgang</td>
+            <td align="center"><text id="preview_away_firsthalf_c"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_secondhalf_g"></text></td>
+            <td align="center">Mål scoret andre omgang</td>
+            <td align="center"><text id="preview_away_secondhalf_g"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_secondhalf_c"></text></td>
+            <td align="center">Mål sluppet inn andre omgang</td>
+            <td align="center"><text id="preview_away_secondhalf_c"></text></td>
+        </tr>
     </table>
     <iframe id="preview_weather" width="468" height="290" frameborder="0" style="margin: 10px 10px 10px 10px;" scrolling="no"></iframe>
 </center>

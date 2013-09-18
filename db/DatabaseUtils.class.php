@@ -372,7 +372,7 @@ class DatabaseUtils {
         }
         return $data;
     }
-    public function getTotalPlayerminutes($season,$limit, $leagueid)
+    public function getTotalPlayerminutes($season,$limit, $leagueid, $start = 1)
     {
         if($leagueid == 8){
             $leagueid = '3,4,5,6';
@@ -385,6 +385,7 @@ class DatabaseUtils {
         "JOIN leaguetable l ON m.leagueid = l.leagueid " .
         "WHERE pp.playerid != -1 " .
         "AND l.year = pp.year AND p.ignore = 0 " .
+        "AND p.start = " . $start . " " .        
         ($leagueid == '0' ? '' : ' AND l.java_variable IN ('.$leagueid.' ) ')      .  
         "GROUP BY p.playerid ".
         "ORDER BY SUM(p.minutesplayed) DESC " .
@@ -745,7 +746,7 @@ class DatabaseUtils {
         return $total;
     }    
     
-    public function getCleanSheetsPlayer($season, $leagueid){
+    public function getCleanSheetsPlayer($season, $teamid, $leagueid){
         
         $q="SELECT 
     p.playerid,
@@ -785,7 +786,8 @@ class DatabaseUtils {
     ) 
     AND l.`year` = {$season}  ".
     ($leagueid == 0 ? "" : " AND l.java_variable IN ( {$leagueid} )") .
-    "GROUP BY p.`playerid` ORDER BY COUNT(*) Desc";
+    "GROUP BY p.`playerid` ORDER BY COUNT(*) Desc " .
+    ($teamid == 0 ? ' LIMIT 10 ' : ' ');
   
     $data = array();   
         $result = mysql_query($q);
@@ -1078,9 +1080,19 @@ class DatabaseUtils {
         }
         $data['homelineup'] = DatabaseTeam::getLineup($homeId, 2013, $matchid);
         $data['awaylineup'] = DatabaseTeam::getLineup($awayId, 2013, $matchid);
-        $data['streak'] = DatabaseTeam::getStreakString($teamWonId,$matchid,$type);
+        if($teamWonId == 0){
+            DatabaseTeam::getStreakString($homeId,$matchid,$type);
+            DatabaseTeam::getStreakString($awayId,$matchid,$type);
+        }else{
+            $data['streak'] = DatabaseTeam::getStreakString($teamWonId,$matchid,$type);
+        }
         $data['homerealteamid'] = DatabaseTeam::getSecondTeamId($homeId);
         $data['awayrealteamid'] = DatabaseTeam::getSecondTeamId($awayId);
         return $data;
+    }
+    public function submitFeedback($name,$mail,$page,$msg,$rating)
+    {
+        $q = "INSERT INTO rating (fromname,frommail,pagename,comment,rating,ip,timestamp) VALUES ('".$name."','".$mail."','".$page."','".$msg."',$rating, '".$_SERVER['REMOTE_ADDR']."',NOW())";
+        mysql_query($q);
     }
 }

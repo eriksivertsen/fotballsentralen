@@ -52,12 +52,12 @@
         </tr>
         <tr>
             <td align="center"><text id="preview_home_form"></text></td>
-            <td align="center">Hjemme/borte statistikk</td>
+            <td align="center">Statistikk (hjemme/borte)</td>
             <td align="center"><text id="preview_away_form"></text></td>
         </tr>
         <tr>
             <td align="center"><text id="preview_home_position"></text></td>
-            <td align="center">Hjemme/bortetabell</td>
+            <td align="center">Tabellposisjon (hjemme/borte)</td>
             <td align="center"><text id="preview_away_position"></text></td>
         </tr>
         <tr>
@@ -67,7 +67,7 @@
         </tr>
         <tr>
             <td align="center"><text id="preview_home_lastfive_home"></text></td>
-            <td align="center">Siste fem kamper hjemme/borte</td>
+            <td align="center">Siste fem kamper (hjemme/borte)</td>
             <td align="center"><text id="preview_away_lastfive_away"></text></td>
         </tr>
         <tr>
@@ -77,8 +77,13 @@
         </tr>
         <tr>
             <td align="center"><text id="preview_home_over3"></text></td>
-            <td align="center">Over 2.5 mål (totalt)</td>
+            <td align="center">Over 2.5 mål</td>
             <td align="center"><text id="preview_away_over3"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_over4"></text></td>
+            <td align="center">Over 3.5 mål</td>
+            <td align="center"><text id="preview_away_over4"></text></td>
         </tr>
         <tr>
             <td align="center"><text id="preview_home_over3ha"></text></td>
@@ -86,16 +91,40 @@
             <td align="center"><text id="preview_away_over3ha"></text></td>
         </tr>
         <tr>
-            <td align="center"><text id="preview_home_over4"></text></td>
-            <td align="center">Over 3.5 mål (totalt)</td>
-            <td align="center"><text id="preview_away_over4"></text></td>
-        </tr>
-        <tr>
             <td align="center"><text id="preview_home_over4ha"></text></td>
             <td align="center">Over 3.5 mål (hjemme/borte)</td>
             <td align="center"><text id="preview_away_over4ha"></text></td>
         </tr>
-        
+        <tr>
+            <td align="center"><text id="preview_home_goalsscored"></text></td>
+            <td align="center">Mål scoret (hjemme/borte)</td>
+            <td align="center"><text id="preview_away_goalsscored"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_conceded"></text></td>
+            <td align="center">Mål sluppet inn (hjemme/borte)</td>
+            <td align="center"><text id="preview_away_conceded"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_firsthalf_g"></text></td>
+            <td align="center">Mål scoret første omgang</td>
+            <td align="center"><text id="preview_away_firsthalf_g"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_firsthalf_c"></text></td>
+            <td align="center">Mål sluppet inn første omgang</td>
+            <td align="center"><text id="preview_away_firsthalf_c"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_secondhalf_g"></text></td>
+            <td align="center">Mål scoret andre omgang</td>
+            <td align="center"><text id="preview_away_secondhalf_g"></text></td>
+        </tr>
+        <tr>
+            <td align="center"><text id="preview_home_secondhalf_c"></text></td>
+            <td align="center">Mål sluppet inn andre omgang</td>
+            <td align="center"><text id="preview_away_secondhalf_c"></text></td>
+        </tr>
     </table>
     <iframe id="preview_weather" width="468" height="290" frameborder="0" style="margin: 10px 10px 10px 10px;" scrolling="no"></iframe>
 </center>

@@ -34,8 +34,55 @@
                 });
                 
                 
-        });
+                
+        })
         
+
+        function submitFeedback(){
+            var name = $('#feedback_name').val();
+            var mail = $('#feedback_mail').val();
+            var msg = $('#feedback_msg').val();
+            var page = $('#feedback_page').val();
+            var rating = $('input[name=group]:radio:checked').attr('value');
+            
+            if(name == '' || msg == ''){
+                alert('Husk navn og kommentar!');
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "receiver.php",
+                dataType: "json",
+                timeout: timeout,
+                data: {
+                    action: "submitFeedback",
+                    name: name,
+                    mail: mail,
+                    msg: msg,
+                    page: page,
+                    rating: rating
+                },
+                error: function () {
+                    stopLoad()
+                },
+                success: function() {
+                    alert('Takk for tilbakemeldingen!');
+                    closePopup();
+                }
+            });
+            
+        }
+        // POPup functions:
+        function showPopup(){
+            $('#feedback_form').show('fast');
+            $('#feedback_name').focus();
+            $('#feedback_click').hide();
+        }
+        function closePopup(){
+            $('#feedback_form').hide('fast');
+            $('#feedback_click').show();
+        }
+  
         function controlHash()
         {
 //            var str = window.location.href;
@@ -132,10 +179,55 @@
         <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
         <div id="loader" class="loader"></div>
         {if $page == ''}
-        <input id="next" type="image" src="images/arrow_next.png" style="position:absolute;bottom:35%;right:55px" title="Neste sesong" onclick="nextSeason()">
-        <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previousSeason()">
+        <input id="next" type="image" src="images/arrow_next.png" style="position:absolute;bottom:35%;right:55px" title="Neste sesong" onclick="next()">
+        <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previous()">
         {/if}
         <div class="indexbody">
+            <div id="feedback_form" hidden="true" align="right" style="font-size:9pt">
+                <table style="font-size:9pt;">
+                    <tr>
+                       <td>Navn: <text style="color:red"> *</text></td> 
+                       <td>
+                           <input type="text" id="feedback_name"></input> 
+                       </td>  
+                    </tr>
+                    <tr>
+                        <td>Mail:</td>
+                        <td>
+                            <input type="text" title="Kun hvis du ønsker svar" id="feedback_mail"></input>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Gjelder side:</td>
+                            <td>
+                                <input type="text" id="feedback_page" disabled="true"><text ></text></input> 
+                            </td>
+                    </tr>
+                    <tr>
+                        <td>Kommentar:</td>
+                        <td>
+                            <textarea id="feedback_msg" style="width:240px;height:100px;resize: none;"></textarea> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Rangering:
+                        </td>
+                        <td>    
+                            <input type="radio" name="group" title="Håpløst" value="1" id="feedback_radio_1"></input>
+                            <input type="radio" name="group" title="Dårlig" value="2" id="feedback_radio_2"></input>
+                            <input type="radio" name="group" title="Middels" value="3" id="feedback_radio_3" checked></input>
+                            <input type="radio" name="group" title="Bra" value="4" id="feedback_radio_4"></input>
+                            <input type="radio" name="group" title="Strålende" value="5" id="feedback_radio_5"></input>
+                        </td>
+                    </tr>
+                </table>
+                <button id="feedback_close" onclick="closePopup();return false;">Lukk</button>
+                <button id="feedback_send" onclick="submitFeedback();return false;">Send inn</button>
+            </div>
+            <div align="right" id="feedback_index" style="margin-right: 10px">
+                <a href="#" id="feedback_click" style="font-size: 8pt" title="Hjelp FotballSentralen bli bedre!" onclick="showPopup();return false;">Feedback</a>
+            </div>
             <div id="welcometext" style="font-size: 10pt; margin-left:16px;margin-right:20px; background-color: #8dbdd8 ">
                 <b>Velkommen til FotballSentralen.com!</b>
                 <br/>

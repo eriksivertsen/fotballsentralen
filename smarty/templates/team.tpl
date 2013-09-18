@@ -26,12 +26,24 @@
             <td><text id="team_players_used"></text></td>
         </tr>
         <tr>
-            <td>Mål for/mot:</td>
-            <td><text id="team_scored"></text> - <text id="team_conceded"></td>
+            <td>Mål scoret:</td>
+            <td><text id="team_scored"></text></td>
+        </tr>
+        <tr>
+            <td>Mål sluppet inn:</td>
+            <td><text id="team_conceded"></td>
         </tr>
         <tr>
             <td>Clean sheets:</td>
             <td><text id="team_cleansheets"></text></td>
+        </tr>
+        <tr>
+            <td>Gule kort:</td>
+            <td><text id="team_yellowcard"></text></td>
+        </tr>
+        <tr>
+            <td>Røde kort:</td>
+            <td><text id="team_redcard"></text></td>
         </tr>
         <tr>
             <td>Over 2.5 mål:</td>

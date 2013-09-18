@@ -197,4 +197,21 @@ class DatabaseStats {
         }
         return $data;
     }
+    public function getRatings()
+    {
+        $q = "SELECT pagename, rating, comment, fromname, timestamp FROM rating";
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'pagename' => $row['pagename'],
+                'rating' => $row['rating'],
+                'comment' => $row['comment'],
+                'fromname' => $row['fromname'],
+                'timestamp' => $row['timestamp']
+            );
+        }
+        return $data;
+    }
 }

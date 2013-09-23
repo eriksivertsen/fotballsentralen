@@ -45,7 +45,15 @@ function getPlayerLink(playerid,playername)
     if(playerid == -1){
         return playername;
     }
-    return '<a href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>'
+    return '<a href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>';
+    //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
+}
+function getPlayerLinkWithId(playerid,playername)
+{
+    if(playerid == -1){
+        return playername;
+    }
+    return '<a id="match_'+playerid+'" href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>';
     //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
 function getTeamLink(teamid,teamname)
@@ -53,12 +61,12 @@ function getTeamLink(teamid,teamname)
     if(teamid == -1){
         return teamname;
     }
-    return '<a href="#" onclick="getTeam(0,'+teamid+');return false;">'+teamname+'</a>'
+    return '<a href="#" onclick="getTeam(0,'+teamid+');return false;">'+teamname+'</a>';
     //return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
 }
 function getLeagueLink(leagueid)
 {
-    return '<a href="#" onclick="getTeam('+leagueid+',0);return false;">'+getLeagueName(leagueid)+'</a>'
+    return '<a href="#" onclick="getTeam('+leagueid+',0);return false;">'+getLeagueName(leagueid)+'</a>';
     //return '<a href="index.php?season='+season+'&league_id='+leagueid+'">'+getLeagueName(leagueid)+'</a>';
 }
 
@@ -208,7 +216,7 @@ function getLineupArrayFullnameLink(array){
     
     for(var player in array){
         
-        var playername = getPlayerLink(array[player].playerid, array[player].fullname);
+        var playername = getPlayerLinkWithId(array[player].playerid, array[player].fullname);
         if(array[player].starts != undefined){
             playername += ' ('+array[player].starts+')';
         }
@@ -361,15 +369,15 @@ function setTeamLogo(id,teamid){
 function getEventtype(eventtype){
     var eventName = '';
     if(eventtype == 4 || eventtype == 8 || eventtype == 9){
-        eventName = 'goal16';
+        eventName = 'goal10';
     }else if(eventtype == 6 || eventtype == 7){
-        eventName = 'sub16';
+        eventName = 'sub10';
     }else if(eventtype == 1){
-        eventName = 'yellowred16';
+        eventName = 'yellowred10';
     }else if(eventtype == 2){
-        eventName = 'yellow16';
+        eventName = 'yellow10';
     }else if(eventtype == 3){
-        eventName = 'red16';
+        eventName = 'red10';
     }
     return eventName+'.png';
 }

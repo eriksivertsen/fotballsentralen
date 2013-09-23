@@ -42,7 +42,8 @@ class DatabasePlayer {
                 WHERE p.`playerid` = {$playerid}
                 AND l.`year` = {$season} 
                 GROUP by t.teamid
-                ORDER BY m.`dateofmatch` DESC";
+                ORDER BY m.`dateofmatch` DESC
+                LIMIT 1";
 
         $data = array();
         $result = mysql_query($q);

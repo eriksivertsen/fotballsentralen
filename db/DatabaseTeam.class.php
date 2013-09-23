@@ -60,7 +60,8 @@ class DatabaseTeam {
             'scoringpercentagehalfs' => self::getScoringPercentageHalfs($teamid,$season),
             'scoringhomeaway' => self::getPercentageHomeAway($teamid,$season,'scoring'),
             'concededhomeaway' => self::getPercentageHomeAway($teamid,$season,'conceded'),
-            'concededpercentagehalfs' => self::getConcededPercentageHalfs($teamid,$season)
+            'concededpercentagehalfs' => self::getConcededPercentageHalfs($teamid,$season),
+            'dangerlist' => DatabaseUtils::getDangerListTeam($teamid,$season)
          );
         return $events;
     }
@@ -1046,6 +1047,44 @@ class DatabaseTeam {
         "ORDER BY `event count` DESC ".
         ($teamid == 0 ? ' LIMIT 10 ' : ' ');
         
+        
+         $q = 
+        "SELECT 
+        events.playerid,
+        events.playername,
+        events.event_count,
+        t.`teamid`,
+        t.`teamname` 
+        FROM
+        (SELECT 
+            e.`playerid`,
+            p.`playername`,
+            COUNT(*) AS event_count 
+        FROM
+            eventtable e 
+            JOIN leaguetable l 
+            ON l.`leagueid` = e.`leagueid` 
+            JOIN playertable p 
+            ON p.`playerid` = e.`playerid` 
+            AND p.year = l.year 
+            AND p.`teamid` = e.`teamid`  " .
+            ($teamid == 0 ? ' ' : ' AND e.teamid = '.$teamid.' ') .
+            ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
+        "WHERE e.`eventtype` IN ({$eventtype}) 
+            AND e.`ignore` = 0 
+            AND l.`year` = {$season} 
+        GROUP BY e.`playerid`
+        ORDER BY COUNT(*) DESC  " .
+        ($teamid == 0 ? ' LIMIT 10 ' : ' ') . "
+            ) AS `events` 
+        JOIN playertable p 
+            ON p.playerid = events.playerid 
+            AND p.`year` = {$season} 
+        JOIN teamtable t 
+            ON t.`teamid` = p.teamid
+            GROUP BY playerid
+            ORDER BY events.event_count DESC";
+        
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -1054,7 +1093,7 @@ class DatabaseTeam {
             $data[] = array(
                 'playerid' => $row['playerid'],
                 'playername' => $playername,
-                'eventcount'=> $row['event count'],
+                'eventcount'=> $row['event_count'],
                 'teamname' => $row['teamname'],
                 'teamid' => $row['teamid']
             );

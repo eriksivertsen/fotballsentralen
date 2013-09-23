@@ -26,6 +26,7 @@ class DatabaseStats {
             LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
             LEFT JOIN leaguetable l on l.java_variable = trending.clicked_id
             LEFT JOIN leaguetable l1 ON l1.`leagueid` = trending.clicked_id
+            GROUP BY TIME,ip
         ORDER by trending.time DESC LIMIT 100";
         
         $data = array();
@@ -211,6 +212,29 @@ class DatabaseStats {
                 'fromname' => $row['fromname'],
                 'timestamp' => $row['timestamp']
             );
+        }
+        return $data;
+    }
+    public function getEarliestCrawlerStart()
+    {
+        
+        $q = "SELECT 
+            l.leaguename ,
+            l.`leagueid`,
+            DATE_ADD(MAX(m.dateofmatch),INTERVAL 3 HOUR) AS yo
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON l.leagueid = m.leagueid 
+            WHERE DATE(m.`dateofmatch`) = DATE(NOW())
+            GROUP BY l.`leagueid`
+            ORDER BY yo desc";
+        
+        $data = '';
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data = $row['yo'];
         }
         return $data;
     }

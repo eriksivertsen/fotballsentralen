@@ -289,7 +289,7 @@ function getPreview(matchid)
             var matchtime = parseInt(timestamp) + parseInt(twoHours);
             $('#preview_warning').html('');
             if(matchtime < (now.getTime())){
-                $('#preview_warning').html('NB: Kamp allerede spilt!');
+                $('#preview_warning').html('NB: Kamp allerede spilt: ' +getMatchLinkTextInternal(matchid,'Rapport'));
                 $('#preview_warning').attr('style','color:#FFFFCC;font-weight:bold;');
             }
             
@@ -857,7 +857,7 @@ function getCount(value)
     }
 }
 
-function updateTeamPlayers(teamidarray)
+function updateTeamPlayers(teamidarray, dangerlistarray)
 {
     
     var array = teamidarray;
@@ -895,9 +895,10 @@ function updateTeamPlayers(teamidarray)
             players_used++;
         }
 
+        var img = '<img src="images/events/yellowtiny.png" style="margin-left:3px;" title="Må sone karantene ved neste gule kort"></img>';
         $('#teamplayerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
             '<td>'+array[i].shirtnumber+'</td>'+
-            '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
+            '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+' ' + (dangerlistarray[array[i].playerid] != undefined ? img : '') +'</td>'+
             '<td>'+array[i].minutesplayed+'</td>'+
             '<td>'+array[i].started+'</td>'+
             '<td>'+array[i].subbedin+'</td>'+
@@ -1243,7 +1244,7 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.subout,7);
             updateTeamRankList(array.cleansheetrank, 12);
 
-            updateTeamPlayers(array.teamplayer);
+            updateTeamPlayers(array.teamplayer, array.dangerlist);
             if($('#season').val() == '2013'){
                 updateLatestMatches(array.latestmatches, array.last5lineup);
                 updateNextMatches(array.nextmatches);
@@ -1830,7 +1831,7 @@ function updateMatchTable(array)
     $(prefix +'table').empty();
     
     var string = array.streak;
-    console.log(string);
+    //console.log(string);
     
     var hlineup = getLineupArrayFullnameLink(array.homelineup);
     var alineup =  getLineupArrayFullnameLink(array.awaylineup);
@@ -1875,19 +1876,25 @@ function updateMatchTable(array)
             '<td align="center"></td>'+
             '<td align="center"><h4>'+getTeamLink(array.awayid,array.awayname)+'</td>'+
         '</tr>'+
-        '<tr>'+
+        '<tr id>'+
             '<td align="center"><h1>'+array.homescore+'</h1></td>'+
             '<td align="center"></td>'+
             '<td align="center"><h1>'+array.awayscore+'</h1></td>'+
         '</tr>');
     for (var i = 0; i < sortedLineup.length; i++) {
-        $(prefix +'table').append('<tr>'+
-                '<td align="center">'+sortedLineup[i]+'</td>'+
+        $(prefix +'table').append( 
+            '<tr '+(i == 10 ? 'id=match_lastrow' : '') +'>'+
+                '<td align="center" style="margin:3px">'+sortedLineup[i]+'</td>'+
                 '<td align="center"></td>'+
                 '<td align="center">'+sortedLineupAway[i]+'</td>'+
             '</tr>');
     }
-    $(prefix +'table').append('</tr><tr><td>&nbsp</td></tr><tr><td></td><td>'+getMatchLinkText(array.matchid,'Offisiell kamprapport')+'</td></tr><tr><td>&nbsp</td></tr>');
+    $(prefix +'table').append('<tr>'+
+        '<td>&nbsp</td></tr>'+
+        '<tr><td colspan="3" align="center">'+getMatchLinkText(array.matchid,'Offisiell kamprapport')+'</td></tr>'+
+        '<tr><td colspan="3" align="center">Dommer: '+getRefereeLink(array.refereeid,array.refereename)+'</td></tr>'+
+        (array.attendance != 0 ? '<tr><td colspan="3" align="center">Tilskuere: '+array.attendance+'</td></tr>' : '') +
+        '<tr><td>&nbsp</td></tr>');
    
     
 }
@@ -1899,7 +1906,9 @@ function updateMatchEvents(array)
         if(event.teamid == event.homeid){
             var homeOut = '';
             if(event.eventtype == 6 || event.eventtype == 7){
+                var homesub = getPlayerLinkWithId(event.playerinid,event.playerinname);
                 homeOut = getPlayerLastnameLink(event.playeroutid,event.playeroutname) +' (ut) / ' + getPlayerLastnameLink(event.playerinid,event.playerinname) +' (inn) ';
+                //$('#match_'+event.playerinid).append(img);
             }else{
                 homeOut = getPlayerLink(event.playerid,event.playername);
                 if(event.eventtype == 8){
@@ -1918,7 +1927,9 @@ function updateMatchEvents(array)
             // Away event
             var awayOut = '';
             if(event.eventtype == 6 || event.eventtype == 7){
+                var awaysub = getPlayerLinkWithId(event.playerinid,event.playerinname);
                 awayOut += getPlayerLastnameLink(event.playeroutid,event.playeroutname) +' (ut) / ' + getPlayerLastnameLink(event.playerinid,event.playerinname) +' (inn) ';
+                //$('#match_'+event.playerinid).append(img);
             }else{
                 awayOut += getPlayerLink(event.playerid,event.playername);
                 if(event.eventtype == 8){
@@ -1933,6 +1944,12 @@ function updateMatchEvents(array)
             '<td align="center">'+awayOut+'</td>'+
             '</tr>');
         }
+        if(awaysub != undefined && homesub != undefined){
+            //$('#matches_table > tbody > tr').eq(13).after('<tr><td align=center>'+homesub+'</td><td></td><td align=center>'+awaysub+'</td></tr>');
+            awaysub = undefined;
+            homesub = undefined;
+        }
+        $('#match_'+event.playerid).append(img);
     }
 }
 

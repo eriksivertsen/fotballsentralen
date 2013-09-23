@@ -86,6 +86,7 @@ if($printTips) {
 echo 'Latest Observer update: ' . $db->getLatestObserverDate() . ' <br/>';
 echo 'Latest mail sent: ' . $db->getLatestMailSent() . ' <br/>';
 echo 'Latest league update: ' . $db->getLatestLeagueUpdate() . ' <br/>';
+echo 'Earliest crawler start: ' . $db->getEarliestCrawlerStart() . ' <br/>';
 $db->printTable($ratings,'ratings');
 $db->printTable($clicktable,'clicktable');
 $db->printTable($dailyClick,'daily clicks');

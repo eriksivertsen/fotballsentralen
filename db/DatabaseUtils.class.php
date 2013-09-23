@@ -409,13 +409,15 @@ class DatabaseUtils {
     public function getSuspList($leagueid)
     {
         $year = 2013;
-        $q = "SELECT * FROM eventtable e
+        $q = "SELECT e.* FROM eventtable e
             JOIN matchtable m ON e.`matchid` = m.`matchid` 
             JOIN playertable p ON e.playerid = p.playerid and e.teamid = p.teamid and p.leagueid = m.leagueid
+            LEFT JOIN eventtable e1 ON e1.`matchid` = e.`matchid` AND e1.`playerid` = e.`playerid` AND e1.`eventtype` = 1 AND e1.ignore = 0    
             WHERE e.eventtype = 2
             AND e.playerid != -1
             AND m.leagueid = {$leagueid}
             AND e.ignore = 0
+            AND e1.eventid is null
             GROUP BY e.`matchid`,e.`playerid`
             HAVING COUNT(e.`eventid`) = 1
             ORDER BY m.`dateofmatch` ASC ";
@@ -527,6 +529,57 @@ class DatabaseUtils {
             'moreYellow' => DatabaseUtils::getSuspendedFromArray($moreYellow,$year),
             'redCard' => $redCardSuspended
         );
+    }
+    
+    public function getDangerListTeam($teamid,$year)
+    {
+        $q = "SELECT e.* FROM eventtable e
+            JOIN matchtable m ON e.`matchid` = m.`matchid` 
+            JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
+            JOIN playertable p ON e.playerid = p.playerid and e.teamid = p.teamid and p.leagueid = m.leagueid
+            LEFT JOIN eventtable e1 ON e1.`matchid` = e.`matchid` AND e1.`playerid` = e.`playerid` AND e1.`eventtype` = 1 and e1.ignore = 0
+            WHERE e.eventtype = 2
+            AND e.playerid != -1
+            AND e.teamid = {$teamid}
+            AND l.year = {$year}
+            AND e.ignore = 0
+            and e1.eventid is null
+            GROUP BY e.`matchid`,e.`playerid`
+            HAVING COUNT(e.`eventid`) = 1
+            ORDER BY m.`dateofmatch` ASC ";
+        
+        $data = array();
+        $playerlist = array();
+        
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            if(!isset($data[$row['playerid']])){
+                $data[$row['playerid']] = array(
+                    'matchid' => array ( $row['matchid'] ),
+                    'leagueid' => $row['leagueid']
+                );
+            }
+            else{
+                $data[$row['playerid']]['matchid'][] = $row['matchid'];
+                
+                if(count($data[$row['playerid']]['matchid']) == 2 ||
+                    count($data[$row['playerid']]['matchid']) == 4 ||
+                    count($data[$row['playerid']]['matchid']) == 6 ||
+                    count($data[$row['playerid']]['matchid']) >= 7){
+                    $playerlist[$row['playerid']] = '';
+                }
+                
+                // Need to remove the player if it as ZONED karantene.
+                if(count($data[$row['playerid']]['matchid']) == 3 ||
+                    count($data[$row['playerid']]['matchid']) == 5 ||
+                    count($data[$row['playerid']]['matchid']) == 7 ||
+                    count($data[$row['playerid']]['matchid']) >= 8){
+                    unset($playerlist[$row['playerid']]);
+                }
+            }
+        }
+        return $playerlist;
     }
     
     public function getSuspendedFromArray(array $suspendedArray,$year)
@@ -746,7 +799,7 @@ class DatabaseUtils {
         return $total;
     }    
     
-    public function getCleanSheetsPlayer($season, $teamid, $leagueid){
+    public function getCleanSheetsPlayer($season, $leagueid){
         
         $q="SELECT 
     p.playerid,
@@ -786,8 +839,7 @@ class DatabaseUtils {
     ) 
     AND l.`year` = {$season}  ".
     ($leagueid == 0 ? "" : " AND l.java_variable IN ( {$leagueid} )") .
-    "GROUP BY p.`playerid` ORDER BY COUNT(*) Desc " .
-    ($teamid == 0 ? ' LIMIT 10 ' : ' ');
+    "GROUP BY p.`playerid` ORDER BY COUNT(*) Desc ";
   
     $data = array();   
         $result = mysql_query($q);
@@ -993,12 +1045,13 @@ class DatabaseUtils {
     {
         DatabaseUtils::setInternalMatchHit($matchid);
         
-        $q = "SELECT e.*,p.`playername`,m.teamwonid, m.homescore,m.awayscore, home.`teamname` AS homename, away.`teamname` AS awayname,home.`teamid` AS homeid, away.`teamid` AS awayid
+        $q = "SELECT e.*,p.`playername`,m.teamwonid, m.attendance, m.homescore,m.awayscore, home.`teamname` AS homename, away.`teamname` AS awayname,home.`teamid` AS homeid, away.`teamid` AS awayid, r.refereeid, r.refereename
         FROM eventtable e 
         JOIN leaguetable l ON l.`leagueid` = e.`leagueid`
         JOIN matchtable m ON m.`matchid` = e.`matchid`
         JOIN teamtable home ON home.`teamid` = m.`hometeamid`
         JOIN teamtable away ON away.`teamid` = m.`awayteamid`
+        JOIN refereetable r on r.refereeid = m.refereeid
         JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`year` = l.`year` AND p.`teamid` = e.`teamid`
         WHERE e.`matchid` = $matchid
         AND e.`ignore` = 0
@@ -1035,6 +1088,9 @@ class DatabaseUtils {
                     'matchid' => $row['matchid'],
                     'homescore' => $row['homescore'],
                     'awayscore' => $row['awayscore'],
+                    'attendance' => $row['attendance'],
+                    'refereeid' => $row['refereeid'],
+                    'refereename' => $row['refereename'],
                     'teamid' => $row['teamid'],
                     'homeid' => $row['homeid'],
                     'homename' => $row['homename'],
@@ -1056,10 +1112,11 @@ class DatabaseUtils {
                 $playerOutName = '';
             
             }else if($event != 6 && $event != 7){
-                
-                
                 $data['events'][] = array(
                     'matchid' => $row['matchid'],
+                    'attendance' => $row['attendance'],
+                    'refereeid' => $row['refereeid'],
+                    'refereename' => $row['refereename'],
                     'homescore' => $row['homescore'],
                     'awayscore' => $row['awayscore'],
                     'teamid' => $row['teamid'],

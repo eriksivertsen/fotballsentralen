@@ -17,7 +17,6 @@
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.time.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
         <script type="text/javascript" src="js/news/jquery.ticker.js"></script>
-        <script type="text/javascript" src="js/jquery.fancybox.js"></script>
         
         <script type="text/javascript" src="js/common.js"></script>
         <script type="text/javascript" src="js/Utils.js"></script>

@@ -528,7 +528,6 @@ input, select { vertical-align:middle; }
 
 /* END RESET CSS */
 
-/* Site styling */ 
 html {
 	/* always force a scrollbar in non-IE */
 	overflow-y: scroll;

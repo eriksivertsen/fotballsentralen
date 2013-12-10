@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-08-09 22:47:29
+<?php /* Smarty version Smarty-3.1.12, created on 2013-11-22 18:22:42
          compiled from "smarty\templates\player.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2302350a8208dbc1742-06689911%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2fd8608f4a45b10a71bf952fa500cc4388128b60' => 
     array (
       0 => 'smarty\\templates\\player.tpl',
-      1 => 1376088339,
+      1 => 1385144561,
       2 => 'file',
     ),
   ),
@@ -61,9 +61,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     </table>
     <br/>
     <br/>
-    <select id="teamSelect" style="margin: 20px" onchange="selectPlayerTeam()">
-        <option value="0">Alle lag</option>
-    </select>
+    <label id="player_label" class="selectlabel">
+        <select id="teamSelect" style="margin: 20px" onchange="selectPlayerTeam()">
+            <option value="0">Alle lag</option>
+        </select>
+    </label>
     <br/>
 <table id="playerinfo" class="tablesorter playerinfo"></table>
 <center><text id="noData" style="font-size: 9pt">Ingen data denne sesongen!</text></center>

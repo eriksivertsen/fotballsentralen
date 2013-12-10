@@ -23,6 +23,63 @@ weekday[4]="Torsdag";
 weekday[5]="Fredag";
 weekday[6]="Lørdag";
 
+var eventArray = new Array();
+
+eventArray[50] = {name:'Seiersprosent',types:'0'};
+eventArray[11] = {name:'Spilleminutter',types:'0'};
+eventArray[80] = {name:'Spilletid i prosent',types:'0'};
+eventArray[10] = {name:'Toppscorer',types:'0,1'};
+eventArray[60] = {name:'Måleffektivitet',types:'0'};
+eventArray[8] = {name:'Straffemål',types:'0,1'};
+eventArray[12] = {name:'Clean sheets',types:'0,1'};
+eventArray[70] = {name:'Mål som innbytter',types:'0,1'};
+eventArray[4] = {name:'Spillemål',types:'0,1'};
+eventArray[9] = {name:'Selvmål',types:'0,1'};
+eventArray[2] = {name:'Gule kort',types:'0,1'};
+eventArray[3] = {name:'Rødt kort (direkte)',types:'0,1'};
+eventArray[1] = {name:'Rødt kort (to gule)',types:'0,1'};
+eventArray[6] = {name:'Byttet inn',types:'0,1'};
+eventArray[7] = {name:'Byttet ut',types:'0,1'};
+
+var tableArray = new Array();
+tableArray[0] = 'Totalt';
+tableArray[1] = 'Hjemmetabell';
+tableArray[2] = 'Bortetabell';
+
+
+function getMonthYear(tick)
+{
+    switch(parseInt(tick)){
+        case 0: return 'Mars 2011';
+        case 1: return 'April 2011';
+        case 2: return 'Mai 2011';
+        case 3: return 'Juni 2011';
+        case 4: return 'Juli 2011';
+        case 5: return 'August 2011';
+        case 6: return 'September 2011';
+        case 7: return 'Oktober 2011';
+        case 8: return 'November 2011';
+        case 9: return 'Mars 2012';
+        case 10: return 'April 2012';
+        case 11: return 'Mai 2012';
+        case 12: return 'Juni 2012';
+        case 13: return 'Juli 2012';
+        case 14: return 'August 2012';
+        case 15: return 'September 2012';
+        case 16: return 'Oktober 2012';
+        case 17: return 'November 2012';
+        case 18: return 'Mars 2013';
+        case 19: return 'April 2013';
+        case 20: return 'Mai 2013';
+        case 21: return 'Juni 2013';
+        case 22: return 'Juli 2013';
+        case 23: return 'August 2013';
+        case 24: return 'September 2013';
+        case 25: return 'Oktober 2013';
+        case 26: return 'November 2013';
+        default: return 'Nå';
+    }
+}
 
 function getTippeligaen(){return 1;}
 function getAdeccoligaen(){return 2;}
@@ -265,38 +322,62 @@ function getTableRowSelected(array)
     var arrayString = '<td>'+array.join('</td><td>')+'</td>';
     return '<tr class=selected>'+arrayString+'</tr>';
 }
-function getEventFromId(eventid)
+function getEventFromId(eventid, type)
 {
     if(eventid == '4,8'){
         eventid = 10;
     }
+    var typeString = '';
+    if(type == 1){
+        typeString = '&nbsp(Lag)';
+    }
     eventid = parseInt(eventid);
-    switch(eventid)
-    {
-        case 1:
-            return 'Rødt&nbspkort&nbsp(to&nbspgule)'
-        case 2:
-            return 'Gule&nbspkort';
-        case 3:
-            return 'Rødt&nbspkort&nbsp(direkte)';
-        case 4:
-            return 'Spillemål';
-        case 6:
-            return 'Byttet&nbspinn';
-        case 7:
-            return 'Byttet&nbsput';
-        case 8:
-            return 'Straffemål';
-        case 9:
-            return 'Selvmål';
-        case 10:
-            return 'Toppscorer';
-        case 12:
-            return 'Clean&nbspsheets';
-        case 11:
-            return 'Spilleminutter';
+    return eventArray[eventid].name+typeString;
+//    switch(eventid)
+//    {
+//        case 1:
+//            return 'Rødt&nbspkort&nbsp(to&nbspgule)'+typeString;
+//        case 2:
+//            return 'Gule&nbspkort'+typeString;
+//        case 3:
+//            return 'Rødt&nbspkort&nbsp(direkte)'+typeString;
+//        case 4:
+//            return 'Spillemål'+typeString;
+//        case 6:
+//            return 'Byttet&nbspinn'+typeString;
+//        case 7:
+//            return 'Byttet&nbsput'+typeString;
+//        case 8:
+//            return 'Straffemål'+typeString;
+//        case 9:
+//            return 'Selvmål'+typeString;
+//        case 10:
+//            return 'Toppscorer'+typeString;
+//        case 12:
+//            return 'Clean&nbspsheets'+typeString;
+//        case 11:
+//            return 'Spilleminutter'+typeString;
+//        case 50:
+//            return 'Seiersprosent'+typeString;
+//        case 60:
+//            return 'Måleffektivitet'+typeString;
+//        case 70:
+//            return 'Mål&nbspsom&nbspinnbytter'+typeString;
+//        case 80:
+//            return 'Spilletid&nbspi&nbspprosent'+typeString;
+//    }
+}
+
+function createEventLink(eventtype, type,leagueid)
+{
+    var string = getEventFromId(eventtype,type);
+    if(type == 0){
+        return '<a href="#" style="cursor:pointer" onclick=getEventsTotal('+eventtype+','+leagueid+')>'+string+'</a>';
+    }else{
+        return '<a href="#" style="cursor:pointer" onclick=getEventsTotalTeam('+eventtype+','+leagueid+')>'+string+'</a>';
     }
 }
+
 function getLeagueName(leagueid)
 {
     if(leagueid == getAndreDivAll()){
@@ -321,6 +402,8 @@ function getLeagueName(leagueid)
             return '2.divisjon&nbspavdeling&nbsp3';
         case getAndreDiv4():
             return '2.divisjon&nbspavdeling&nbsp4';
+        case 11: 
+            return 'Nord&#8209;Norge&nbspUnited';
     }
 }
 function getDateString(date)
@@ -366,10 +449,21 @@ function setTeamLogo(id,teamid){
     });
     id.show();
 }
+function setNationalTeamLogo(id,teamid){
+    id.attr("src",'images/logos/norway.png');
+    id.attr("onclick",'getNationalTeam('+teamid+')');
+    id.css("cursor",'pointer');
+    id.error(function (){
+        id.attr("src",'images/logos/blank.png');
+    });
+    id.show();
+}
 function getEventtype(eventtype){
     var eventName = '';
-    if(eventtype == 4 || eventtype == 8 || eventtype == 9){
+    if(eventtype == 4 || eventtype == 8){
         eventName = 'goal10';
+    }else if(eventtype == 9){
+        eventName = 'owngoal10';
     }else if(eventtype == 6 || eventtype == 7){
         eventName = 'sub10';
     }else if(eventtype == 1){
@@ -464,5 +558,12 @@ function getScorerString(matchid, scorerarray)
         scorerstring += scorerArray[s];
     }
     return scorerstring;
+}
+
+function getNationalTeamName(teamid){
+    switch(teamid){
+        case 1: return 'A-lag';
+        case 2: return 'U-21';
+    }
 }
 

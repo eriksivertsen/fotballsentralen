@@ -2,6 +2,9 @@
 
 // put full path to Smarty.class.php
 require('smarty/libs/Smarty.class.php');
+require_once('db/DatabaseUtils.class.php');
+
+$dbUtils = new DatabaseUtils();
 
 $smarty = new Smarty();
 
@@ -35,6 +38,7 @@ if(isset($_GET['season'])){
 }else{
     $smarty->assign('season',2013);
 }
+$smarty->assign('status', $dbUtils->getStatus());
 $smarty->assign('contents',$smarty->fetch('infoindex.tpl'));
 $smarty->display('main.tpl');
 

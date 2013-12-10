@@ -1,5 +1,5 @@
 
-<div align="center">    
+<div align="center">   
     <div class="categoryheader"><text id="league_name"></text></div>
     <table id="league_table" style="font-size: 9pt; width:100%">
         <tr>
@@ -64,33 +64,32 @@
             <li class="news-item"> </li>
         </ul>
     </div>
-     <div id="overall" class="category">
+    <div id="overall" class="category">
         <div class="categoryheader" style="margin-top: 5px">Tabeller</div>
-        <table id="leaguetable" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-        <table id="leaguetablehome" class="tablesorter playerinfo" style="display: inline-table;"> </table>
-        <table id="leaguetableaway" class="tablesorter playerinfo" style="display: inline-table;"> </table>
+        <table id="leaguetable" class="tablesorter playerinfo" > </table>
+        <table id="leaguetablehome" class="tablesorter playerinfo" > </table>
+        <table id="leaguetableaway" class="tablesorter playerinfo" > </table>
     </div>
     
     <div id="mins" class="category">
         <div class="categoryheader" style="margin-top: 5px">Spilletid</div>
-        <table id="playingminutes" class="tablesorter"></table>
-        <table id="subsout" class="tablesorter"> </table>
-        <table id="subsin" class="tablesorter"> </table>
+        <table id="playingminutes" class="tablesorter playerinfo"></table>
+        <table id="subsout" class="tablesorter playerinfo"> </table>
+        <table id="subsin" class="tablesorter playerinfo"> </table>
     </div>
 
     <div id="goal" class="category">
         <div class="categoryheader" style="margin-top: 5px">Mål</div>
-        <table id="totalgoals" class="tablesorter"> </table>
+        <table id="totalgoals" class="tablesorter playerinfo"> </table>
         <!--<table id="goals" class="tablesorter"> </table>-->
-        <table id="penalty" class="tablesorter"> </table>
-        <table id="owngoal" class="tablesorter"> </table>
+        <table id="penalty" class="tablesorter playerinfo"> </table>
+        <table id="owngoal" class="tablesorter playerinfo"> </table>
     </div>
 
     <div id="dicipline" class="category">
         <div class="categoryheader" style="margin-top: 5px">Disiplin</div>
-        <table id="yellowcard" class="tablesorter"> </table>
-        <table id="yellow_red" class="tablesorter"> </table>
-        <table id="redcard" class="tablesorter"> </table>
+        <table id="yellowcard" class="tablesorter playerinfo"> </table>
+        <table id="yellow_red" class="tablesorter playerinfo"> </table>
+        <table id="redcard" class="tablesorter playerinfo"> </table>
     </div>
-
 </div>

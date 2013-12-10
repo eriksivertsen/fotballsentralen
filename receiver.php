@@ -1,16 +1,22 @@
 <?php
 require_once('db/DatabaseUtils.class.php');
 require_once('db/DatabaseTeam.class.php');
+require_once('db/DatabaseNationalTeam.class.php');
 require_once('db/DatabaseLeague.class.php');
 require_once('db/DatabasePreview.class.php');
 require_once('db/DatabasePlayer.class.php');
+require_once('db/DatabaseAdmin.class.php');
+require_once('db/DatabaseScope.class.php');
 
 
+$dbScope = new DatabaseScope();
 $dbUtils = new DatabaseUtils();
 $dbTeam = new DatabaseTeam();
+$dbNatTeam = new DatabaseNationalTeam();
 $dbLeague = new DatabaseLeague();
 $dbPlayer = new DatabasePlayer();
 $dbPreview = new DatabasePreview();
+$dbAdmin= new DatabaseAdmin();
 
 if(isset($_POST['action'])){
     
@@ -64,12 +70,37 @@ if(isset($_POST['action'])){
     }
     if($_POST['action'] == 'getTeamInfo'){
         $from = $_POST['from'];
-         if(isset($from) && !empty($from)){
+        if(isset($from) && !empty($from)){
             DatabaseUtils::setTeamSearchHit($_POST['teamid']);
         }else{
             DatabaseUtils::setTeamHit($_POST['teamid']);
         }
         $events = $dbTeam->getTeamInfo($_POST['teamid'],$_POST['season']);
+        echo json_encode($events);
+    }
+    if($_POST['action'] == 'getNationalTeam'){
+       $events = $dbNatTeam->getTeamInfo($_POST['teamid'],$_POST['season']);
+       echo json_encode($events);
+    }
+    if($_POST['action'] == 'getScope'){
+        $from = $dbScope->getMYSQLDate($_POST['from']);
+        $to = $dbScope->getMYSQLDate($_POST['to']);
+        
+        $scopeEvents = $_POST['scopeEvents'];
+        
+        $events = $dbScope->getScope($_POST['leagueid'],$from,$to,$scopeEvents);
+        echo json_encode($events);
+    }
+    if($_POST['action'] == 'getScopeDatabase'){
+        $events = $dbScope->getScopeDatabase($_POST['urlhash']);
+        echo json_encode($events);
+    }
+    if($_POST['action'] == 'getRandomScope'){
+        $events = $dbScope->getRandomScope();
+        echo json_encode($events);
+    }
+    if($_POST['action'] == 'saveScope'){
+        $events = $dbScope->saveScope($_POST['scopeHash'],$_POST['scopeEvents'],$_POST['name']);
         echo json_encode($events);
     }
     if($_POST['action'] == 'getPopulare'){
@@ -116,7 +147,15 @@ if(isset($_POST['action'])){
     if($_POST['action'] == 'submitFeedback'){
         $dbUtils->submitFeedback($_POST['name'],$_POST['mail'],$_POST['page'],$_POST['msg'],$_POST['rating']);
     }
+    if($_POST['action'] == 'getUsersLeague'){
+        echo json_encode($dbAdmin->getUsersLeagues($_POST['userid']));
+    }
+    if($_POST['action'] == 'saveSettings'){
+        echo json_encode($dbAdmin->saveSettings($_POST['userid'],stripslashes($_POST['settings'])));
+    }
+    if($_POST['action'] == 'changePassword'){
+        echo json_encode($dbAdmin->changePassword($_POST['userid'],$_POST['password']));
+    }
 }
-
 
 ?>

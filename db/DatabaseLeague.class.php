@@ -7,6 +7,11 @@ class DatabaseLeague {
     public function getLeagueInfo($leagueid,$teamid,$season)
     {
         DatabaseUtils::setLeagueHit($leagueid);
+        $teamids = DatabaseLeague::getCustomLeagueTeams($leagueid);
+        if(!empty($teamids)){
+            $teamid = implode(" , ", $teamids);
+            $leagueid = 0;
+        }
         $events = array (
             'lastupdate' => DatabaseUtils::getLastUpdate($leagueid,$season),
             'yellow' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,2,$season),
@@ -20,14 +25,14 @@ class DatabaseLeague {
             'owngoal' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,9,$season),
             'cleansheet' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,12,$season),
             'minutes' => DatabaseTeam::getPlayingMinutesJSON($teamid,$leagueid,$season),
-            'minutesbench' => DatabaseTeam::getPlayingMinutesBenchJSON($teamid,$leagueid,$season),
-            'topscorer' => DatabaseTeam::getEventInfoJSON(0, $leagueid, '4,8', $season),
-            'topscorercount' => DatabaseTeam::getTopscorerCount(0,$leagueid,$season),
-            'hometeam' => DatabaseLeague::getBestHometeam($leagueid, $season),
-            'awayteam' => DatabaseLeague::getBestAwayteam($leagueid, $season),
-            'leaguetable' => DatabaseLeague::getLeagueTable($season, $leagueid),
-            'leaguetablehome' => DatabaseLeague::getLeagueTableHome($leagueid, $season),
-            'leaguetableaway' => DatabaseLeague::getLeagueTableAway($leagueid, $season)
+            'topscorer' => DatabaseTeam::getEventInfoJSON($teamid, $leagueid, '4,8', $season),
+            'topscorercount' => DatabaseTeam::getTopscorerCount($teamid,$leagueid,$season),
+            'hometeam' => DatabaseLeague::getBestHometeam($leagueid, $season, $teamid),
+            'awayteam' => DatabaseLeague::getBestAwayteam($leagueid, $season, $teamid),
+            'leaguetable' => DatabaseLeague::getLeagueTable($season, $leagueid, $teamid),
+            'leaguetablehome' => DatabaseLeague::getLeagueTableHome($leagueid, $season, $teamid),
+            'leaguetableaway' => DatabaseLeague::getLeagueTableAway($leagueid, $season, $teamid),
+            'playingminutes_percentage' => DatabaseUtils::getPlayPercentage($season,$leagueid,$teamid)
          );
         return $events;
     }
@@ -65,7 +70,7 @@ class DatabaseLeague {
         return $data;
     }
     
-    public function getLeagueTable($season, $leagueid)
+    public function getLeagueTable($season, $leagueid, $teamid)
     {
         $orderby = 'points';
         $index = $orderby;
@@ -112,8 +117,13 @@ class DatabaseLeague {
             ON m.`leagueid` = l.`leagueid` 
         WHERE l.`year` = {$season} 
             AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
-            AND l.java_variable IN ( {$leagueid} )
-        GROUP BY m.hometeamid 
+            AND l.java_variable IN ( {$leagueid} ) ";
+       
+            if($teamid != 0){
+                $q .= " AND  m.hometeamid IN (".$teamid.")  ";
+            }  
+
+            $q .= " GROUP BY m.hometeamid 
         ORDER BY points DESC,
             mf DESC) AS home JOIN 
         (SELECT 
@@ -133,13 +143,17 @@ class DatabaseLeague {
             ON t.teamid = m.awayteamid 
             JOIN leaguetable l 
             ON m.`leagueid` = l.`leagueid` 
-        WHERE l.`year` = {$season} AND l.`java_variable` IN ( {$leagueid} )
-            AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
+        WHERE l.`year` = {$season} AND l.`java_variable` IN ( {$leagueid} ) ";
+        
+        if($teamid != 0){
+            $q .= " AND m.awayteamid IN (".$teamid.") ";
+        }
+        
+        $q .= " AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
         GROUP BY m.awayteamid 
         ORDER BY points DESC,
             mf DESC) away ON home.teamid = away.teamid GROUP BY teamid ORDER BY $orderby DESC, mf DESC, goals DESC LIMIT $limit";
-        //echo $q;
-         $data = array();
+        $data = array();
        
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -159,13 +173,14 @@ class DatabaseLeague {
         }
         return $data;
     }
-    public function getLeagueTableHome($leagueid,$season)
+    
+    public function getLeagueTableHome($leagueid,$season,$teamid)
     {
-        return DatabaseLeague::getBestTeam('hometeam',$leagueid,$season,0,20);
+        return DatabaseLeague::getBestTeam('hometeam',$leagueid,$season,$teamid,20);
     }
-    public function getLeagueTableAway($leagueid,$season)
+    public function getLeagueTableAway($leagueid,$season,$teamid)
     {
-        return DatabaseLeague::getBestTeam('awayteam',$leagueid,$season,0,20);
+        return DatabaseLeague::getBestTeam('awayteam',$leagueid,$season,$teamid,20);
     }  
     
     public function getBestTeam($team,$leagueid,$season,$teamid = 0, $limit = 1)
@@ -184,13 +199,13 @@ class DatabaseLeague {
             $conceded = 'm.homescore';
         }
         else{
-            echo 'not supported ';
+            echo $team . ' not supported ';
             return;
         }
         
         $orderby = 'points';
         $index = $orderby;
-        if(($leagueid == 0 || $leagueid == '3,4,5,6') && $teamid == 0){
+        if($leagueid == 0 || $leagueid == '3,4,5,6'){
             $orderby = 'pointavg DESC, played';
             $index = 'pointavg';
         }
@@ -213,14 +228,12 @@ class DatabaseLeague {
         "JOIN leaguetable l ON m.`leagueid` = l.`leagueid`  " .
         "WHERE l.`year` = {$season}  " .
         ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
-        ($teamid == 0 ? ' ' : ' AND t.teamid = '.$teamid.' ') .
+        ($teamid == 0 ? ' ' : ' AND t.teamid IN ('.$teamid.' ) ') .
         "AND m.`result` NOT REGEXP '- : -|(Utsatt)' " .
         "GROUP BY {$team} " .
         "" .
         ") as tabell 
         ORDER BY $orderby DESC, mf DESC LIMIT {$limit}";
-        
-        //echo $q;
         
         $data = array();   
             
@@ -253,13 +266,14 @@ class DatabaseLeague {
         return DatabaseLeague::getBestTeam('awayteam',0,$season,$teamid);
     }
 
-    public function getBestHometeam($leagueid,$season)
+    public function getBestHometeam($leagueid,$season,$teamid)
     {
-        return DatabaseLeague::getBestTeam('hometeam',$leagueid,$season);
+        return DatabaseLeague::getBestTeam('hometeam',$leagueid,$season,$teamid);
     }
-    public function getBestAwayteam($leagueid,$season)
+
+    public function getBestAwayteam($leagueid,$season,$teamid)
     {
-        return DatabaseLeague::getBestTeam('awayteam',$leagueid,$season);
+        return DatabaseLeague::getBestTeam('awayteam',$leagueid,$season,$teamid);
     } 
     
     public function getAvereageEventLeague($eventtype,$leagueid,$year,$groupby)
@@ -287,5 +301,27 @@ class DatabaseLeague {
            
         }
         return $average;  
+    }
+    public function getCustomLeagueTeams($leagueid)
+    {
+        $q = "SELECT teamid FROM league_to_team where leagueid IN ( " . $leagueid. ")";
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = $row['teamid'];
+        }
+        return $data;
+    }
+    public function isCustomLeague($leagueid)
+    {
+        $q = "SELECT teamid FROM league_to_team where leagueid IN ( " .$leagueid. ")";
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = $row['teamid'];
+        }
+        return !empty($data);
     }
 }

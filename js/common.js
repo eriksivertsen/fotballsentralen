@@ -37,12 +37,31 @@ function selectSuspendedLeague()
 function selectTotalEvents()
 {
     leagueidselected = $('#allEventsSelect').val();
+    $('#leagueselect').val(leagueidselected);
     if(eventselected == 11){
         getTotalPlayerMinutes();
     }else{
         selectEvents();
     }
 }
+
+function setLeagueSelected(){
+    leagueidselected = $('#scope_league').val();
+}
+
+function selectLeague()
+{
+    if(!allowClicks){
+        return;
+    }
+    leagueidselected = $('#leagueselect').val();
+    if(leagueidselected == 0){
+        getTeam(0,0);
+    }else{
+        getTeam(leagueidselected);
+    }
+}
+
 
 function selectEvents(){
     if($('#playerradio').is(':checked')){
@@ -82,11 +101,6 @@ function selectSeason()
     }
     if($('#playerminutes').is(":visible")){
         getTotalPlayerMinutes();
-    }
-}
-function setLastVisit(last_visit){
-    if(lastVisit == undefined){
-        lastVisit = last_visit;
     }
 }
 function setSeason(season_){
@@ -451,6 +465,35 @@ function getReferee()
         }
     });
 }
+function getNationalTeam(teamid)
+{
+    if(!allowClicks){
+        return;
+    }
+    teamidselected = teamid;    
+    window.location.hash = '/'+season+'/nationalteam/'+teamid;
+    $('#feedback_page').val('Landslagsversikt');
+    startLoad();
+    updateBreadcrumbSpecific('Landslag','',getNationalTeamName(teamid),'getNationalTeam('+teamid+')');
+    $.ajax({
+        type: "POST",
+        url: "receiver.php",
+        dataType: "json",
+        timeout: timeout,
+        data: {action: "getNationalTeam", teamid: teamid, season: season},
+        error: function () {
+            stopLoad()
+        },
+        success: function(json) {
+            var array = json;
+            $('#nationalteamname').html('Norge '+getNationalTeamName(teamid));
+            setNationalTeamLogo($('#nationalteam_logo'),teamid);
+            updateTeamPlayers('national_teamplayerinfo',array.players);
+            stopLoad();
+            $('#nationalteam').show();
+        }
+    }); 
+}
 function getRefereeId(refereeid)
 {
     if(!allowClicks){
@@ -603,7 +646,6 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
             $('#breadcrumbs').append('<li><a onclick="getTeam('+getAndreDiv4()+',0)">Avdeling 4</a></li>');
             document.title = "2.divisjon avd 4 | " + title;
         }
-        leagueidselected = leagueidfound;
         $('#breadcrumbs').append('<li><a onclick="getTeam(0,'+teamidfound+')">'+teamname+'</a></li>');
         $('#teamname').html(teamname);
 
@@ -659,7 +701,6 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
             $('#breadcrumbs').append('<li><a href="#" onclick=getTeam('+getAndreDiv4()+',0)">Avdeling 4</a></li>');
             document.title = "2.divisjon avd 4 | " + title;
         }
-        leagueidselected = leagueid;
         $("#breadcrumbs").breadcrumbs("home");
     }
     
@@ -680,6 +721,14 @@ function getTotalPlayerMinutes(){
     }
     eventselected = 11;
     startLoad();
+    window.location.hash = '/'+season+'/events/'+eventselected;
+    if(leagueidselected == undefined){
+        leagueidselected = 0;
+    }
+    $('#allEventsSelectType').val(eventselected);
+    $('#allEventsSelect').val(leagueidselected);
+    $('#leagueselect').val(leagueidselected);
+    
     
     if(leagueidselected == 0){
         updateBreadcrumbSpecific('Norge', 'getTeam(0,0)', 'Spilleminutter', 'getTotalPlayerMinutes()');
@@ -705,6 +754,7 @@ function getTotalPlayerMinutes(){
             var array = json;
             $('#playerminutes_table').empty();
             $('#playerminutes_table').append('<caption class="tableheader" onclick="getTotalPlayerMinutes()">Spilleminutter&nbspi&nbsp'+ getLeagueName(leagueidselected)+',&nbsp' + season+'</caption>');
+            $('#playerminutes_table').append('<thead ><tr><td><b>Spiller<b></td><td><b>Lag<b></td><td><b>Min<b></td></tr></thead>');
             for (var i=0; i<array.length; i++) {
                 
                 $('#playerminutes_table').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
@@ -720,7 +770,6 @@ function getTotalPlayerMinutes(){
             $('#events').show();
         }
     });
-    
 }
 
 function getEventsTotal(eventtype,leagueid)
@@ -730,6 +779,7 @@ function getEventsTotal(eventtype,leagueid)
     }
     $('#allEventsSelectType').val(eventtype);
     $('#allEventsSelect').val(leagueid);
+    $('#leagueselect').val(leagueid);
     
     leagueidselected = leagueid;
     eventselected = eventtype;
@@ -740,6 +790,11 @@ function getEventsTotal(eventtype,leagueid)
     if(eventtype == 10){
         // topscorer hack
         eventtype = '4,8';
+    }
+    if(eventtype == 50 || eventtype == 60 || eventtype == 80){
+        $('#teamradio').prop('disabled',true);
+    }else{
+        $('#teamradio').prop('disabled',false);
     }
     
     $('#playerradio').prop('checked',true);
@@ -768,12 +823,10 @@ function getEventsTotal(eventtype,leagueid)
             stopLoad()
         },
         success: function(json) {
-            
             var array = json;
-            
             $('#allEvents').empty();
-            
             $('#allEvents').append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueid+')">'+tableheader+'&nbspi&nbsp'+ getLeagueName(leagueid)+',&nbsp' + season+'</caption>');
+            $('#allEvents').append('<thead ><tr><td><b>Spiller<b></td><td><b>Lag<b></td><td><b>Antall<b></td></tr></thead>');
             for (var i=0; i<array.length; i++) {
                 $('#allEvents').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
                     '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
@@ -782,6 +835,8 @@ function getEventsTotal(eventtype,leagueid)
             stopLoad();
             $('#allEventsSelectType').show();
             $('#allEventsSelect').show();
+            $('#label_event').show();
+            $('#label_league').show();
             $('#allEvents').show();
             $('#events').show();
             $('#radio').show();
@@ -795,12 +850,12 @@ function getEventsTotalTeam(eventtype, leagueid)
     }
     eventselected = eventtype;
     leagueidselected = leagueid;
-    
     window.location.hash = '/'+season+'/eventsteam/'+eventtype;
     $('#feedback_page').val('Toppliste lag ' + eventtype);
     
     $('#allEventsSelectType').val(eventtype);
     $('#allEventsSelect').val(leagueid);
+    $('#leagueselect').val(leagueid);
     
     if(eventtype == 10){
         eventtype = '4,8';
@@ -845,6 +900,8 @@ function getEventsTotalTeam(eventtype, leagueid)
             $('#allEvents').show();
             $('#events').show();
             $('#radio').show();
+            $('#label_event').show();
+            $('#label_league').show();
         }
     });
 }
@@ -857,13 +914,12 @@ function getCount(value)
     }
 }
 
-function updateTeamPlayers(teamidarray, dangerlistarray)
+function updateTeamPlayers(teamidarray, dangerlistarray, winarray)
 {
-    
     var array = teamidarray;
     $('#teamplayerinfo').empty();    
     $('#teamplayerinfo').show(); 
-    $('#teamplayerinfo').append('<thead><th>Nr</th><th>Navn</th><th>Spilleminutter&nbsp&nbsp&nbsp</th><th>Fra&nbspstart&nbsp&nbsp&nbsp</th><th>Byttet&nbsput&nbsp&nbsp&nbsp</th><th>Byttet&nbspinn&nbsp&nbsp&nbsp</th><th>Mål&nbsp&nbsp&nbsp</th><th>Straffemål&nbsp&nbsp&nbsp</th><th>Selvmål&nbsp&nbsp&nbsp</th><th>Gule&nbspkort&nbsp&nbsp&nbsp</th><th>Røde&nbspkort&nbsp&nbsp&nbsp</th></thead>');
+    $('#teamplayerinfo').append('<thead><th>Nr</th><th>Navn</th><th>Spilleminutter&nbsp&nbsp&nbsp</th><th>Fra&nbspstart&nbsp&nbsp&nbsp</th><th>Byttet&nbsput&nbsp&nbsp&nbsp</th><th>Byttet&nbspinn&nbsp&nbsp&nbsp</th><th>Mål&nbsp&nbsp&nbsp</th><th>Straffemål&nbsp&nbsp&nbsp</th><th>Selvmål&nbsp&nbsp&nbsp</th><th>Gule&nbspkort&nbsp&nbsp&nbsp</th><th>Røde&nbspkort&nbsp&nbsp&nbsp</th><th>Seiere&nbsp&nbsp&nbsp</th></thead>');
     $('#teamplayerinfo').append('<tbody>');
 
     var players_used = 0;
@@ -876,6 +932,8 @@ function updateTeamPlayers(teamidarray, dangerlistarray)
     var subbedin = 0;
     var subbedoff = 0;
     var owngoals = 0;
+    var totalPercentage = 0;
+    var totalWinCount = 0;
 
     for (var i=0; i<array.length; i++) {
         
@@ -894,7 +952,17 @@ function updateTeamPlayers(teamidarray, dangerlistarray)
         if(array[i].minutesplayed > 0){
             players_used++;
         }
-
+        var winpercentage = '-';
+        for(var j=0;j<winarray.length;j++){
+            if(winarray[j].playerid == array[i].playerid){
+                winpercentage = winarray[j].percentage;
+                totalPercentage += parseFloat(winpercentage);
+                winpercentage += '%';
+                totalWinCount++;
+                break;
+            }
+        }
+        
         var img = '<img src="images/events/yellowtiny.png" style="margin-left:3px;" title="Må sone karantene ved neste gule kort"></img>';
         $('#teamplayerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
             '<td>'+array[i].shirtnumber+'</td>'+
@@ -908,6 +976,7 @@ function updateTeamPlayers(teamidarray, dangerlistarray)
             '<td>'+array[i].owngoals+'</td>'+
             '<td>'+array[i].yellowcards+'</td>'+
             '<td>'+array[i].redcards+'</td>'+
+            '<td>'+winpercentage+'</td>'+
             '</tr>');
 
         goals += parseInt(array[i].goals);
@@ -919,14 +988,16 @@ function updateTeamPlayers(teamidarray, dangerlistarray)
         subbedin += parseInt(array[i].subbedin);
         subbedoff += parseInt(array[i].subbedoff);
         owngoals += parseInt(array[i].owngoals);
-
+       
     }
+    
     $('#teamplayerinfo').append('<tr><td><b>Totalt</b></td><td>&nbsp</td><td><b>'+minutes+'</b></td><td><b>'+start+'</b></td><td><b>'+subbedin+'</b></td><td><b>'+subbedoff+'</b></td>'+
-    '<td><b>'+goals+'</b></td><td><b>'+penalty+'</b></td><td><b>'+owngoals+'</b></td><td><b>'+yellow+'</b></td><td><b>'+red+'</b></td></tr>');
+    '<td><b>'+goals+'</b></td><td><b>'+penalty+'</b></td><td><b>'+owngoals+'</b></td><td><b>'+yellow+'</b></td><td><b>'+red+'</b></td><td><b>'+(totalPercentage/totalWinCount).toFixed(2)+'%</b></td></tr>');
     $('#teamplayerinfo').append('</tbody>');
     $('#teamplayerinfo').tablesorter({widgets: ['zebra']});
     $('#team_players_used').html(players_used);
 }
+
 function selectPlayerTeam(){
     getPlayerTeam(playeridselected, $('#teamSelect').val());
 }
@@ -976,6 +1047,7 @@ function getPlayerFull(playerid,fromString,teamid)
                 if(teamid != 0){
                     $('#teamSelect').val(teamid);
                 }
+                $('#player_label').show();
                 $('#teamSelect').show();
             }
             
@@ -1092,6 +1164,8 @@ function getPlayerFull(playerid,fromString,teamid)
                 $('#similarplayers').hide();
             }
             $('#playerinfo').show();
+            $('#next').show();
+            $('#previous').show();
             getEventRankPlayer(json);  
             stopLoad();
         }
@@ -1127,12 +1201,17 @@ function getLeagueInfo(leagueid,teamid)
 {
     startLoad();
     leagueidselected = leagueid;
+    if(leagueid == 0){
+        $('#info_click').show();
+    }
     if(leagueid == getAndreDivAll()){
         //history.pushState("", "Title", 'index.php?season='+season+'&league_id='+getAndreDiv());
         window.location.hash = '/'+season+'/league/'+getAndreDiv();
         $('#news_'+getAndreDiv()).show();
+        $('#leagueselect').val(getAndreDiv());
     }else{
         //history.pushState("", "Title", 'index.php?season='+season+'&league_id='+leagueidselected);
+        $('#leagueselect').val(leagueidselected);
         window.location.hash = '/'+season+'/league/'+leagueid;
         $('#news_'+leagueidselected).show();
     }
@@ -1167,7 +1246,6 @@ function getLeagueInfo(leagueid,teamid)
                 $('#league_awayteam').html(getTeamLink(awayteam.teamid,awayteam.teamname + ' (' + awayteam.wins + '-' + awayteam.draws + "-"+awayteam.loss+') - ' +awayteam.goals+'-'+awayteam.conceded));
                 setTeamLogo($('#league_awayteam_logo'),awayteam.teamid);
             }
-            
             updateLeagueTable(json.leaguetable,$('#leaguetable'),'Tabell');
             updateLeagueTable(json.leaguetablehome,$('#leaguetablehome'),'Hjemmetabell');
             updateLeagueTable(json.leaguetableaway,$('#leaguetableaway'),'Bortetabell');
@@ -1180,13 +1258,17 @@ function getLeagueInfo(leagueid,teamid)
             updateEventTable(json.subout,$('#subsout'),7);
             updateEventTable(json.subin,$('#subsin'),6);
             updateEventTable(json.yellow, $('#yellowcard'), 2);
-            updatePlayerMinutes(json.minutes);
+            updatePlayerMinutes(json.minutes, $('#playingminutes'));
             
             updateBreadcrumb(leagueid, teamid, null);
             stopLoad();
+            $('#event_table').show();
+            $('#events').show();
+            $('#eventoverview').show();
         }
     }); 
 }
+
 function getTeamInfoSearch(teamid){
     getTeamInfoFull(teamid,'search');
 }
@@ -1199,7 +1281,6 @@ function getTeamInfoFull(teamid,fromPage)
         return;
     }
     teamidselected = teamid;    
-   // history.pushState("", "Title", 'index.php?season='+season+'&team_id='+teamidselected);
     window.location.hash = '/'+season+'/team/'+teamid;
     $('#feedback_page').val('Lagoversikt');
     startLoad();
@@ -1223,9 +1304,11 @@ function getTeamInfoFull(teamid,fromPage)
             
             updateTeamInfoTable(array);
             updateBreadcrumb(0, teamid, array.teamtoleague);
+            
             updateLeagueTable(array.leaguetable,$('#team_leaguetable'),array.teamtoleague[0].leaguename, teamid);
             
             $('#rankingteam').append('<h4>Lagranking i Norge</h4>');
+            
             updateTeamRankList(array.yellowred,1); 
             updateTeamRankList(array.red,3); 
             updateTeamRankList(array.penalty,8);
@@ -1243,23 +1326,24 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.subin,6);
             updateTeamRankList(array.subout,7);
             updateTeamRankList(array.cleansheetrank, 12);
-
-            updateTeamPlayers(array.teamplayer, array.dangerlist);
+            updateTeamPlayers(array.teamplayer, array.dangerlist, array.winpercentage);
             if($('#season').val() == '2013'){
                 updateLatestMatches(array.latestmatches, array.last5lineup);
                 updateNextMatches(array.nextmatches);
             }
+            
             updateAllMatches(array.allmatches, array.goalscorers, teamid);
             updateGoalPie(array.scoringminute,$("#scoringminute"), 'scored');
             updateGoalPie(array.concededminute, $("#concededminute"), 'conceded');
-           
             stopLoad();
-            
             $('#team').show();
+            $('#next').show();
+            $('#previous').show();
         }
     }); 
     //history.href = "?team_id="+teamid;
 }
+
 function getPerMatch(events, match)
 {
     if(events != undefined && match != undefined)
@@ -1321,11 +1405,7 @@ function updateLeagueTable(leaguetable, tablename, tableheader, selectedteamid)
 {
     tablename.empty();
     tablename.append('<caption class="tableheader">'+tableheader+'</caption>');
-    if(leagueidselected == 0){
-        tablename.append(getTableHeader(["#","Lag","S","V","U","T","Mål","+/-","Snitt"]));
-    }else{
-        tablename.append(getTableHeader(["#","Lag","S","V","U","T","Mål","+/-","P"]));
-    }
+    tablename.append(getTableHeader(["#","Lag","S","V","U","T","Mål","+/-","P"]));
     tablename.append('<tbody>');
     var pos = 0;
     for(var key in leaguetable){
@@ -1427,28 +1507,38 @@ function updatePreviewTable(array,team)
     $(prefix + 'secondhalf_g').html(array.scoringpercentagehalfs[0].secondhalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_second+'%)');
     $(prefix + 'secondhalf_c').html(array.concededpercentagehalfs[0].second_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_second+'%)');
 }
-
-function updateEventTable(array,table,eventtype)
+function updateEventTable(array,table,eventtype){
+    updateEventTable(array,table,eventtype,0,false,-1,leagueidselected);
+}
+function updateEventTable(array,table,eventtype,type,edit,scopeeventid,leagueid)
 {
-    var tableheader = getEventFromId(eventtype);
-    table.empty();
-    table.append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueidselected+')">'+tableheader+'</caption><tbody>');
-    table.append('<tr><th style="width: 55%"><th style="width: 36%"><th style="width: 9%"></tr>');
-    for (var i=0; i<array.length; i++) {
-        table.append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
-            '<td style="width:300px;">'+getPlayerLink(array[i].playerid,array[i].playername.toString().substring(0,24))+'</td>'+
-            '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
-            '<td>'+array[i].eventcount+'</td></tr>');
+    if(type == undefined) {
+        type = 0;
     }
-    table.append('</tbody><tfoot><tr></tr></tfoot>');
+    var editTable = '<a href="#" onclick="openGraphEdit(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
+    var closeTable = '<a href="#" onclick="closeTable(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
+    var tableheaderLink = createEventLink(eventtype,type,leagueid);
+    table.empty();
+    table.attr('class','tablesorter playerinfo');
+    table.append('<caption class="tableheader">'+tableheaderLink+(edit ? editTable+closeTable : '')+'</caption><tbody>');
+    for (var i=0; i<array.length; i++) {
+        var string = '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>';
+        if(type == 0) {
+           string += '<td style=max-width:140px;overflow:hidden>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>';
+        }
+        string += '<td style=max-width:100px;overflow:hidden>'+getTeamLink(array[i].teamid,array[i].teamname)+' </td>';
+        
+        if(type == 1){
+            string += '<td> </td>';
+        }
+        string += '<td align=center>'+array[i].eventcount+'</td></tr>';
+        table.append(string);
+    }
     if(array.length == 0){
         table.hide();
     }else{
         table.show();
     }
-    $('#event_table').show();
-    $('#events').show();
-    $('#eventoverview').show();
 }
 function updateGoalPie(array, divplaceholder, scoringtype)
 {
@@ -1582,7 +1672,6 @@ function updateAllMatches(array, scorers, selectedteamid)
             scorerArray[s] += ') ';
             scorerstring += scorerArray[s];
         }
-        
         tablename.append(
             '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
             '<td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
@@ -1599,23 +1688,22 @@ function updateAllMatches(array, scorers, selectedteamid)
     }
 }
 
-
-function updatePlayerMinutes(array)
+function updatePlayerMinutes(array,table)
 {
-    $('#playingminutes').empty();
-    $('#playingminutes').append('<caption class="tableheader" onclick="getTotalPlayerMinutes()">Spilleminutter</caption>');
-    $('#playingminutes').append('<tr><th style="width: 55%"><th style="width: 32%"><th style="width: 13%"></tr>');
-    $('#playingminutes').append('<tbody>');
+    table.empty();
+    table.append('<caption class="tableheader" onclick="getTotalPlayerMinutes()">Spilleminutter</caption>');
+    table.append('<tr><th style="width: 55%"><th style="width: 32%"><th style="width: 13%"></tr>');
+    table.append('<tbody>');
     for (var i=0; i<array.length; i++) {
-        $('#playingminutes').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
+        table.append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
             '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
             '<td>'+array[i].minutesplayed+'</td></tr>');
     }
-    $('#playingminutes').append('</tbody>');
+    table.append('</tbody>');
     if(array.length == 0){
-        $('#playingminutes').hide();
+        table.hide();
     }else{
-        $('#playingminutes').show();
+        table.show();
     }
    
 }
@@ -1641,7 +1729,6 @@ function updateTeamInfoTable(array)
     if(array.length == 0){
         return ;
     }
-   // $('#team_leagueposition').html(array.currentposition + '.plass (totalt) - '+array.currentpositionhome+'.plass (hjemme) - '+array.currentpositionaway+'.plass (borte)');
     
     if(array.realteamid == -1){
         setTeamLogo( $('#team_logo'),array.teamtoleague[0].teamid);
@@ -1657,6 +1744,9 @@ function updateTeamInfoTable(array)
         else if(array.topscorercount > 2){
             $('#team_topscorer').append(' ('+(array.topscorercount-1) +' andre spillere)');
         }
+    }
+    if(array.winpercentage.length != 0){//array.mostminutes[0].playerid
+        $('#team_winpercentage').html(getPlayerLink(array.winpercentage[0].playerid,array.winpercentage[0].playername)+' - '+array.winpercentage[0].percentage+' %');
     }
     if(array.mostminutes.length != 0){//array.mostminutes[0].playerid
         $('#team_minutes').html(getPlayerLink(array.mostminutes[0].playerid,array.mostminutes[0].playername)+' - '+array.mostminutes[0].minutes+' minutter');
@@ -1735,8 +1825,9 @@ function pieHover(event, pos, obj) {
 
 function startLoad()
 {
-    
+    $('#loaderdiv').show();    
     $('#rankingteam').empty(); 
+    $('#scope').hide();
     $('#welcometext').hide();
     $('#events').hide();
     $('#allEvents').hide();
@@ -1765,6 +1856,7 @@ function startLoad()
     $('#player_table').hide();
     $('#league_table').hide();
     $('#player_logo').hide();
+    $('#player_label').hide();
     $('#social').hide();
     $('#suspensionSelect').hide();
     $('#similar').hide();
@@ -1786,7 +1878,10 @@ function startLoad()
     $('#teamSelect').hide();
     $('#allEventsSelect').hide();
     $('#allEventsSelectType').hide();
-    
+    $('#nationalteam').hide();
+    $('#info_click').hide();
+    $('#label_event').hide();
+    $('#label_league').hide();
     
     $("html").css("cursor", "progress");
     spinner = new Spinner(opts).spin();
@@ -1914,6 +2009,9 @@ function updateMatchEvents(array)
                 if(event.eventtype == 8){
                     homeOut += ' (straffe)';
                 }
+                if(event.eventtype == 9){
+                    homeOut += ' (selvmål)';
+                }
             }
             // Home event
             $('#matches_table').append(
@@ -1934,6 +2032,9 @@ function updateMatchEvents(array)
                 awayOut += getPlayerLink(event.playerid,event.playername);
                 if(event.eventtype == 8){
                     awayOut += ' (straffe)';
+                }
+                if(event.eventtype == 9){
+                    awayOut += ' (selvmål)';
                 }
             }
             // Home event
@@ -1956,7 +2057,7 @@ function updateMatchEvents(array)
 function stopLoad()
 {
     $('#social').show();
-    $(window).scrollTop($('#jMenu').position().top)
+    $('#loaderdiv').hide();
     $("html").css("cursor", "default");
     spinner.spin(false);
     allowClicks = true;

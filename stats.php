@@ -23,6 +23,15 @@ $ratings = $db->getRatings();
 
 $printTips = false;
 
+$year = 2013;
+
+$matchArrayPL = $db->getMatchesOneWeekPL();
+foreach($matchArrayPL as $match){
+    $db->printScoringPercentagePL($match['hometeamid'], $match['awayteamid'], $year,$match['homename'],$match['awayname']);
+}
+
+
+
 //$teams = $dbC->getTeamsJSON(2, 2013);
 
 echo '<br/>';
@@ -46,11 +55,12 @@ if($printTips) {
     }
 
     foreach($matchArray as $match){
-        $year = 2013;
         $teamArray = $dbP->getMatchInfo($match['matchid']);
 
         $homeTeam = $dbT->getOverGoals($teamArray['hometeamid'], $year,'home');
         $awayTeam = $dbT->getOverGoals($teamArray['awayteamid'], $year,'away');
+        
+       // $db->printScoringPercentage($match['matchid'],$teamArray['hometeamid'],$teamArray['awayteamid'],$year);
 
         $homeSuspCount = (isset($suspAr[$teamArray['hometeamid']]) ? count($suspAr[$teamArray['hometeamid']]) : 0);
         $awaySuspCount = (isset($suspAr[$teamArray['awayteamid']]) ? count($suspAr[$teamArray['awayteamid']]) : 0);
@@ -84,6 +94,7 @@ if($printTips) {
 
 
 echo 'Latest Observer update: ' . $db->getLatestObserverDate() . ' <br/>';
+echo 'Latest Observer update PL: ' . $db->getLatestObserverDatePL() . ' <br/>';
 echo 'Latest mail sent: ' . $db->getLatestMailSent() . ' <br/>';
 echo 'Latest league update: ' . $db->getLatestLeagueUpdate() . ' <br/>';
 echo 'Earliest crawler start: ' . $db->getEarliestCrawlerStart() . ' <br/>';

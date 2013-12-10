@@ -253,7 +253,7 @@ class DatabasePlayer {
         ) 
         AND l.`year` = {$season}
         AND m.`result` NOT REGEXP '- : -|(Utsatt)' ";
-        
+               
         $result = mysql_query($q2);
         while($row = mysql_fetch_array($result))
         {
@@ -281,11 +281,10 @@ class DatabasePlayer {
         ($teamid == 0 ? '' : ' AND p.teamid = '.$teamid.' ') .
         "AND m.`result` NOT REGEXP '- : -|(Utsatt)'
         AND m.`teamwonid` = p.`teamid`
-        AND START = 1) AS totalmatches_won;
-        ";
+        AND START = 1) AS totalmatches_won";
+        
         $result = mysql_query($q);
-        while($row = mysql_fetch_array($result))
-        {
+        while($row = mysql_fetch_array($result)){
             $percentage = $row['percentage'];
         }
         

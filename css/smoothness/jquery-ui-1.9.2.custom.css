@@ -1,22 +1,46 @@
 body{
-    background: #F0F0F6;
-    font-family: 'Rosario' , 'Verdana' , sans-serif;
+    background: white;
+    font-family: 'Noto Sans', sans-serif;
 }
 a{
     color: black;
 }
-
 li a {
     color: black;
     text-decoration: none;
 }
+
 div.warning{
     color:red;
     width:auto;
 }
+div.top{
+    background:#f5f5f5;
+    height:110px;
+    border-bottom: 2px solid black;
+}
+div.social-buttons{
+    display:inline;
+    float: right;
+    padding: 25px;
+}
+div.nav-buttons{
+    margin-left:50px;
+    display:inline;
+}
+div.settings{
+    float:left;
+    margin-left:50px;
+    display:inline;
+}
+div.home {
+    display:inline;
+    margin-left: 30px;
+    margin-top: 40px;
+    float:left;
+}
 
 div.category {
-    outline: #8dbdd8 10px;
     border-top-style:ridge;
     border-top-width: 1px;
 }
@@ -24,11 +48,19 @@ div.category {
 .ranking {
     font-size: 10pt;
     display:block;
-    background: #8dbdd8;
+}
+
+.scope_header { 
+    border:none;
+    background:#f5f5f5;
+    text-align: center;
+    font-size:14pt;
+    color:#939393;
+    cursor: pointer;
 }
 
 div.infoWindow{
-    
+
     border: 1px solid black;
     display: block; 
     position: absolute; 
@@ -52,7 +84,7 @@ div.loader {
     z-index: 100;
 }
 seasonselect {
-    
+
     background-attachment: scroll;
     background-image: url('images/logos/10.png');
     position: fixed;
@@ -60,7 +92,7 @@ seasonselect {
     z-index: 100;
 }
 div.menubody {
-   -moz-box-shadow:
+    -moz-box-shadow:
         inset 7px 0 7px -7px #777,
         inset -7px 0 7px -7px #777;
     -webkit-box-shadow:
@@ -71,21 +103,16 @@ div.menubody {
         inset -7px 0 7px -7px #777;
     margin-left: 150px;
     margin-right: 150px;
-    background-color: #8dbdd8;
+    background-color: #f5f5f5;
     padding:10px;
     display:block;
     color:#fff;
     text-transform:uppercase;
     cursor:pointer;
     font-size:12px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-div.player {
-    background-color: #8dbdd8;
 }
 div.indexbody {
-   -moz-box-shadow:
+    -moz-box-shadow:
         inset 7px 0 7px -7px #777,
         inset -7px 0 7px -7px #777;
     -webkit-box-shadow:
@@ -99,7 +126,7 @@ div.indexbody {
     margin-right: 150px;
     margin-bottom: 50px;
     min-height: 90%;
-    background-color: #8dbdd8;
+    background-color: #f5f5f5;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
@@ -107,26 +134,44 @@ div.indexbody {
 /* tables */
 table.tablesorter{
     font-size: 8pt;
-    margin: 20px;
+    margin: 17px;
     text-align: left;
     overflow: hidden;
     overflow-x: hidden;
     overflow-y: hidden;
-    display: inline-block;
-    width: 290px;
+    width:300px;
     border-collapse:collapse;
     table-layout: fixed;
     vertical-align:top;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+    border-left: 1px solid;
 }
 table.playerinfo {
     table-layout: auto;
+    display: inline-block;
     font-size: 8pt;
-    margin: 20px;
+    margin: 17px;
     overflow: visible;
     text-align: left;
-    display: inline-block;
+    border-collapse:collapse;
+    max-width: 300px;
+}
+
+table.emptytable {
+    table-layout: auto;
+    display: inline-table;
+    font-size: 8pt;
+    margin: 17px;
+    overflow: visible;
     border-collapse:collapse;
     width: 300px;
+    height: 240px;
+    background: #e8e8e8;
+    vertical-align:top;
+    text-align: center;
+    
 }
 
 table.matchinfo {
@@ -134,14 +179,87 @@ table.matchinfo {
     margin: 20px;
     text-align: left;
     overflow: auto;
-    display: inline-block;
+    display: inline-table;
     width: 400px;
     border-collapse:collapse;
     table-layout: auto;
 }
 
+.search {
+    padding:3px;
+    margin: 3px;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow: 0 2px 0 #ccc, 0 -1px #fff inset;
+    -moz-box-shadow: 0 2px 0 #ccc, 0 -1px #fff inset;
+    box-shadow: 0 2px 0 #ccc, 0 -1px #fff inset;
+    background: #f8f8f8;
+    color:black;
+    width:158px;
+    border:none;
+    outline:none;
+    display: inline-block;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+}
+
+
+/* The CSS */
+select {
+    padding:3px;
+    margin: 3px;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow: 0 2px 0 #ccc, 0 -1px #fff inset;
+    -moz-box-shadow: 0 2px 0 #ccc, 0 -1px #fff inset;
+    box-shadow: 0 2px 0 #ccc, 0 -1px #fff inset;
+    background: #f8f8f8;
+    color:black;
+    border:none;
+    outline:none;
+    display: inline-block;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    cursor:pointer;
+}
+
+
+/* Targetting Webkit browsers only. FF will show the dropdown arrow with so much padding. */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select {padding-right:18px}
+}
+
+.selectlabel {position:relative}
+.selectlabel:after {
+    content:'<>';
+    font:11px "Consolas", monospace;
+    color:#aaa;
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -ms-transform:rotate(90deg);
+    transform:rotate(90deg);
+    right:8px; top:2px;
+    padding:0 0 2px;
+    border-bottom:1px solid #ddd;
+    position:absolute;
+    pointer-events:none;
+}
+.selectlabel:before {
+    content:'';
+    right:6px; top:0px;
+    width:20px; height:20px;
+    background:#f8f8f8;
+    position:absolute;
+    pointer-events:none;
+    display:block;
+}
+
 table.tablesorter thead tr th, table.tablesorter tfoot tr th, table.matchinfo tfoot tr th {
-    background-color: #e6EEEE;
+    background-color: #b5b5b5;
     border-bottom: 1px solid black;
     font-size: 8pt;
     padding: 4px;
@@ -160,12 +278,16 @@ table.tablesorter tbody td {
     overflow: hidden;
     white-space: nowrap;
 }
+table.playerinfo thead td {
+    padding: 4px;
+    border-bottom: 1px solid black;
+}
 table.tablesorter tbody tr.odd td {
-    background-color: #F0F0FF;
+    background-color: #e8e8e8;
     /*#F0F0F6*/
 }
 table.tablesorter tbody tr.selected td  {
-    background-color: #FFFFAA;
+    background-color: #f0e3b4;
     /*#F0F0F6*/
 }
 table.tablesorter thead tr .headerSortUp {
@@ -175,13 +297,11 @@ table.tablesorter thead tr .headerSortDown {
     background-image: url(desc.gif);
 }
 table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
-    background-color: #8dbdd8;
+    background-color: #b5b5b5;
 }
 caption.tableheader {
     font-size: 12px;
     color: black;
-    cursor: pointer;
-    /*background-color:  #d8d8d8;*/
     border-top-left-radius: 2em;
     border-top-right-radius: 2em;
 }
@@ -195,7 +315,7 @@ div.categoryheader {
 }
 
 #jMenu {
-    display:table;
+    display:inline;
     margin:0;
     padding:0
 }
@@ -205,26 +325,29 @@ div.categoryheader {
 /********************/
 #jMenu li {
     display:table-cell;
-    background-color:#8dbdd8;
+    background-color:#f5f5f5;
     margin:0;
     float:left;
 }
 #jMenu li a {
-    padding:10px;
+    padding:12px;
+    padding-top:18px;
     padding-left: 24px;
     display:block;
     background-color: transparent;
-    color:#fff;
+    color:black;
     text-transform:uppercase;
     cursor:pointer;
     font-size:12px;
 }
 
+
+
 /*******************/
 /** second niveau **/
 /*******************/
 #jMenu li ul {
-    
+    color:black;
     display:none;
     position:absolute;
     padding:0;
@@ -238,7 +361,7 @@ div.categoryheader {
     padding:0 px;
 }
 #jMenu li ul li.arrow {
-    background:#8dbdd8 url('arrow_down.png') no-repeat center center;
+    background:#f5f5f5 url('arrow_down.png') no-repeat center center;
     height:6px;
     padding:0;
     border-bottom:none;
@@ -247,6 +370,7 @@ div.categoryheader {
 #jMenu li ul li a {
     text-align: center;
     font-size:11px;
+    color: black;
     text-transform:none;
     padding:7px;
     display:block;
@@ -254,106 +378,106 @@ div.categoryheader {
     border-bottom:1px solid transparent;
 }
 #jMenu li ul li a.isParent {
-    background:#8dbdd8 url('arrow_right.png') no-repeat right center;
+    background:#f5f5f5 url('arrow_right.png') no-repeat right center;
 }
 #jMenu li ul li hover {
-    background-color:#8dbdd8;
+    background-color:#f5f5f5;
     border-top:1px solid #322f32;
     border-bottom:1px solid #322f32;
 }
 
 .breadcrumb_container
 {
-	display:block;
-	height:34px;
-	margin:0px;
-	padding:0px;
-	font-size:10pt;
-	color:#404040;
+    display:block;
+    height:34px;
+    margin:0px;
+    padding:0px;
+    font-size:10pt;
+    color:#404040;
 }
 
 .breadcrumb_e
 {
-	height:34px;
-	line-height: 34px;
-	display:inline-block;
-	float:left;
-	min-width:4px;
-	background-repeat:no-repeat;
-	background-image:url('breadcrumbs/bc-sprite-full.png');
+    height:34px;
+    line-height: 34px;
+    display:inline-block;
+    float:left;
+    min-width:4px;
+    background-repeat:no-repeat;
+    background-image:url('breadcrumbs/bc-sprite-full.png');
 }
 
 .breadcrumb_icon_home
 {
-	width:15px;
-	height:17px;
-	background-position:0px -67px;
-	display:block;
-	margin-top:7px;
+    width:15px;
+    height:17px;
+    background-position:0px -67px;
+    display:block;
+    margin-top:7px;
 }
 
 .breadcrumb_icon_search
 {
-	width:18px;
-	height:17px;
-	background-position:-16px -67px;
-	display:block;
-	margin-top:7px;
+    width:18px;
+    height:17px;
+    background-position:-16px -67px;
+    display:block;
+    margin-top:7px;
 }
 
 .breadcrumb_item
 {
-	background-image:url('breadcrumbs/bc-mid.png');
-	background-repeat:repeat-x;
-	padding:0px 8px 0px 8px;
-	cursor:pointer;
+    background-image:url('breadcrumbs/bc-mid.png');
+    background-repeat:repeat-x;
+    padding:0px 8px 0px 8px;
+    cursor:pointer;
 }
 
 .breadcrumb_item_short
 {
-	padding:0px 4px 0px 4px;
+    padding:0px 4px 0px 4px;
 }
 
 .breadcrumb_item_hover
 {
-	background-position:0px -34px;
+    background-position:0px -34px;
 }
 
 .breadcrumb_divider
 {
-	width:24px;
-	background-position: -28px 0px;
+    width:24px;
+    background-position: -28px 0px;
 }
 
 .breadcrumb_divider_right
 {
-	background-position: -86px 0px;
+    background-position: -86px 0px;
 }
 
 .breadcrumb_divider_left
 {
-	background-position: -86px -34px;
+    background-position: -86px -34px;
 }
 
 .breadcrumb_end
 {
-	width:24px;
-	background-position: -57px 0px;
+    width:24px;
+    background-position: -57px 0px;
 }
 
 .breadcrumb_end_hover
 {
-	background-position: -57px -34px;
+    background-position: -57px -34px;
 }
 
 .breadcrumb_before
 {
-	width:17px;
+    width:17px;
 }
 
 .breadcrumb_before_hover
 {
-	background-position: 0px -34px;
+    background-position: 0px -34px;
 }
 
 
@@ -411,16 +535,16 @@ div.categoryheader {
 .ui-accordion .ui-accordion-header .ui-accordion-header-icon { position: absolute; left: .5em; top: 50%; margin-top: -8px; }
 .ui-accordion .ui-accordion-content { padding: 1em 2.2em; border-top: 0; overflow: auto; zoom: 1; }
 .ui-autocomplete {
-	position: absolute;
-	top: 0;
-	left: 0;
-	cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
 }
 .ui-menu-item {
-     background-color:white;
+    background-color:white;
 }
 .ui-menu {
-     background-color:grey;
+    background-color:grey;
 }
 
 /* workarounds */
@@ -546,7 +670,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-progressbar { height:2em; text-align: left; overflow: hidden; }
 .ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; }.ui-slider { position: relative; text-align: left; }
 .ui-slider .ui-slider-handle { position: absolute; z-index: 2; width: 1.2em; height: 1.2em; cursor: default; }
-.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; }
+.ui-slider .ui-slider-range { position: absolute; z-index: 1; font-size: .7em; display: block; border: 0; background-position: 0 0; background: #626262 }
 
 .ui-slider-horizontal { height: .8em; }
 .ui-slider-horizontal .ui-slider-handle { top: -.3em; margin-left: -.6em; }
@@ -568,8 +692,8 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 
 /* TR overrides */
 .ui-spinner .ui-icon-triangle-1-s {
-	/* need to fix icons sprite */
-	background-position:-65px -16px;
+    /* need to fix icons sprite */
+    background-position:-65px -16px;
 }
 .ui-tabs { position: relative; padding: .2em; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
 .ui-tabs .ui-tabs-nav { margin: 0; padding: .2em .2em 0; }
@@ -580,16 +704,16 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-tabs .ui-tabs-nav li a, .ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
 .ui-tabs .ui-tabs-panel { display: block; border-width: 0; padding: 0.1em 0.1em; background: none; }
 .ui-tooltip {
-	padding: 8px;
-	position: absolute;
-	z-index: 9999;
-	max-width: 300px;
-	-webkit-box-shadow: 0 0 5px #aaa;
-	box-shadow: 0 0 5px #aaa;
+    padding: 8px;
+    position: absolute;
+    z-index: 9999;
+    max-width: 300px;
+    -webkit-box-shadow: 0 0 5px #aaa;
+    box-shadow: 0 0 5px #aaa;
 }
 /* Fades and background-images don't work well together in IE6, drop the image */
 * html .ui-tooltip {
-	background-image: none;
+    background-image: none;
 }
 body .ui-tooltip { border-width: 2px; }
 

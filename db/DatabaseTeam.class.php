@@ -55,13 +55,15 @@ class DatabaseTeam {
             'mostusedplayers' => self::getMostUsedLineup($teamid, $season),
             'lastlineup' => self::getLineup($teamid, $season, $latestMatches[0]['matchid']),
             'last5lineup' => self::getLastFiveLineups($teamid,$season,$latestMatches),
-            'leaguetable' => DatabaseLeague::getLeagueTable($season, $teamtoleague[0]['leagueid']),
+            'leaguetable' => DatabaseLeague::getLeagueTable($season, $teamtoleague[0]['leagueid'],0),
             'realteamid' => self::getSecondTeamId($teamid),
             'scoringpercentagehalfs' => self::getScoringPercentageHalfs($teamid,$season),
             'scoringhomeaway' => self::getPercentageHomeAway($teamid,$season,'scoring'),
             'concededhomeaway' => self::getPercentageHomeAway($teamid,$season,'conceded'),
             'concededpercentagehalfs' => self::getConcededPercentageHalfs($teamid,$season),
-            'dangerlist' => DatabaseUtils::getDangerListTeam($teamid,$season)
+            'dangerlist' => DatabaseUtils::getDangerListTeam($teamid,$season),
+            'winpercentage' => self::getWinPercentage($teamid,$season),
+            'pointmonth' => DatabaseTeam::getMontlyPoints($teamid,$season)
          );
         return $events;
     }
@@ -115,7 +117,6 @@ class DatabaseTeam {
             
         $result = mysql_query($q);
         $data = array();
-        
         while($row = mysql_fetch_array($result))
         {
             $data[] = array(
@@ -170,7 +171,6 @@ class DatabaseTeam {
                 
         $result = mysql_query($q);
         $data = array();
-        
         while($row = mysql_fetch_array($result))
         {
             $data[] = array(
@@ -255,11 +255,11 @@ class DatabaseTeam {
     public function getLeaguePosition($teamid,$leagueid,$season,$type = 'all')
     {
         if ($type == 'all') {
-            $leaguetable = DatabaseLeague::getLeagueTable($season, $leagueid);
+            $leaguetable = DatabaseLeague::getLeagueTable($season, $leagueid,0);
         } elseif ($type == 'home') {
-            $leaguetable = DatabaseLeague::getLeagueTableHome($leagueid, $season);
+            $leaguetable = DatabaseLeague::getLeagueTableHome($leagueid, $season,0);
         } elseif ($type == 'away') {
-            $leaguetable = DatabaseLeague::getLeagueTableAway($leagueid, $season);
+            $leaguetable = DatabaseLeague::getLeagueTableAway($leagueid, $season,0);
         }
         foreach($leaguetable as $position => $array){
             if($array['teamid'] == $teamid){
@@ -295,7 +295,7 @@ class DatabaseTeam {
         "WHERE eventtype IN (4,8) ".
         "AND l.`year` = {$season} AND e.ignore = 0 " .
         ($leagueid == '0' ? '' : ' AND l.`java_variable` IN ('.$leagueid.') ') .
-        ($teamid == '0' ? '' : ' AND e.teamid = '.$teamid.' ') .
+        ($teamid == '0' ? '' : ' AND e.teamid  IN ('.$teamid.') ') .
         "GROUP BY playerid  " . 
         "HAVING COUNT(*) = ".$topscorerCount;
        
@@ -957,19 +957,25 @@ class DatabaseTeam {
     }
     public function getPlayingMinutesJSON($teamid,$leagueid,$season,$start = 1)
     {
+        if(strpos($teamid, ',') !== false){
+            $limit = true;
+        }else{
+            $limit = false;
+        }
+        
         $q = "SELECT pp.playerid,pp.playername,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played` FROM playtable p " . 
         "JOIN matchtable m ON m.matchid = p.matchid " .
         "JOIN playertable pp ON pp.playerid = p.playerid AND p.teamid = pp.teamid AND pp.year = ". $season . " " . 
         "JOIN teamtable t ON t.teamid = pp.teamid ".
         "JOIN leaguetable l ON m.leagueid = l.leagueid " .
         "WHERE pp.playerid != -1 " .
-        ($teamid == 0 ? '' : ' AND t.teamid = '.$teamid.' ') .
+        ($teamid == 0 ? '' : ' AND t.teamid IN ( '.$teamid.' )') .
         "AND p.start = " . $start. " " .
         ($leagueid == '0' ? '' : ' AND l.java_variable IN ('.$leagueid.') ') .
         "AND l.year = " . $season . "  AND p.ignore = 0 " .
         "GROUP BY p.playerid ".
         "ORDER BY SUM(p.minutesplayed) DESC " .
-        ($teamid == 0 ? ' LIMIT 10  ' : ' ') ;
+        ($teamid == 0 || $limit == 1 ? ' LIMIT 10  ' : ' ') ;
 
         $data = array();
         $result = mysql_query($q);
@@ -995,6 +1001,17 @@ class DatabaseTeam {
         if($eventtype == 12){
             return DatabaseUtils::getCleanSheetsTeam($season,$leagueid);
         }
+        if($eventtype == 70){
+            return DatabaseUtils::getGoalsAsSubstitutes('teamid',$leagueid,$season);
+        }
+        
+        $teamid = 0;
+        $teamids = DatabaseLeague::getCustomLeagueTeams($leagueid);
+        if(!empty($teamids)){
+            $teamid = implode(" , ", $teamids);
+            $leagueid = 0;
+        }
+        
         $q = 
         "SELECT tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
         "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " .$season . " " . 
@@ -1004,7 +1021,8 @@ class DatabaseTeam {
         "WHERE e.eventtype IN ( ".$eventtype . ")" .
         "AND e.playerid != -1 ".
         "AND l.year = "  . $season .  " "  .
-        ($leagueid == '0' ? '' : ' AND l.java_variable IN ('.$leagueid.') ')  .      
+        ($leagueid == '0' ? '' : ' AND l.java_variable IN ('.$leagueid.') ')  .     
+        ($teamid == '0' ? '' : ' AND e.teamid IN ('.$teamid.') ')  .     
         "AND e.ignore = 0 " .    
         "GROUP BY e.teamid " .
         "ORDER BY `event count` DESC ".
@@ -1031,59 +1049,64 @@ class DatabaseTeam {
         if($eventtype == 12){
             return DatabaseUtils::getCleanSheetsPlayer($season,$teamid,$leagueid);
         }
+        if(strpos($teamid, ',') !== false){
+            $limit = true;
+        }else{
+            $limit = false;
+        }
         $q = 
-        "SELECT t.playerid,t.playername,tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
+        "SELECT t.playerid,t.playername,tt.teamid,tt.teamname,COUNT(*) AS `event_count`, eventtype FROM eventtable e " .
         "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " . $season . " " .
         "JOIN teamtable tt ON tt.teamid = t.teamid " .
         "JOIN matchtable m ON e.matchid = m.matchid  ".
         "JOIN leaguetable l ON l.leagueid = m.leagueid ".    
         "WHERE e.eventtype IN ( ".$eventtype . " )" .
         "AND e.playerid != -1 ".
-        ($teamid == 0 ? ' ' : ' AND e.teamid = '.$teamid.' ') .
+        ($teamid == 0 ? ' ' : ' AND e.teamid IN ( '.$teamid.' ) ') .
         ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
         'AND l.year = '.$season.' ' .
         "AND e.ignore = 0 " .         
         "GROUP BY e.playerid " .
-        "ORDER BY `event count` DESC ".
-        ($teamid == 0 ? ' LIMIT 10 ' : ' ');
+        "ORDER BY `event_count` DESC ".
+        ($teamid == 0 || $limit == 1  ? ' LIMIT 10 ' : ' ');
         
-        
-         $q = 
-        "SELECT 
-        events.playerid,
-        events.playername,
-        events.event_count,
-        t.`teamid`,
-        t.`teamname` 
-        FROM
-        (SELECT 
-            e.`playerid`,
-            p.`playername`,
-            COUNT(*) AS event_count 
-        FROM
-            eventtable e 
-            JOIN leaguetable l 
-            ON l.`leagueid` = e.`leagueid` 
-            JOIN playertable p 
-            ON p.`playerid` = e.`playerid` 
-            AND p.year = l.year 
-            AND p.`teamid` = e.`teamid`  " .
-            ($teamid == 0 ? ' ' : ' AND e.teamid = '.$teamid.' ') .
-            ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
-        "WHERE e.`eventtype` IN ({$eventtype}) 
-            AND e.`ignore` = 0 
-            AND l.`year` = {$season} 
-        GROUP BY e.`playerid`
-        ORDER BY COUNT(*) DESC  " .
-        ($teamid == 0 ? ' LIMIT 10 ' : ' ') . "
-            ) AS `events` 
-        JOIN playertable p 
-            ON p.playerid = events.playerid 
-            AND p.`year` = {$season} 
-        JOIN teamtable t 
-            ON t.`teamid` = p.teamid
-            GROUP BY playerid
-            ORDER BY events.event_count DESC";
+//         $q = 
+//        "SELECT 
+//        events.playerid,
+//        events.playername,
+//        events.event_count,
+//        t.`teamid`,
+//        t.`teamname` 
+//        FROM
+//        (SELECT 
+//            e.`playerid`,
+//            p.`playername`,
+//            COUNT(*) AS event_count 
+//        FROM
+//            eventtable e 
+//            JOIN leaguetable l 
+//            ON l.`leagueid` = e.`leagueid` 
+//            JOIN playertable p 
+//            ON p.`playerid` = e.`playerid` 
+//            AND p.year = l.year 
+//            AND p.`teamid` = e.`teamid`  " .
+//            ($teamid == 0 ? ' ' : ' AND e.teamid = '.$teamid.' ') .
+//            ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
+//        "WHERE e.`eventtype` IN ({$eventtype}) 
+//            AND e.`ignore` = 0 
+//            AND l.`year` = {$season} 
+//            AND e.playerid != -1
+//        GROUP BY e.`playerid`
+//        ORDER BY COUNT(*) DESC  " .
+//        ($teamid == 0 ? ' LIMIT 10 ' : ' ') . "
+//            ) AS `events` 
+//        JOIN playertable p 
+//            ON p.playerid = events.playerid 
+//            AND p.`year` = {$season} 
+//        JOIN teamtable t 
+//            ON t.`teamid` = p.teamid
+//            GROUP BY playerid
+//            ORDER BY events.event_count DESC";
         
         $data = array();
         $result = mysql_query($q);
@@ -1176,4 +1199,153 @@ class DatabaseTeam {
         $q = "SELECT * FROM teamtable where teamid = $teamid";
         return mysql_query($q);
     }
+    public function getTwitterName($teamid){
+        $q = "SELECT twittername FROM teamtable where teamid = $teamid LIMIT 1";
+        $data = '';
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data = $row['twittername'];
+        }
+        return $data;
+    }
+    public function getWinPercentage($teamid,$season){
+        $q="
+        SELECT 
+        p.`playerid`,
+        pl.`playername`,
+        COUNT(*) AS started,
+        COUNT(won.`matchid`) AS won,
+        ROUND((COUNT(won.`matchid`) / COUNT(*)) * 100,2) AS percentage,
+        SUM(p.minutesplayed)
+        FROM
+        playtable p 
+        JOIN matchtable m 
+            ON m.`matchid` = p.`matchid` 
+        LEFT JOIN matchtable won 
+            ON won.`matchid` = p.`matchid`
+            AND won.`teamwonid` = {$teamid}
+        JOIN leaguetable l 
+            ON l.`leagueid` = m.`leagueid` 
+            JOIN playertable pl
+            ON p.`playerid` = pl.`playerid`
+            AND pl.`teamid` = p.`teamid`
+            AND pl.`year` = l.`year`
+        WHERE p.`teamid` = {$teamid} 
+        AND p.`start` = 1 
+        AND l.`year` = {$season}
+        AND p.ignore = 0 
+        GROUP BY p.`playerid` 
+        HAVING COUNT(*) >= 5
+        ORDER BY (COUNT(won.`matchid`) / COUNT(*)) DESC";
+        
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'playerid' => $row['playerid'],
+                'playername' => $row['playername'],
+                'percentage'=> $row['percentage'],
+                'matcheswon' => $row['won'],
+                'matchesstarted' => $row['started']
+            );
+        }
+        return $data;
+    }
+    function getMontlyPoints($teamid, $season)
+    {
+        $q="SELECT 
+            MONTH(m.dateofmatch) AS month, SUM(IF(m.teamwonid = $teamid, 1, 0) * 3 + IF(m.teamwonid = 0, 1, 0)) AS points 
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON l.leagueid = m.leagueid 
+            WHERE (m.hometeamid = $teamid OR m.awayteamid = $teamid) 
+            AND l.year IN ($season)
+            GROUP BY MONTH(m.dateofmatch)";
+        
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'month' => $row['month'],
+                'points' => $row['points']
+            );
+        }
+        return $data;
+    }
+    public function getTeamMinutes($year)
+    {
+        $q="select 
+        home.total + away.total as totalmin,
+        home.teamid
+        from
+        (SELECT 
+            (COUNT(*) * 90) AS total,
+            m.`hometeamid` AS teamid 
+        FROM
+            matchtable m 
+            JOIN leaguetable l 
+            ON m.`leagueid` = l.`leagueid` 
+            AND l.`year` IN ($year) 
+        where m.`result` NOT REGEXP '- : -|(Utsatt)' 
+        group by m.`hometeamid`) as home 
+        join 
+            (SELECT 
+            (COUNT(*) * 90) AS total,
+            m.`awayteamid` AS teamid 
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON m.`leagueid` = l.`leagueid` 
+                AND l.`year` IN ($year) 
+            WHERE m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            GROUP BY m.awayteamid) as away  on home.teamid = away.teamid";
+        
+        $teammins = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result)){   
+            $teammins[$row['teamid']] = $row['totalmin'];
+        }
+        return $teammins;
+    }
+    public function getTeamMinutesScoped($from,$to)
+    {
+        $q="select 
+        home.total + away.total as totalmin,
+        home.teamid
+        from
+        (SELECT 
+            (COUNT(*) * 90) AS total,
+            m.`hometeamid` AS teamid 
+        FROM
+            matchtable m 
+            JOIN leaguetable l 
+            ON m.`leagueid` = l.`leagueid` 
+            where m.`result` NOT REGEXP '- : -|(Utsatt)'
+        AND m.dateofmatch BETWEEN '$from' AND DATE_ADD('$to',INTERVAL 1 MONTH) 
+        group by m.`hometeamid`) as home 
+        join 
+            (SELECT 
+            (COUNT(*) * 90) AS total,
+            m.`awayteamid` AS teamid 
+            FROM
+            matchtable m 
+            JOIN leaguetable l 
+                ON m.`leagueid` = l.`leagueid` 
+            WHERE m.`result` NOT REGEXP '- : -|(Utsatt)' 
+            AND m.dateofmatch BETWEEN '$from' AND DATE_ADD('$to',INTERVAL 1 MONTH) 
+            GROUP BY m.awayteamid) as away  on home.teamid = away.teamid";
+        
+        
+        $teammins = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result)){   
+            $teammins[$row['teamid']] = $row['totalmin'];
+        }
+        return $teammins;
+    }
+    
 }

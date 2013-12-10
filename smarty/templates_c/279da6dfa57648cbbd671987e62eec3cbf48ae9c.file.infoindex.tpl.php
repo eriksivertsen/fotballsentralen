@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-22 14:51:09
+<?php /* Smarty version Smarty-3.1.12, created on 2013-12-10 18:36:21
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1379861466,
+      1 => 1386700556,
       2 => 'file',
     ),
   ),
@@ -19,6 +19,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_50ad1bad24f056_48494864',
   'variables' => 
   array (
+    'status' => 0,
     'page' => 0,
   ),
   'has_nocache_code' => false,
@@ -27,8 +28,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <head>     
         <title>FotballSentralen.com</title>
         <script type="text/javascript">
-            
-            !function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){ js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+                var nrOfTicks = 26;
+                var startTick = 18;
+
+            !function(d,s,id){ var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){ js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
             
             (function(d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
@@ -43,11 +47,32 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 $(window).on('hashchange', function() {
                    controlHash();
                 });
-            
+                
+                $('#time').html(getMonthYear(startTick) + " - " + getMonthYear(nrOfTicks));
+                
+                $("#slider-range").slider({
+                    range: true,
+                    min: 0,
+                    max: nrOfTicks,
+                    values: [startTick, nrOfTicks],
+                    step:1,
+                    slide: function(e, ui) {
+                        if(allowClicks) {
+                            var from = ui.values[0];
+                            var to = ui.values[1];
+                            $('#time').html(getMonthYear(from) + " - " + getMonthYear(to));
+                        }
+                    }
+                });
+                
+//                $("#slider-range").mouseup(function () {
+//                    if(allowClicks){
+//                        getScope($("#slider-range").slider("values", 0),$("#slider-range").slider("values", 1));
+//                    }
+//                });
+                
                 controlHash();
-                
                 //Hover arrows functions
-                
                 $('#previous').hover(function () {
                     this.src = 'images/arrow_prev_shadow.png';
                 }, function () {
@@ -57,12 +82,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 }, function () {
                     this.src = 'images/arrow_next.png';
                 });
-                
-                
-                
-        })
+        });
         
-
         function submitFeedback(){
             var name = $('#feedback_name').val();
             var mail = $('#feedback_mail').val();
@@ -95,7 +116,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     closePopup();
                 }
             });
-            
         }
         // POPup functions:
         function showPopup(){
@@ -107,33 +127,46 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             $('#feedback_form').hide('fast');
             $('#feedback_click').show();
         }
+        function openInfo(){
+        
+            $('#total_players').html(<?php echo $_smarty_tpl->tpl_vars['status']->value['playercount'];?>
+);
+            $('#total_events').html(<?php echo $_smarty_tpl->tpl_vars['status']->value['eventcount'];?>
+);
+            $('#total_matches').html(<?php echo $_smarty_tpl->tpl_vars['status']->value['matchcount'];?>
+);
+            $('#total_lineups').html(<?php echo $_smarty_tpl->tpl_vars['status']->value['lineupcount'];?>
+);
+            $('#total_click').html(<?php echo $_smarty_tpl->tpl_vars['status']->value['clickcount'];?>
+);
+            $('#info_form').show('fast');
+            $('#info_click').hide();
+        }
+        function closeInfo(){
+            $('#info_form').hide('fast');
+            $('#info_click').show();
+        }
   
         function controlHash()
-        {
-//            var str = window.location.href;
-//            var indexOf = str.indexOf('index.php?');
-//            var indexOfHash = str.indexOf('#');
-//            if(indexOf != -1 && indexOfHash != -1){
-//                var params = str.substring(indexOf+10,indexOfHash);
-//                var array = params.split("&");
-//                for(var val in array){
-//                    var obj = array[val].split("=");
-//                    type = obj[0].split("_")[0];
-//                    id = obj[1];
-//                }
-//            }
-            
+        {            
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
                 setSeason(2013);
                 getTeam(0, 0);
                 return;
             }
+            if(paramArray[1] == 's'){
+                if(paramArray[2] != undefined){
+                    getScopeDatabase(paramArray[2]);
+                    return;
+                }
+            }
+            
             setSeason(paramArray[1]);
             var type = paramArray[2];
             var id = paramArray[3];
             var specialid = paramArray[4];
-                   
+            
             if(type == 'player'){
                 if(id != playeridselected || type != typeselected){
                     getPlayer(id);
@@ -160,6 +193,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     getTeamInfo(id,0);
                 }
             }
+            if(type == 'nationalteam'){
+                if(id != teamidselected || type != typeselected ){
+                    getNationalTeam(id);
+                }
+            }
             if(type == 'league'){
                 if(id != leagueidselected || type != typeselected){
                     getTeam(id,0);
@@ -168,6 +206,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             if(type == 'page'){
                 if(id == 'populare'){
                     getPopulare();
+                }
+                else if(id == 'scope'){
+                    if(specialid == undefined){
+                        getScope(startTick,nrOfTicks);
+                    }else{
+                        getScopeDatabase(specialid);
+                    }
                 }
                 else if(id == 'suspension'){
                     getSuspensionList(specialid);
@@ -208,6 +253,33 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <input id="previous" type="image" src="images/arrow_prev.png" style="position:absolute;bottom:35%;left:55px;" title="Forrige sesong" onclick="previous()">
         <?php }?>
         <div class="indexbody">
+            <div id="info_form" hidden="true" align="center" style="font-size:10pt">
+                <div style="width:400px;margin-right:10px;text-align: center">
+                    Fotballsentralen samler informasjonen som ligger på fotball.no, og strukturerer denne slik at du skal få best mulig 
+                    oversikt over de ulike lagene og divisjonene i Norge.
+                    Per dags dato er vi de eneste i Norge har en komplett oversikt over spilte minutter i 2. divisjon siden 2012. 
+                    Det finnes flere ulike oversikter som gir deg et unikt bilde over hvordan din klubb eller spiller gjør det i 
+                    forhold til resten av fotball-Norge. Du kan også navigere deg tilbake til 2011 med detaljert informasjon for enkeltspillere.
+                    Heller ingen andre i Norge har oversikt over suspensjoner i 2. divisjon!
+                    <br/>
+                    <br/>
+                    Vi har ambisjoner om å være statistikkansvarlig for flere og flere lag i Norge. Lag i 2.divisjon har ikke ressurser til å
+                    oppdatere statistikken jevnlig, og vi håper at FotballSentralen kan være med på å automatisere akkurat denne prosessen for lag.
+                    Sålangt er det noen lag som benytter seg av dette (bla. <a href="#" onclick="getTeam(0,139);return false">Kvik Halden</a>) men
+                    vi oss ønsker flere!
+                    <br/>
+                    <br/>
+                    <b>Live status:</b>
+                    <br/>
+                    Antall spillere: <b><text id="total_players"></text></b><br/>
+                    Antall kamper: <b><text id="total_matches"></text></b><br/>
+                    Antall kort, bytter og mål: <b><text id="total_events"></text></b><br/>
+                    Antall spilletidoppføringer: <b><text id="total_lineups"></text></b><br/>
+                    Antall klikk på siden: <b><text id="total_click"></text></b><br/>
+                    <br/>
+                </div>
+                <button id="info_close" onclick="closeInfo();return false;">Lukk</button>
+            </div>
             <div id="feedback_form" hidden="true" align="right" style="font-size:9pt">
                 <table style="font-size:9pt;">
                     <tr>
@@ -252,21 +324,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </div>
             <div align="right" id="feedback_index" style="margin-right: 10px">
                 <a href="#" id="feedback_click" style="font-size: 8pt" title="Hjelp FotballSentralen bli bedre!" onclick="showPopup();return false;">Feedback</a>
+                <br/>
+                <a href="#" id="info_click" style="font-size: 8pt" onclick="openInfo();return false;">Ny på FotballSentralen?</a>
             </div>
-            <div id="welcometext" style="font-size: 10pt; margin-left:16px;margin-right:20px; background-color: #8dbdd8 ">
-                <b>Velkommen til FotballSentralen.com!</b>
-                <br/>
-                <br/>
-                Denne nystartede siden samler offisielle kampfakta og resultater fra fotball.no, og sorterer dette slik at du 
-                enkelt kan bla deg gjennom fotball-Norge! Kort sagt er dette en oversikt over spilleminutter, bytter, mål og kort for 
-                ALLE spillere fra 2.divisjon og opp. Per dags dato ligger det statistikker fra 2011 (Tippeligaen og Adeccoligaen) 
-                samt alle 2.divisjons-avdelingene fra 2012-sesongen.
-                <br/>
-                <br/>
-                Siden er stadig under utvikling, og har du tips eller innspill tas de gjerne imot <a href="mailto:kontakt@fotballsentralen.com">her</a>.
-                <br/>
-                <br/>
-                </div>
+            
             
             <div id="eventoverview">
                 <?php echo $_smarty_tpl->getSubTemplate ("events.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
@@ -306,6 +367,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
             </div>
             
+            <div id="scope">
+                <?php echo $_smarty_tpl->getSubTemplate ("scope.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
+            </div>
+            
             <div id="match_main">
                 <?php echo $_smarty_tpl->getSubTemplate ("match.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
@@ -317,22 +383,21 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </div>
 
             <div id="suspensionList">
+                <label class="selectlabel">
+                    <select id="suspensionSelect" style="margin: 20px" onchange="selectSuspendedLeague()">
+                        <option value="134365">Tippeligaen</option>
+                        <option value="134367">Adeccoligaen</option>
+                        <option value="134371">2.divisjon avd 1</option>
+                        <option value="134372">2.divisjon avd 2</option>
+                        <option value="134373">2.divisjon avd 3</option>
+                        <option value="134374">2.divisjon avd 4</option>
+                    </select>
+                </label>
                 <br/>
-                <select id="suspensionSelect" style="margin: 20px" onchange="selectSuspendedLeague()">
-                    <option value="134365">Tippeligaen</option>
-                    <option value="134367">Adeccoligaen</option>
-                    <option value="134371">2.divisjon avd 1</option>
-                    <option value="134372">2.divisjon avd 2</option>
-                    <option value="134373">2.divisjon avd 3</option>
-                    <option value="134374">2.divisjon avd 4</option>
-                </select>
+                <table id="suspensionTable" class="tablesorter playerinfo " style="float: none; width:auto;"></table>
                 <br/>
-                <table id="suspensionTable" class="tablesorter" style="float: none; width:auto;"></table>
-                <br/>
-                <br/>
-                <table id="suspensionTableDanger" class="tablesorter" style="float: none; width:auto;"></table>
-                
             </div>
+            <div id="loaderdiv" style="min-height: 300px"> </div>
             <text id="lastupdate" style="font-size: 7pt;margin-left: 15px;" >Sist oppdatert: </text>
             <br/>
             <br/>

@@ -27,8 +27,8 @@
 		/**************/
 		defaults: {
 			ulWidth : 'auto',
-			absoluteTop : 30,
-			absoluteLeft : 0,
+			absoluteTop : 75,
+			absoluteLeft : -10,
 			effects : {
 				effectSpeedOpen : 150,
 				effectSpeedClose : 150,

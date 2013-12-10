@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-09-22 14:51:27
+<?php /* Smarty version Smarty-3.1.12, created on 2013-12-10 18:19:22
          compiled from "smarty\templates\main.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2243450b0caef60c5f3-55980832%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'ad3342d91c48a987ea8de39e00385b406c1dc521' => 
     array (
       0 => 'smarty\\templates\\main.tpl',
-      1 => 1379861486,
+      1 => 1386699538,
       2 => 'file',
     ),
   ),
@@ -28,7 +28,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <head>
         <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/flot-flot-8760ee7/excanvas.min.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery-1.8.2.js"></script>  
-        
+        <link href='http://fonts.googleapis.com/css?family=Noto+Sans|Share+Tech+Mono' rel='stylesheet' type='text/css'>
         <script type="text/javascript" src="js/jquery-ui.js"></script>  
         <script type="text/javascript" src="js/jquery.tablesorter.js"></script> 
         <script type="text/javascript" src="js/jMenu.jquery.js"></script>
@@ -42,15 +42,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.time.js"></script>
         <script type="text/javascript" src="js/flot-flot-8760ee7/jquery.flot.pie.js"></script>
         <script type="text/javascript" src="js/news/jquery.ticker.js"></script>
-        
+        <script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
         <script type="text/javascript" src="js/common.js"></script>
         <script type="text/javascript" src="js/Utils.js"></script>
-        
+        <script type="text/javascript" src="js/scope.js"></script>
         <link href="favicon.ico" rel="icon" type="image/x-icon" />
         <link href="css/ticker-style.css" rel="stylesheet" type="text/css" />
         
         <link rel="stylesheet" href="css/smoothness/jquery-ui-1.9.2.custom.css" >
-        
     </head>
     <?php echo $_smarty_tpl->getSubTemplate ("header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 

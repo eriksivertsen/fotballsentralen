@@ -178,6 +178,9 @@ function getEventTypeLink(eventtype)
 
 function getRefereeLink(referee_id,refereename)
 {
+    if(referee_id === null){
+        return 'Ikke funnet';
+    }
     return '<a href="#" onclick="getRefereeId('+referee_id+');return false;">'+refereename+'</a>';
     //return '<a href="index.php?page=referee&referee_id='+referee_id+'">'+refereename+'</a>';
 }
@@ -333,43 +336,13 @@ function getEventFromId(eventid, type)
     }
     eventid = parseInt(eventid);
     return eventArray[eventid].name+typeString;
-//    switch(eventid)
-//    {
-//        case 1:
-//            return 'Rødt&nbspkort&nbsp(to&nbspgule)'+typeString;
-//        case 2:
-//            return 'Gule&nbspkort'+typeString;
-//        case 3:
-//            return 'Rødt&nbspkort&nbsp(direkte)'+typeString;
-//        case 4:
-//            return 'Spillemål'+typeString;
-//        case 6:
-//            return 'Byttet&nbspinn'+typeString;
-//        case 7:
-//            return 'Byttet&nbsput'+typeString;
-//        case 8:
-//            return 'Straffemål'+typeString;
-//        case 9:
-//            return 'Selvmål'+typeString;
-//        case 10:
-//            return 'Toppscorer'+typeString;
-//        case 12:
-//            return 'Clean&nbspsheets'+typeString;
-//        case 11:
-//            return 'Spilleminutter'+typeString;
-//        case 50:
-//            return 'Seiersprosent'+typeString;
-//        case 60:
-//            return 'Måleffektivitet'+typeString;
-//        case 70:
-//            return 'Mål&nbspsom&nbspinnbytter'+typeString;
-//        case 80:
-//            return 'Spilletid&nbspi&nbspprosent'+typeString;
-//    }
 }
 
-function createEventLink(eventtype, type,leagueid)
+function createEventLink(eventtype, type, leagueid)
 {
+    if(leagueid === undefined){
+        leagueid = 0;
+    }    
     var string = getEventFromId(eventtype,type);
     if(type == 0){
         return '<a href="#" style="cursor:pointer" onclick=getEventsTotal('+eventtype+','+leagueid+')>'+string+'</a>';

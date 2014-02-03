@@ -13,6 +13,7 @@
                             <option value="2011">2011</option>
                             <option value="2012">2012</option>
                             <option value="2013">2013</option>
+                            <option value="2014">2014</option>
                         </select>
                     </label>
                 </td>
@@ -81,7 +82,7 @@
                 </a>
                 <ul>
                     <li><a href="#" onclick="getEventsTotal(50,leagueidselected);return false;">Seiersprosent</a></li>
-                    <li><a href="#" onclick="getTotalPlayerMinutes();return false;">Spilleminutter</a></li>
+                    <li><a href="#" onclick="getEventsTotal(11,leagueidselected);return false;">Spilleminutter</a></li>
                     <li><a href="#" onclick="getEventsTotal(80,leagueidselected);return false;">Spilletid i prosent</a></li>
                     <li><a href="#" onclick="getEventsTotal(10,leagueidselected);return false;">Toppscorer</a></li>
                     <li><a href="#" onclick="getEventsTotal(60,leagueidselected);return false;">Måleffektivitet</a></li>
@@ -103,7 +104,7 @@
                 </a>
             </li>
             <li class="menu">
-                <a class="fNiv" href="#" onclick="getSuspensionList(134365);return false;">
+                <a class="fNiv" href="#" onclick="getSuspensionList(suspendedLeagueLand);return false;">
                     <img title="Suspensjonsliste" src="images/suspension.png" onmouseover="this.src='images/suspension-hover.png'" onmouseout="this.src='images/suspension.png'" style="cursor:pointer;"/>
                 </a>
             </li>
@@ -115,6 +116,7 @@
                     <li><a href="#" onclick="getPopulare();return false;">Populære</a></li>
                     <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>
                     <li><a href="#" onclick="getTransfers();return false;">Overganger</a></li>
+                    <li><a href="#" onclick="getScopeCurrent();return false;">Statoskopet</a></li>
                 </ul>
             </li>
             <li class="menu">

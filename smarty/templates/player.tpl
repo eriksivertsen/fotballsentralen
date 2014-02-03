@@ -47,7 +47,6 @@
     </label>
     <br/>
 <table id="playerinfo" class="tablesorter playerinfo"></table>
-<center><text id="noData" style="font-size: 9pt">Ingen data denne sesongen!</text></center>
 <ul id="ranking" class="ranking" style="margin-left:15px;"></ul>
 <br/>
 <div id="similar">

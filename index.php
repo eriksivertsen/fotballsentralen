@@ -3,8 +3,10 @@
 // put full path to Smarty.class.php
 require('smarty/libs/Smarty.class.php');
 require_once('db/DatabaseUtils.class.php');
+require_once('db/DatabaseScope.class.php');
 
 $dbUtils = new DatabaseUtils();
+$dbScope = new DatabaseScope();
 
 $smarty = new Smarty();
 
@@ -38,7 +40,10 @@ if(isset($_GET['season'])){
 }else{
     $smarty->assign('season',2013);
 }
+$searcharray = $dbUtils->getSearchArray();
+$smarty->assign('searcharray', json_encode($searcharray['searcharray']));
 $smarty->assign('status', $dbUtils->getStatus());
+$smarty->assign('scopes', $dbScope->getLiveScopes());
 $smarty->assign('contents',$smarty->fetch('infoindex.tpl'));
 $smarty->display('main.tpl');
 

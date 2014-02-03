@@ -7,25 +7,19 @@ class DatabaseLeague {
     public function getLeagueInfo($leagueid,$teamid,$season)
     {
         DatabaseUtils::setLeagueHit($leagueid);
-        $teamids = DatabaseLeague::getCustomLeagueTeams($leagueid);
-        if(!empty($teamids)){
-            $teamid = implode(" , ", $teamids);
-            $leagueid = 0;
-        }
+        
         $events = array (
             'lastupdate' => DatabaseUtils::getLastUpdate($leagueid,$season),
-            'yellow' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,2,$season),
-            'yellow_red' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,1,$season),
-            'red' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,3,$season),
-            'goal' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,4,$season),
-            'totalgoals' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,'4,8',$season),
-            'subin' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,6,$season),
-            'subout' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,7,$season),
-            'penalty' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,8,$season),
-            'owngoal' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,9,$season),
-            'cleansheet' => DatabaseTeam::getEventInfoJSON($teamid,$leagueid,12,$season),
-            'minutes' => DatabaseTeam::getPlayingMinutesJSON($teamid,$leagueid,$season),
-            'topscorer' => DatabaseTeam::getEventInfoJSON($teamid, $leagueid, '4,8', $season),
+            'yellow' => DatabaseUtils::getEventInfoTotalJSON(2,10,$season,$leagueid),
+            'yellow_red' => DatabaseUtils::getEventInfoTotalJSON(1,10,$season,$leagueid),
+            'red' => DatabaseUtils::getEventInfoTotalJSON(3,10,$season,$leagueid),
+            'goal' => DatabaseUtils::getEventInfoTotalJSON(4,10,$season,$leagueid),
+            'subin' => DatabaseUtils::getEventInfoTotalJSON(6,10,$season,$leagueid),
+            'subout' => DatabaseUtils::getEventInfoTotalJSON(7,10,$season,$leagueid),
+            'penalty' => DatabaseUtils::getEventInfoTotalJSON(8,10,$season,$leagueid),
+            'owngoal' => DatabaseUtils::getEventInfoTotalJSON(9,10,$season,$leagueid),
+            'minutes' => DatabaseUtils::getTotalPlayerminutes($season,10,$leagueid,$teamid),
+            'topscorer' => DatabaseUtils::getEventInfoTotalJSON('4,8',10,$season,$leagueid),
             'topscorercount' => DatabaseTeam::getTopscorerCount($teamid,$leagueid,$season),
             'hometeam' => DatabaseLeague::getBestHometeam($leagueid, $season, $teamid),
             'awayteam' => DatabaseLeague::getBestAwayteam($leagueid, $season, $teamid),
@@ -75,6 +69,12 @@ class DatabaseLeague {
         $orderby = 'points';
         $index = $orderby;
         $limit = 20;
+        
+        $teamids = DatabaseLeague::getCustomLeagueTeams($leagueid);
+        if(!empty($teamids)){
+            $teamid = implode(" , ", $teamids);
+            $leagueid = 0;
+        }
         
         if($leagueid == 0){
            $leagueid = '1,2,3,4,5,6';
@@ -203,6 +203,12 @@ class DatabaseLeague {
             return;
         }
         
+        $teamids = DatabaseLeague::getCustomLeagueTeams($leagueid);
+        if(!empty($teamids)){
+            $teamid = implode(" , ", $teamids);
+            $leagueid = 0;
+        }
+        
         $orderby = 'points';
         $index = $orderby;
         if($leagueid == 0 || $leagueid == '3,4,5,6'){
@@ -304,7 +310,7 @@ class DatabaseLeague {
     }
     public function getCustomLeagueTeams($leagueid)
     {
-        $q = "SELECT teamid FROM league_to_team where leagueid IN ( " . $leagueid. ")";
+        $q = "SELECT teamid FROM league_to_team where leagueid IN (" . $leagueid. ")";
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))

@@ -2,17 +2,7 @@ var scopeEvents = new Array();
 var tempName = '';
 
 if(!sessionStorage.scopeEvents) {
-    scopeEvents[0] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[1] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[2] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[3] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[4] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[5] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[6] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[7] = {graphtype:0,eventid:-1,type:0,limit:10};
-    scopeEvents[8] = {graphtype:0,eventid:-1,type:0,limit:10};
-    var jsonString = JSON.stringify(scopeEvents);
-    sessionStorage.scopeEvents = jsonString;
+    clearCache();
 }
 else{
     scopeEvents = JSON.parse(sessionStorage.scopeEvents);
@@ -28,48 +18,61 @@ String.prototype.hashCode = function() {
     }
     return hash;
   }
-
-function getScopeHash(){
-    var hashArray = new Array();
-    var leagueid = leagueidselected;
-    if(leagueidselected === undefined){
-        leagueid = 0;
-    }
-    var fromTick = $("#slider-range").slider("values", 0);
-    var toTick = $("#slider-range").slider("values", 1);
-    hashArray[0] = {leagueid:leagueid};
-    hashArray[1] = {from:fromTick};
-    hashArray[2] = {to:toTick};
-    
-    for(var obj in scopeEvents){
-        hashArray.push(scopeEvents[obj]);
-    }
-    var jsonString = JSON.stringify(hashArray);
-    console.log(jsonString +': '+jsonString.hashCode());
+ function clearCache(){
+    scopeEvents[0] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[1] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[2] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[3] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[4] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[5] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[6] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[7] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[8] = {graphtype:0,eventid:-1,type:0,limit:10};
+    scopeEvents[9] = {leagueid:0,publicscope:1};
+    scopeEvents[10] = {from:0};
+    scopeEvents[11] = {to:-1};
+    var jsonString = JSON.stringify(scopeEvents);
+    sessionStorage.scopeEvents = jsonString;
+  }
+function clearScope(){
+    clearCache();
+    getScopeCurrent();
+    $('#scope_name').val('Oversikt uten navn');
+    $('#scope_name').removeAttr('style');
+    $('#scope_public').attr('checked','true');
+    $('#scope_name').removeAttr('disabled');
+    window.location.hash = '/'+season+'/page/scope/';
 }
-function getEventsString(){
-    console.log(JSON.stringify(scopeEvents).hashCode());
-    var arrayString = '';
-    for(var obj in scopeEvents){
-        arrayString += scopeEvents[obj].graphtype+','+scopeEvents[obj].eventid+','+scopeEvents[obj].type+','+scopeEvents[obj].limit+'-';
-    }
-    return arrayString.substring(0,arrayString.length-1);
+function openScopeInfo(){
+    $('#scope_form').show('fast');
+    $('#info_scope_click').hide();
 }
-
-function closeTable(id){
+function closeScopeInfo(){
+    $('#scope_form').hide('fast');
+    $('#info_scope_click').show();
+}
+function closeNewGraphEdit(id){
     if(scopeEvents[id].eventid == -1){
-        id = parseInt(id);
-        $('#graphedit_'+id).hide();
-        scopeEvents = JSON.parse(sessionStorage.scopeEvents);
-        scopeEvents[id] = {graphtype:0,eventid:-1,type:0,limit:10};
-        sessionStorage.scopeEvents = JSON.stringify(scopeEvents);
-        createEmptyTable($('#scope_event'+id));
+        closeTable(id);
     }else{
-        console.log('Closing existing table');
-        $('#graphedit_'+id).hide();
-        $('#scope_event'+id).show();
-        createEmptyTable($('#scope_event'+id));
+        if(scopeEvents[id].graphtype == 0){
+            if(scopeEvents[id].eventid == 11){
+                updatePlayerMinutes(eventArray,$('#scope_event'+id),id);
+            }else{
+                updateEventTable(eventArray, $('#scope_event'+id),scopeEvents[id].eventid,scopeEvents[id].type, true, id, leagueidselected);
+            }
+        }else{
+            updateLeagueTableScoped(eventArray, $('#scope_event'+id), scopeEvents[id].eventid, id, true);
+        }
     }
+}
+function closeTable(id){
+    scopeEvents[id] = {graphtype:0,eventid:-1,type:0,limit:10};
+    sessionStorage.scopeEvents = JSON.stringify(scopeEvents);
+    $('#scope_event'+id).hide();
+    $('#graphedit_'+id).hide();
+    createEmptyTable($('#scope_event'+id));
+    $('#newgraph_'+id).show();
 }
 
 function addMonthToSlider(tick){
@@ -141,8 +144,8 @@ function getScopeDatabase(urlhash){
     if(!allowClicks){
         return;
     }
-    console.log('Loading scope from database: ' +urlhash);
-    if(leagueidselected == undefined){
+    startLoad();
+    if(leagueidselected === undefined){
         leagueidselected = 0;
     }
     $.ajax({
@@ -155,14 +158,23 @@ function getScopeDatabase(urlhash){
             stopLoad()
         },
         success: function(data) {
+            stopLoad();
             // Set scopeevents, set leagueidselected
             // getScope with data.from, data.to
             scopeEvents = data.scopeEvents;
             leagueidselected = data.leagueid;
+            var jsonString = JSON.stringify(scopeEvents);
+            sessionStorage.scopeEvents = jsonString;
             $('#scope_name').val(data.name);
             $('#scope_name').attr('style','color:black;');
             getScope(data.from,data.to,urlhash);
-            
+            $('#scope_name').attr('disabled','disabled');
+            $('#scope_select').val(0);
+            if(data.scopepublic == 1){
+                $('#scope_public').attr('checked','checked');
+            }else{
+                $('#scope_public').removeAttr('checked');
+            }
         }
     }); 
     $('#scope').show();
@@ -174,11 +186,12 @@ function getScope(from, to, hash)
     if(!allowClicks){
         return;
     }
-    console.log('Loading scope from ' + from + ' to ' + to);
-    if(leagueidselected == undefined){
+    if(leagueidselected === undefined){
         leagueidselected = 0;
     }
+    
     startLoad();
+    $('#info_scope_click').show();
     if(hash == undefined){
         window.location.hash = '/'+season+'/page/scope';
     }
@@ -196,25 +209,28 @@ function getScope(from, to, hash)
               var json = data;
               for(var i=0;i<9;i++){
                   if(scopeEvents[i].eventid != -1){
+                      $('#newgraph_'+i).hide();
                         var eventArray = eval('json.scope_event'+i);
                         if(scopeEvents[i].graphtype == 0){
-                            if(scopeEvents[i].eventid == 11){
-                                updatePlayerMinutes(eventArray,$('#scope_event'+i));
-                            }else{
-                                updateEventTable(eventArray, $('#scope_event'+i),scopeEvents[i].eventid,scopeEvents[i].type, true, i, leagueidselected);
-                            }
+                            updateEventTable(eventArray, $('#scope_event'+i),scopeEvents[i].eventid,scopeEvents[i].type, hash === undefined, i, leagueidselected);
                         }else{
-                            updateLeagueTableScoped(eventArray, $('#scope_event'+i), scopeEvents[i].eventid, i);
+                            updateLeagueTableScoped(eventArray, $('#scope_event'+i), scopeEvents[i].eventid, i, hash === undefined);
                         }
                     }else{
-                        createEmptyTable($('#scope_event'+i));
+                        if(hash == undefined){
+                            createEmptyTable($('#scope_event'+i));
+                            $('#scope_event'+i+'_div').show();
+                        }else{
+                            $('#scope_event'+i+'_div').hide();
+                        }
                     }
               }
-               $('#scope_league').val(leagueidselected);
+//            $('#scope_twitter').attr('data-url','http://www.fotballsentralen.com/#/page/scope/'+hash);
+            $('#scope_league').val(leagueidselected);
+            $("#slider-range").slider("values", 0, from);
+            $("#slider-range").slider("values", 1, to);
+            $('#time').html(getMonthYear($("#slider-range").slider("values", 0)) + " - " + getMonthYear($("#slider-range").slider("values", 1)));
             stopLoad();
-            if(hash != undefined){
-                window.location.hash = '/'+season+'/page/scope/'+hash;
-            }
         }
     }); 
     $('#scope').show();
@@ -232,16 +248,14 @@ function getRandomScope(){
             stopLoad()
         },
         success: function(data) {              
-            // Set scopeevents, set leagueidselected
-            // getScope with data.from, data.to
-            scopeEvents = data.scopeEvents;
-            leagueidselected = data.leagueid;
-            getScope(data.from,data.to,data.urlhash);
-            $('#scope_name').val(data.name);
-            $('#scope_name').attr('style','color:black');
+            window.location.hash = '/'+season+'/page/scope/'+data;
         }
     }); 
 }
+function getScopeList(){
+    window.location.hash = '/'+season+'/page/scope/'+$('#scope_select').val();
+}
+
 function changeName(){
     if($('#scope_name').val() != 'Oversikt uten navn'){
         tempName = $('#scope_name').val();
@@ -259,6 +273,7 @@ function saveScope(){
     if(leagueidselected === undefined){
         leagueidselected = 0;
     }
+    var checked = $('#scope_public').is(':checked');
     scopeEvents[9] = {leagueid:leagueidselected};
     scopeEvents[10] = {from:$("#slider-range").slider("values", 0)};
     scopeEvents[11] = {to:$("#slider-range").slider("values", 1)};
@@ -268,13 +283,23 @@ function saveScope(){
         alert('Mangler navn. ');
         return;
     }
+    var exist = false;
+    for(var i=0;i<9;i++){
+        if(scopeEvents[i].eventid != -1){
+            exist = true;
+        }
+    }
+    if(!exist){
+        alert('Ingen data funnet! Trykk "Legg til data" og velg en datatype!');
+        return;
+    }
     
     $.ajax({
         type: "POST",
         url: "receiver.php",
         dataType: "json",
         timeout: timeout,
-        data: {action: "saveScope",  scopeEvents: scopeEvents,scopeHash: JSON.stringify(scopeEvents).hashCode(),name:name},
+        data: {action: "saveScope",  scopeEvents: scopeEvents,scopeHash: JSON.stringify(scopeEvents).hashCode(),name:name,scopepublic:(checked == true ? 1 : 0)},
         error: function () {
             stopLoad()
         },
@@ -284,15 +309,13 @@ function saveScope(){
         }
     }); 
 }
-function updateLeagueTableScoped(leaguetable, tablename, typeid, scopeeventid)
+function updateLeagueTableScoped(leaguetable, tablename, typeid, scopeeventid,edit)
 {
-
-    var editTable = '<a href="#" onclick="openGraphEdit(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
     var closeTable = '<a href="#" onclick="closeTable(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
     
     tablename.empty();
     tablename.attr('class','tablesorter playerinfo');
-    tablename.append('<caption class="tableheader">'+tableArray[typeid]+editTable+closeTable+'</caption>');
+    tablename.append('<caption class="tableheader">'+tableArray[typeid]+(edit ? closeTable : '')+'</caption>');
     tablename.append(getTableHeader(["#","Lag","S","V","U","T","Mål","+/-","P"]));
     tablename.append('<tbody>');
     var pos = 0;
@@ -319,38 +342,41 @@ function selectGraphEvent(id){
 function selectGraphType(id){
     var val = $('#graphedit_graphtype_'+id).val();
     var selectBox = $('#graphedit_eventid_'+id);
+    var selectBox2 = $('#graphedit_type_'+id);
     selectBox.empty();
+    selectBox2.empty();
     if(val == 1){
         // Tables
         selectBox.append("<option value='0'>Totalt</option>");
         selectBox.append("<option value='1'>Hjemme</option>");
         selectBox.append("<option value='2'>Borte</option>");
-        $('#grouped_by_row_'+id).hide();
+        
+        selectBox2.append("<option value='0'>Poeng totalt</option>");
+        selectBox2.append("<option value='1'>Poengsnitt</option>");
+        
     }else if(val == 0){
         // Events
         var appendString = '';
         for(var eventid in eventArray){
             var name = eventArray[eventid].name;
-            appendString += "<option value='"+eventid+"'>'"+name+"'</option>";
+            appendString += "<option value='"+eventid+"'>"+name+"</option>";
         }
         selectBox.append(appendString);
-        $('#grouped_by_row_'+id).show();
+        
+        selectBox2.append("<option value='0'>Spillere</option>");
+        selectBox2.append("<option value='1'>Lag</option>");
+        
     }
 }
 function openGraphEdit(id)
 {
-    $('#scope_event'+id).hide();
-    $('#scope_event'+id+'_div').empty();
-    
-    var table = "<table id='scope_event"+id+"'></table>";
     var graphdiv = 
-       "<div id='graphedit_"+id+"' style='display:inline-table;width:300px;height:250px;vertical-align:top'>"+
             "<table style='font-size:8pt;margin-top:55px'>"+
             "<tr>"+
                 "<td>Graf:</td>"+
                 "<td><label id='label_event' class='selectlabel'>"+
                     "<select id='graphedit_graphtype_"+id+"' style='margin: 4px' onchange=selectGraphType("+id+")>"+
-                        "<option value='0'>Hendelser</option>"+
+                        "<option value='0'>Oversikt</option>"+
                         "<option value='1'>Tabell</option>"+
                     "</select>"+
                 "</label></td>"+
@@ -382,7 +408,7 @@ function openGraphEdit(id)
                     "<td>Gruppert på:</td>"+
                     "<td>"+
                         "<label id='label_event' class='selectlabel'>"+
-                            "<select id='graphedit_type_"+id+"' style='margin: 4px' disabled='true'>"+
+                            "<select id='graphedit_type_"+id+"' style='margin: 4px'>"+
                                 "<option value='0'>Spillere</option>"+
                                 "<option value='1'>Lag</option>"+
                             "</select>"+
@@ -397,18 +423,12 @@ function openGraphEdit(id)
                 "</tr>"+
             "</table>"+
             "<button onclick='saveGraphEdit(\""+id+"\")' style='margin:5px'>Lagre</button>"+
-            "<button onclick='closeTable(\""+id+"\")' style='margin:5px'>Avbryt</button>"+
-        "</div>";
+            "<button onclick='closeNewGraphEdit(\""+id+"\")' style='margin:5px'>Avbryt</button>";
     
-    if(scopeEvents[id].eventid == -1){
-        $('#scope_event'+id+'_div').append(table);
-    }
-    $('#scope_event'+id+'_div').append(graphdiv);
-    $('#scope_event'+id+'_div').show();
-    $('#graphedit_graphtype_'+id).val(scopeEvents[id].graphtype);
-    $('#graphedit_limit_'+id).val(scopeEvents[id].limit);
-    $('#graphedit_type_'+id).val(scopeEvents[id].type);
-    $('#graphedit_eventid_'+id).val(scopeEvents[id].eventid);
+    $('#graphedit_'+id).html(graphdiv);
+    $('#graphedit_'+id).show();
+    $('#scope_event'+id).hide();
+    $('#newgraph_'+id).hide();
     selectGraphType(id)
 }
 function saveGraphEdit(id){
@@ -424,6 +444,8 @@ function saveGraphEdit(id){
     var obj = {graphtype:graphtypeval,eventid:eventidval,type:typeval,limit:limitval};
     
     $('#graphedit_'+id).hide();
+//    $('#scope_name').val('Oversikt uten navn');
+    $('#scope_name').removeAttr('style');
     var array = new Array();
     if(sessionStorage.scopeEvents){
        array = JSON.parse(sessionStorage.scopeEvents);
@@ -436,12 +458,13 @@ function saveGraphEdit(id){
 
 function createEmptyTable(table)
 {
-    var string = 'Legg til tabell';
+    var string = 'Legg til data';
     var id = table.attr('id');
     id = id.replace(/\D/g, '');
-    table.empty();
-    table.attr('class','emptytable');
-    table.append('<tr><td><a href=# onclick="openGraphEdit(\''+id+'\');return false;">'+string+'</a></td></tr>');
+    $('#newgraph_'+id).show();
+    $('#scope_event'+id).hide();
+    $('#newgraph_'+id).empty();
+    $('#newgraph_'+id).append('<tr><td><a href=# onclick="openGraphEdit(\''+id+'\');return false;">'+string+'</a></td></tr>');
 }
 
 

@@ -12,7 +12,10 @@ $host = "213.162.240.26:3306"; //cpanel20.proisp.no
 $user = "fotbalqt_java";
 $pass = "Eriketard1";
 $db   = "fotbalqt_main";
-
+//
+//$host = "localhost";
+//$user = "root";
+//$pass = "";
 
 // This part sets up the connection to the 
 // database (so you don't need to reopen the connection

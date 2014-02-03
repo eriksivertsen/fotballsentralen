@@ -13,7 +13,16 @@ class DatabaseTeam {
         $goalscorers = DatabaseUtils::getGoalScoreresMatch($matchids);
         $teamtoleague = self::getTeamToLeague($teamid,$season);
         $latestMatches = self::getLatestMatches($teamid,'both');
+        if(isset($latestMatches[0]['matchid'])){
+            $lastLineup = self::getLineup($teamid, $season, $latestMatches[0]['matchid']);
+        }else{
+            $lastLineup = array();
+        }
         
+        if(empty($teamtoleague)){
+            return array('teamtoleague' => array());
+        }
+          
         $events = array (
             'teamtoleague' => $teamtoleague,
             'yellow' => self::getEventRankTeam($teamid,2,$season),
@@ -45,15 +54,15 @@ class DatabaseTeam {
             'homestats' => DatabaseLeague::getHomestats($teamid, $season),
             'awaystats' => DatabaseLeague::getAwaystats($teamid, $season),
             'allmatches' => $allmatches,
-            'homestreak' => self::getStreakString($teamid,'home'),
-            'awaystreak' => self::getStreakString($teamid,'away'),
+//            'homestreak' => self::getStreakString($teamid,'home'),
+//            'awaystreak' => self::getStreakString($teamid,'away'),
             'goalscorers' => $goalscorers,
             'attendance' => self::getAttendance($teamid,$season),
             'currentposition' => self::getLeaguePosition($teamid, $teamtoleague[0]['leagueid'], $season),
             'currentpositionhome' => self::getLeaguePosition($teamid, $teamtoleague[0]['leagueid'], $season,'home'),
             'currentpositionaway' => self::getLeaguePosition($teamid, $teamtoleague[0]['leagueid'], $season, 'away'),
             'mostusedplayers' => self::getMostUsedLineup($teamid, $season),
-            'lastlineup' => self::getLineup($teamid, $season, $latestMatches[0]['matchid']),
+            'lastlineup' => $lastLineup,
             'last5lineup' => self::getLastFiveLineups($teamid,$season,$latestMatches),
             'leaguetable' => DatabaseLeague::getLeagueTable($season, $teamtoleague[0]['leagueid'],0),
             'realteamid' => self::getSecondTeamId($teamid),
@@ -63,7 +72,7 @@ class DatabaseTeam {
             'concededpercentagehalfs' => self::getConcededPercentageHalfs($teamid,$season),
             'dangerlist' => DatabaseUtils::getDangerListTeam($teamid,$season),
             'winpercentage' => self::getWinPercentage($teamid,$season),
-            'pointmonth' => DatabaseTeam::getMontlyPoints($teamid,$season)
+//            'pointmonth' => DatabaseTeam::getMontlyPoints($teamid,$season)
          );
         return $events;
     }
@@ -287,7 +296,10 @@ class DatabaseTeam {
     
     public function getTopscorerCount($teamid,$leagueid,$season)
     {
-        $topscorer = self::getEventInfoJSON($teamid,$leagueid,'4,8',$season);
+        $topscorer = DatabaseUtils::getEventInfoTotalJSON('4,8',3,$season,$leagueid);
+        if(!isset($topscorer[0])){
+            return 0;
+        }
         $topscorerCount = $topscorer[0]['eventcount'];
        
         $q = "SELECT playerid,COUNT(*) as topscorer FROM eventtable e " .
@@ -1041,88 +1053,6 @@ class DatabaseTeam {
         return $data;
     }    
     
-    public function getEventInfoJSON($teamid,$leagueid,$eventtype,$season)
-    {          
-        if($leagueid == '8'){
-            $leagueid = '3,4,5,6';
-        }
-        if($eventtype == 12){
-            return DatabaseUtils::getCleanSheetsPlayer($season,$teamid,$leagueid);
-        }
-        if(strpos($teamid, ',') !== false){
-            $limit = true;
-        }else{
-            $limit = false;
-        }
-        $q = 
-        "SELECT t.playerid,t.playername,tt.teamid,tt.teamname,COUNT(*) AS `event_count`, eventtype FROM eventtable e " .
-        "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " . $season . " " .
-        "JOIN teamtable tt ON tt.teamid = t.teamid " .
-        "JOIN matchtable m ON e.matchid = m.matchid  ".
-        "JOIN leaguetable l ON l.leagueid = m.leagueid ".    
-        "WHERE e.eventtype IN ( ".$eventtype . " )" .
-        "AND e.playerid != -1 ".
-        ($teamid == 0 ? ' ' : ' AND e.teamid IN ( '.$teamid.' ) ') .
-        ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
-        'AND l.year = '.$season.' ' .
-        "AND e.ignore = 0 " .         
-        "GROUP BY e.playerid " .
-        "ORDER BY `event_count` DESC ".
-        ($teamid == 0 || $limit == 1  ? ' LIMIT 10 ' : ' ');
-        
-//         $q = 
-//        "SELECT 
-//        events.playerid,
-//        events.playername,
-//        events.event_count,
-//        t.`teamid`,
-//        t.`teamname` 
-//        FROM
-//        (SELECT 
-//            e.`playerid`,
-//            p.`playername`,
-//            COUNT(*) AS event_count 
-//        FROM
-//            eventtable e 
-//            JOIN leaguetable l 
-//            ON l.`leagueid` = e.`leagueid` 
-//            JOIN playertable p 
-//            ON p.`playerid` = e.`playerid` 
-//            AND p.year = l.year 
-//            AND p.`teamid` = e.`teamid`  " .
-//            ($teamid == 0 ? ' ' : ' AND e.teamid = '.$teamid.' ') .
-//            ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
-//        "WHERE e.`eventtype` IN ({$eventtype}) 
-//            AND e.`ignore` = 0 
-//            AND l.`year` = {$season} 
-//            AND e.playerid != -1
-//        GROUP BY e.`playerid`
-//        ORDER BY COUNT(*) DESC  " .
-//        ($teamid == 0 ? ' LIMIT 10 ' : ' ') . "
-//            ) AS `events` 
-//        JOIN playertable p 
-//            ON p.playerid = events.playerid 
-//            AND p.`year` = {$season} 
-//        JOIN teamtable t 
-//            ON t.`teamid` = p.teamid
-//            GROUP BY playerid
-//            ORDER BY events.event_count DESC";
-        
-        $data = array();
-        $result = mysql_query($q);
-        while($row = mysql_fetch_array($result))
-        {
-            $playername = $row['playername'];
-            $data[] = array(
-                'playerid' => $row['playerid'],
-                'playername' => $playername,
-                'eventcount'=> $row['event_count'],
-                'teamname' => $row['teamname'],
-                'teamid' => $row['teamid']
-            );
-        }
-        return $data;
-    }
     
     public function getTeamToLeague($teamid,$season)
     {

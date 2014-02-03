@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-12-04 16:34:32
+<?php /* Smarty version Smarty-3.1.12, created on 2014-01-26 11:50:26
          compiled from "smarty\templates\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2520451692e292e1372-85071265%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '6652bf75f43eb8665356b88e8a0e2401680ee1b9' => 
     array (
       0 => 'smarty\\templates\\header.tpl',
-      1 => 1386174871,
+      1 => 1390737024,
       2 => 'file',
     ),
   ),
@@ -34,6 +34,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                             <option value="2011">2011</option>
                             <option value="2012">2012</option>
                             <option value="2013">2013</option>
+                            <option value="2014">2014</option>
                         </select>
                     </label>
                 </td>
@@ -102,7 +103,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 </a>
                 <ul>
                     <li><a href="#" onclick="getEventsTotal(50,leagueidselected);return false;">Seiersprosent</a></li>
-                    <li><a href="#" onclick="getTotalPlayerMinutes();return false;">Spilleminutter</a></li>
+                    <li><a href="#" onclick="getEventsTotal(11,leagueidselected);return false;">Spilleminutter</a></li>
                     <li><a href="#" onclick="getEventsTotal(80,leagueidselected);return false;">Spilletid i prosent</a></li>
                     <li><a href="#" onclick="getEventsTotal(10,leagueidselected);return false;">Toppscorer</a></li>
                     <li><a href="#" onclick="getEventsTotal(60,leagueidselected);return false;">Måleffektivitet</a></li>
@@ -124,7 +125,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 </a>
             </li>
             <li class="menu">
-                <a class="fNiv" href="#" onclick="getSuspensionList(134365);return false;">
+                <a class="fNiv" href="#" onclick="getSuspensionList(suspendedLeagueLand);return false;">
                     <img title="Suspensjonsliste" src="images/suspension.png" onmouseover="this.src='images/suspension-hover.png'" onmouseout="this.src='images/suspension.png'" style="cursor:pointer;"/>
                 </a>
             </li>
@@ -136,6 +137,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     <li><a href="#" onclick="getPopulare();return false;">Populære</a></li>
                     <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>
                     <li><a href="#" onclick="getTransfers();return false;">Overganger</a></li>
+                    <li><a href="#" onclick="getScopeCurrent();return false;">Statoskopet</a></li>
                 </ul>
             </li>
             <li class="menu">

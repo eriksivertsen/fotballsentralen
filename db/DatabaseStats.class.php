@@ -16,7 +16,8 @@ class DatabaseStats {
             home.`teamname` AS hometeam,
             away.`teamname` AS awayteam,
             l.leaguename as leaguename,
-            l1.leaguename as leaguename2 
+            l1.leaguename as leaguename2,
+            hash.name as scopename
             FROM clicktable trending 
             LEFT JOIN playertable p ON p.`playerid` = trending.clicked_id AND p.year = 2012
             LEFT JOIN playertable p1 ON p1.`playerid` = trending.clicked_id AND p1.year = 2013
@@ -26,6 +27,7 @@ class DatabaseStats {
             LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
             LEFT JOIN leaguetable l on l.java_variable = trending.clicked_id
             LEFT JOIN leaguetable l1 ON l1.`leagueid` = trending.clicked_id
+            LEFT JOIN scope_hash hash ON hash.`hashcode` = trending.clicked_id
             GROUP BY TIME,ip
         ORDER by trending.time DESC LIMIT 100";
         
@@ -76,6 +78,15 @@ class DatabaseStats {
                     'type' => $row['clicktype'],
                     'matchid' => $row['clicked_id'],
                     'name' => $row['leaguename2'],
+                    'time' => $row['time'],
+                    'ip' => $row['ip']
+                );
+            }
+            else if($row['clicktype']=='scope'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'matchid' => $row['clicked_id'],
+                    'name' => $row['scopename'],
                     'time' => $row['time'],
                     'ip' => $row['ip']
                 );

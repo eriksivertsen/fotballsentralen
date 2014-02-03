@@ -4,9 +4,9 @@ include "dbConnection.php";
 
 class DatabaseScope {
     
-    public function saveScope($scopeHash,$scopeEvents,$name){
+    public function saveScope($scopeHash,$scopeEvents,$name,$public){
         $url = self::alphaID($scopeHash,false,8);
-        self::updateScopeHash($scopeEvents,$scopeHash,$url,$name);
+        self::updateScopeHash($scopeEvents,$scopeHash,$url,$name,$public);
         $events = array();
         $events['url'] = $url;
         return $events;
@@ -23,9 +23,10 @@ class DatabaseScope {
         {
          $hash = $row['url'];  
         }
-        return self::getScopeDatabase($hash);
+        return $hash;
     }
     public function getScopeDatabase($urlhash){
+      
        $hash = self::alphaID($urlhash,true,8);
        $dbArray = self::getScopeInfo($hash);
        $data2  = json_decode($dbArray[0]['scopestring'],true);
@@ -35,19 +36,20 @@ class DatabaseScope {
            $scopeEvents[] = array (
                'graphtype' => $data2[$i]['graphtype'],
                'eventid' => $data2[$i]['eventid'],
-               'limit' => $data2[$i]['limit'],
                'type' => $data2[$i]['type'],
-               'urlhash' => $urlhash
+               'limit' => $data2[$i]['limit']
            );
        }
-       self::updateScopeHash($scopeEvents,$hash,$urlhash,$dbArray[0]['name']);
+       self::updateScopeHash($scopeEvents,$hash,$urlhash,$dbArray[0]['name'],$dbArray[0]['public']);
        
        $array = array(
            'scopeEvents' => $scopeEvents,
            'from' => $data2[10]['from'],
            'to' => $data2[11]['to'],
+           'scopepublic' => $dbArray[0]['public'],
            'leagueid' => $data2[9]['leagueid'],
-           'name' => $dbArray[0]['name']
+           'name' => $dbArray[0]['name'],
+           'urlhash' => $urlhash
        );
        return $array;
     }
@@ -59,6 +61,13 @@ class DatabaseScope {
             $teamid = implode(" , ", $teamids);
             $leagueid = 0;
         }
+        if($leagueid == 8){
+            $leagueid = '3,4,5,6';
+        }
+        return self::getScopeTeam($leagueid,$teamid,$from,$to,$scopeEvents);
+    }
+    public function getScopeTeam($leagueid, $teamid, $from, $to, $scopeEvents)
+    {
         $scopeCount = 0;
         $events = array();
         
@@ -69,11 +78,11 @@ class DatabaseScope {
             else {
                 $array = array('');
                 if($eventtype['eventid'] == 0){
-                    $array = DatabaseScope::getLeagueTableScope($leagueid, $teamid, $from, $to, $eventtype['limit']);
+                    $array = DatabaseScope::getLeagueTableScope($eventtype['type'],$leagueid, $teamid, $from, $to, $eventtype['limit']);
                 }else if($eventtype['eventid'] == 1){
-                    $array = DatabaseScope::getLeagueTableHomeScope($leagueid, $teamid,$from, $to, $eventtype['limit']);
+                    $array = DatabaseScope::getLeagueTableHomeScope($eventtype['type'],$leagueid, $teamid,$from, $to, $eventtype['limit']);
                 }else if($eventtype['eventid'] == 2){
-                    $array = DatabaseScope::getLeagueTableAwayScope($leagueid, $teamid, $from, $to, $eventtype['limit']);
+                    $array = DatabaseScope::getLeagueTableAwayScope($eventtype['type'],$leagueid, $teamid, $from, $to, $eventtype['limit']);
                 }
                 $events['scope_event'.$scopeCount] = $array;
             }
@@ -85,37 +94,38 @@ class DatabaseScope {
         return $events;
     }
     
-    private function updateScopeHash($scopeEvents,$scopeHash,$url,$name){
+    private function updateScopeHash($scopeEvents,$scopeHash,$url,$name,$public){
         $scopeEvents = json_encode($scopeEvents);
-        $q = "INSERT INTO scope_hash (hashcode,url,name,scopestring,hits) VALUES ('$scopeHash','$url','$name','$scopeEvents',1) ON DUPLICATE KEY UPDATE hits=hits+1";
+        $q = "INSERT INTO scope_hash (hashcode,url,name,scopestring,hits,public) VALUES ('$scopeHash','$url','$name','$scopeEvents',1,$public) ON DUPLICATE KEY UPDATE hits=hits+1";
         mysql_query($q);
     }
     public function getScopeInfo($hash)
     {
-        $q = "SELECT scopestring,name FROM scope_hash where hashcode =  " .$hash;
+        $q = "SELECT scopestring,name,public FROM scope_hash where hashcode =  " .$hash;
         $result = mysql_query($q);
         $data = array();
         while($row = mysql_fetch_array($result))
         {
             $data[] = array (
                 'scopestring' => $row['scopestring'],
-                'name' => $row['name']
+                'name' => $row['name'],
+                'public' => $row['public']
             );
         }
         return $data;
     }
     
-    public function getLeagueTableHomeScope($leagueid,$teamid,$from,$to,$limit)
+    public function getLeagueTableHomeScope($eventtype,$leagueid,$teamid,$from,$to,$limit)
     {
-        return DatabaseScope::getBestTeamScope('hometeam',$leagueid,$from,$to,$teamid,$limit);
+        return DatabaseScope::getBestTeamScope('hometeam',$eventtype,$leagueid,$from,$to,$teamid,$limit);
     }
     
-    public function getLeagueTableAwayScope($leagueid,$teamid,$from,$to,$limit)
+    public function getLeagueTableAwayScope($eventtype,$leagueid,$teamid,$from,$to,$limit)
     {
-        return DatabaseScope::getBestTeamScope('awayteam',$leagueid,$from,$to,$teamid,$limit);
+        return DatabaseScope::getBestTeamScope('awayteam',$eventtype,$leagueid,$from,$to,$teamid,$limit);
     }
     
-    private function getBestTeamScope($team,$leagueid,$from,$to,$teamid = 0, $limit = 1)
+    private function getBestTeamScope($team,$eventtype,$leagueid,$from,$to,$teamid = 0, $limit = 1)
     {
         if($team == 'hometeam'){
             $team = 'm.hometeamid';
@@ -135,7 +145,12 @@ class DatabaseScope {
             return;
         }
         
-        $orderby = 'points';
+        if($eventtype == 0){
+            $orderby = 'points';
+            
+        }else if($eventtype == 1){
+            $orderby = 'pointavg';
+        }
         $index = $orderby;
         
         $q = "SELECT 
@@ -184,9 +199,13 @@ class DatabaseScope {
         }
         return $data;
     }
-    public function getLeagueTableScope($leagueid, $teamid, $from, $to,$limit)
+    public function getLeagueTableScope($eventtype, $leagueid, $teamid, $from, $to,$limit)
     {
-        $orderby = 'points';
+        if($eventtype == 0){
+            $orderby = 'points';
+        }else{
+            $orderby = 'pointavg';
+        }
         $index = $orderby;
         
         if($leagueid == 0){
@@ -326,21 +345,25 @@ class DatabaseScope {
     public function getTotalPlayerminutes($leagueid,$teamid,$from,$to,$limit)
     {
         
-        $q = "SELECT pp.playerid,pp.playername,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played` FROM playtable p " . 
+        $q = "SELECT p.`playername`,total.* FROM (SELECT p.playerid,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played`, YEAR(m.dateofmatch) as year FROM playtable p " . 
         "JOIN matchtable m ON m.matchid = p.matchid " .
-        "JOIN playertable pp ON pp.playerid = p.playerid AND p.teamid = pp.teamid AND YEAR(m.dateofmatch) = pp.year " . 
-        "JOIN teamtable t ON t.teamid = pp.teamid ".
+        "JOIN teamtable t ON t.teamid = p.teamid ".
         "JOIN leaguetable l ON m.leagueid = l.leagueid " .
-        "WHERE pp.playerid != -1 " .
-        "AND l.year = pp.year AND p.ignore = 0 " .
+        "WHERE p.playerid != -1 " .
+        "AND l.year = YEAR(m.dateofmatch) AND p.ignore = 0 " .
         "AND m.dateofmatch BETWEEN '$from' AND DATE_ADD('$to', INTERVAL 1 MONTH) "    .    
         ($leagueid == 0 ? '' : ' AND l.java_variable IN ('.$leagueid.' ) ')      .  
         ($teamid == 0 ? '' : ' AND p.teamid IN ('.$teamid.' ) ')      .
         "GROUP BY p.playerid ".
         "ORDER BY SUM(p.minutesplayed) DESC " .
-        "LIMIT " . $limit;
+        "LIMIT " . $limit . ")
+            AS total 
+  JOIN playertable p 
+    ON total.playerid = p.`playerid` 
+    AND total.teamid = p.`teamid` 
+    AND total.year = p.`year`";
                
-        
+//        $start = microtime(true);
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -348,11 +371,13 @@ class DatabaseScope {
             $data[] = array(
                 'playerid' => $row['playerid'],
                 'playername' => $row['playername'],
-                'minutesplayed'=> $row['minutes played'],
+                'eventcount'=> $row['minutes played'],
                 'teamid' => $row['teamid'],
                 'teamname' => $row['teamname']
             );
         }
+//        $end = microtime(true);
+//        $data['time'] = $end - $start;
         return $data;
     }
     
@@ -394,6 +419,9 @@ class DatabaseScope {
     }
     private function getEventtypeTeam($eventtype,$leagueid,$teamid,$from,$to,$limit)
     {
+        if($eventtype == 10){
+            $eventtype = '4,8';
+        }
         $q = 
         "SELECT tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
         "JOIN teamtable tt ON tt.teamid = e.teamid " .
@@ -670,11 +698,8 @@ class DatabaseScope {
         }
         $q .=  "GROUP BY p.`playerid";
        
-        echo $q;
-        
         $teamMins = DatabaseTeam::getTeamMinutesScoped($from,$to);
         $data = array();
-        var_dump($teamMins);
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
@@ -914,6 +939,22 @@ class DatabaseScope {
 		$out = strrev($out); // reverse
 	}
 	return $out;
+    }
+    
+    public function getLiveScopes()
+    {
+        $q = "select url, name from scope_hash where live = 1 and public = 1";
+               
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'url' => $row['url'],
+                'name' => $row['name']
+            );
+        }
+        return $data;
     }
 }
 ?>

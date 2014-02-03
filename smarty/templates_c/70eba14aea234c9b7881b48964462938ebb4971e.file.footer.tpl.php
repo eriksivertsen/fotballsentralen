@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-11-21 17:41:39
+<?php /* Smarty version Smarty-3.1.12, created on 2013-12-19 13:03:03
          compiled from "smarty\templates\footer.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:1961150b0cf64b4a632-22652798%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '70eba14aea234c9b7881b48964462938ebb4971e' => 
     array (
       0 => 'smarty\\templates\\footer.tpl',
-      1 => 1385055689,
+      1 => 1387458180,
       2 => 'file',
     ),
   ),
@@ -23,7 +23,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <body>
         <hr>
             <center>
-                <text style="font-size: 7pt" >FotballSentralen.com | <a href="mailto:kontakt@fotballsentralen.com">Kontakt<a> | Informasjonen er hentet fra <a href="http://www.fotball.no">fotball.no<a></text>
+                <text style="font-size: 7pt" >FotballSentralen.com | <a href="mailto:kontakt@fotballsentralen.com">Kontakt</a> | Informasjonen er hentet fra <a href="http://www.fotball.no">fotball.no<a></text>
             <br/>
             <br/>
             <!-- Start: Kode for proisp.no knapp -->

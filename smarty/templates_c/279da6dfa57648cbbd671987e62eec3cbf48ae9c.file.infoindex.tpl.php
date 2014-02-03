@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-12-10 18:36:21
+<?php /* Smarty version Smarty-3.1.12, created on 2014-01-27 16:06:33
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1386700556,
+      1 => 1390838790,
       2 => 'file',
     ),
   ),
@@ -149,6 +149,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   
         function controlHash()
         {            
+            var url = window.location;
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
                 setSeason(2013);
@@ -277,8 +278,36 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     Antall spilletidoppføringer: <b><text id="total_lineups"></text></b><br/>
                     Antall klikk på siden: <b><text id="total_click"></text></b><br/>
                     <br/>
+                    <br/>
+                    <a href="mailto:kontakt@fotballsentralen.com">Kontakt</a>
                 </div>
                 <button id="info_close" onclick="closeInfo();return false;">Lukk</button>
+            </div>
+            <div id="scope_form" hidden="true" align="center" style="font-size:10pt">
+                <div style="width:500px;margin-right:10px;text-align: center">
+                    <b>Hvordan Statoskopet fungerer:</b>
+                    <br/><br/>
+                    Statoskopet er et verktøy hvor du kan spesfisere ting som tidsperiode og liga, for å så hente ut valgfri data
+                    fra akkurat denne spesifiseringen. Du kan også lage en offentlig oversikt som alle kan være innom, eller en privat
+                    som de kun med link fra deg kan besøke.
+              
+                    <br/><br/>
+                    Det første du kan gjøre, er å velge en spesfikk liga. Deretter kan du velge en tidsperiode du ønsker å 
+                    kikke nærmere på. Hvis du for eksempel ønsker å studere høst-sesongen 2012 i 2.divisjon, velger du startdato
+                    og sluttdato på slideren i toppen. Helt øverst vil du kunne se hvilken måned og år du studerer akkurat nå. Deretter
+                    velger du 2.divisjon i ligavalget.
+                    
+                    <br/><br/>
+                    Når dette er gjort kan du begynne med å velge hvilke data du ønsker å ta med i oversikten. Ønsker du feks å se hvem
+                    som gjorde det best poengmessig høstsesongen, velger du graftype tabell, hjemme/borte, om du vil ha poengsnitt eller 
+                    totalt poeng, og deretter hvor mange lag som skal være med på tabellen.
+                    
+                    <br/><br/>
+                    Du kan lagre opptil 9 tabeller på hver skjerm. Disse tabellene blir ikke fjernet hvis du velger en ny tidsperiode eller
+                    velger en ny liga. Tabellene lastes på nytt med ligavalg og tidsperiode for hvert trykk på "Hent data".
+                    
+                </div> 
+                <button id="scope_close" onclick="closeScopeInfo();return false;">Lukk</button>
             </div>
             <div id="feedback_form" hidden="true" align="right" style="font-size:9pt">
                 <table style="font-size:9pt;">
@@ -326,6 +355,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <a href="#" id="feedback_click" style="font-size: 8pt" title="Hjelp FotballSentralen bli bedre!" onclick="showPopup();return false;">Feedback</a>
                 <br/>
                 <a href="#" id="info_click" style="font-size: 8pt" onclick="openInfo();return false;">Ny på FotballSentralen?</a>
+                <a href="#" id="info_scope_click" style="font-size: 8pt" onclick="openScopeInfo();return false;">Hva er dette?</a>
             </div>
             
             
@@ -381,16 +411,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <table id="referee_table" class="tablesorter playerinfo"></table>
                 <table id="referee_table_specific" class="tablesorter playerinfo"></table>
             </div>
+            <center><text id="noData" style="font-size: 9pt">Ingen data denne sesongen!</text></center>
 
             <div id="suspensionList">
                 <label class="selectlabel">
                     <select id="suspensionSelect" style="margin: 20px" onchange="selectSuspendedLeague()">
-                        <option value="134365">Tippeligaen</option>
-                        <option value="134367">Adeccoligaen</option>
-                        <option value="134371">2.divisjon avd 1</option>
-                        <option value="134372">2.divisjon avd 2</option>
-                        <option value="134373">2.divisjon avd 3</option>
-                        <option value="134374">2.divisjon avd 4</option>
+                        <option value="138918">Tippeligaen</option>
+                        <option value="138920">Adeccoligaen</option>
+                        <option value="138924">2.divisjon avd 1</option>
+                        <option value="138925">2.divisjon avd 2</option>
+                        <option value="138926">2.divisjon avd 3</option>
+                        <option value="138927">2.divisjon avd 4</option>
                     </select>
                 </label>
                 <br/>
@@ -404,7 +435,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <div style="margin-left:15px" id="social">
                 <div class="fb-like" data-href="http://www.facebook.com/fotballsentral1" data-send="false" data-width="400" data-show-faces="true"></div>
                 <br/>
-                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url="http://www.fotballsentralen.com/">Tweet</a>
             </div>
             <br/>
             <br/>

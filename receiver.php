@@ -49,12 +49,17 @@ if(isset($_POST['action'])){
         echo json_encode($events);
     }
     if($_POST['action'] == 'getEventsTotal'){
-        $dbUtils->setEventPageHit($_POST['eventtype']);
-        echo json_encode($dbUtils->getEventInfoTotalJSON($_POST['eventtype'],200,$_POST['season'],$_POST['leagueid']));
+        if($_POST['eventtype'] == 11){
+            $dbUtils->setEventPageHit(11);
+            echo json_encode($dbUtils->getTotalPlayerminutes($_POST['season'],200,$_POST['leagueid']));
+        }
+        else{
+            $dbUtils->setEventPageHit($_POST['eventtype']);
+            echo json_encode($dbUtils->getEventInfoTotalJSON($_POST['eventtype'],200,$_POST['season'],$_POST['leagueid']));
+        }
     }
     if($_POST['action'] == 'getTotalPlayerminutes'){
-        $dbUtils->setEventPageHit(11);
-        echo json_encode($dbUtils->getTotalPlayerminutes($_POST['season'],200,$_POST['leagueid']));
+        
     }
     if($_POST['action'] == 'getEventsTotalTeam'){
         $dbUtils->setEventPageTeamHit($_POST['eventtype']);
@@ -85,13 +90,21 @@ if(isset($_POST['action'])){
     if($_POST['action'] == 'getScope'){
         $from = $dbScope->getMYSQLDate($_POST['from']);
         $to = $dbScope->getMYSQLDate($_POST['to']);
-        
+        $dbUtils->setHit(-1, 'scope');
         $scopeEvents = $_POST['scopeEvents'];
-        
         $events = $dbScope->getScope($_POST['leagueid'],$from,$to,$scopeEvents);
         echo json_encode($events);
     }
+    if($_POST['action'] == 'getScopeTeam'){
+        $from = $dbScope->getMYSQLDate($_POST['from']);
+        $to = $dbScope->getMYSQLDate($_POST['to']);
+        $dbUtils->setHit(-1, 'scope');
+        $scopeEvents = $_POST['scopeEvents'];
+        $events = $dbScope->getScopeTeam(0,$_POST['teamid'],$from,$to,$scopeEvents);
+        echo json_encode($events);
+    }
     if($_POST['action'] == 'getScopeDatabase'){
+        $dbUtils->setHit(DatabaseScope::alphaID($_POST['urlhash'],true,8), 'scope');
         $events = $dbScope->getScopeDatabase($_POST['urlhash']);
         echo json_encode($events);
     }
@@ -100,7 +113,7 @@ if(isset($_POST['action'])){
         echo json_encode($events);
     }
     if($_POST['action'] == 'saveScope'){
-        $events = $dbScope->saveScope($_POST['scopeHash'],$_POST['scopeEvents'],$_POST['name']);
+        $events = $dbScope->saveScope($_POST['scopeHash'],$_POST['scopeEvents'],$_POST['name'],$_POST['scopepublic']);
         echo json_encode($events);
     }
     if($_POST['action'] == 'getPopulare'){

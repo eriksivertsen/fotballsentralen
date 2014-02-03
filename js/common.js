@@ -26,7 +26,8 @@ var typeselected;
 
 var title = 'FotballSentralen.com';
 var season = 2013;
-var timeout = 15000; //ms
+var suspendedLeagueLand = 138918;
+var timeout = 25000; //ms
 
 function selectSuspendedLeague()
 {
@@ -38,11 +39,7 @@ function selectTotalEvents()
 {
     leagueidselected = $('#allEventsSelect').val();
     $('#leagueselect').val(leagueidselected);
-    if(eventselected == 11){
-        getTotalPlayerMinutes();
-    }else{
-        selectEvents();
-    }
+    selectEvents();
 }
 
 function setLeagueSelected(){
@@ -74,11 +71,7 @@ function selectEvents(){
 function selectTotalEventsType()
 {
     eventselected = $('#allEventsSelectType').val();
-    if(eventselected == 11){
-        getTotalPlayerMinutes();
-    }else{
-        selectEvents();
-    }
+    selectEvents();
 }
 
 function selectSeason()
@@ -109,7 +102,7 @@ function setSeason(season_){
 }
 function next() {
     var season_ = parseInt(season);
-    if($('#season').val() != '2013'){
+    if($('#season').val() != '2014'){
         $('#season').val(''+(season_+1));
         selectSeason();
     }
@@ -190,6 +183,9 @@ function getPopulare()
 }
 function getSuspensionList(leagueid) 
 {
+    if(leagueid === undefined){
+        leagueid = suspendedLeagueLand;
+    }
     if(!allowClicks){
         return;
     }
@@ -759,7 +755,7 @@ function getTotalPlayerMinutes(){
                 
                 $('#playerminutes_table').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
                     '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
-                    '<td>'+array[i].minutesplayed+'</td></tr>');
+                    '<td>'+array[i].eventcount+'</td></tr>');
             }
             stopLoad();
             $('#allEventsSelectType').val(11);
@@ -830,7 +826,7 @@ function getEventsTotal(eventtype,leagueid)
             for (var i=0; i<array.length; i++) {
                 $('#allEvents').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
                     '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
-                    '<td>'+array[i].eventcount+'</td></tr>');
+                    '<td align=center>'+array[i].eventcount+'</td></tr>');
             }
             stopLoad();
             $('#allEventsSelectType').show();
@@ -1190,7 +1186,7 @@ function getEventRankPlayer(array)
 
 function updatePlayerRank(array, eventtype)
 {
-    var list = '<a href="#" onclick="getEventsTotal('+eventtype+',0)">'+getEventFromId(eventtype) +'</a>';
+    var list = '<a href="#" style="text-decoration:underline" onclick="getEventsTotal('+eventtype+',0)">'+getEventFromId(eventtype) +'</a>';
     if(array.length > 0) {
         $('#ranking').append('<li>' + list + ': ' + array[0].rank +'. plass ('+array[0].count +')</li>');
         $('#ranking').show();
@@ -1249,7 +1245,7 @@ function getLeagueInfo(leagueid,teamid)
             updateLeagueTable(json.leaguetable,$('#leaguetable'),'Tabell');
             updateLeagueTable(json.leaguetablehome,$('#leaguetablehome'),'Hjemmetabell');
             updateLeagueTable(json.leaguetableaway,$('#leaguetableaway'),'Bortetabell');
-            updateEventTable(json.totalgoals,$('#totalgoals'),10);
+            updateEventTable(json.topscorer,$('#totalgoals'),10);
             updateEventTable(json.yellow_red,$('#yellow_red'),1);
             updateEventTable(json.red,$('#redcard'),3);
             updateEventTable(json.goal,$('#goals'),4);
@@ -1298,15 +1294,13 @@ function getTeamInfoFull(teamid,fromPage)
             
             var array = json;
             if(array.teamtoleague.length == 0){
+                $('#noData').show();
                 stopLoad();
                 return;
             }
-            
             updateTeamInfoTable(array);
             updateBreadcrumb(0, teamid, array.teamtoleague);
-            
             updateLeagueTable(array.leaguetable,$('#team_leaguetable'),array.teamtoleague[0].leaguename, teamid);
-            
             $('#rankingteam').append('<h4>Lagranking i Norge</h4>');
             
             updateTeamRankList(array.yellowred,1); 
@@ -1316,7 +1310,9 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.yellow,2);
             var matchcount = array.allmatches.length;
             
-            $('#team_yellowcard').html(array.yellow[0].count + getPerMatch(array.yellow[0].count,matchcount));
+            if(array.yellow[0] != null){
+                $('#team_yellowcard').html(array.yellow[0].count + getPerMatch(array.yellow[0].count,matchcount));
+            }
             
             var redCards = parseInt((array.red[0] != undefined ? array.red[0].count : 0));
             var yellowRed = parseInt((array.yellowred[0] != undefined ? array.yellowred[0].count : 0));
@@ -1326,8 +1322,9 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.subin,6);
             updateTeamRankList(array.subout,7);
             updateTeamRankList(array.cleansheetrank, 12);
+            
             updateTeamPlayers(array.teamplayer, array.dangerlist, array.winpercentage);
-            if($('#season').val() == '2013'){
+            if($('#season').val() == '2014'){
                 updateLatestMatches(array.latestmatches, array.last5lineup);
                 updateNextMatches(array.nextmatches);
             }
@@ -1354,7 +1351,7 @@ function getPerMatch(events, match)
 }
 function updateTeamRankList(array, eventtype)
 {
-    var list = '<a href="#" onclick="getEventsTotalTeam('+eventtype+',0)">'+getEventFromId(eventtype) +'</a>';
+    var list = '<a href="#" style="text-decoration:underline" onclick="getEventsTotalTeam('+eventtype+',0)">'+getEventFromId(eventtype) +'</a>';
     if(array.length > 0) {
         $('#rankingteam').append('<li>' + list + ': ' + array[0].rank +'. plass ('+array[0].count +')</li>');
     }
@@ -1515,12 +1512,11 @@ function updateEventTable(array,table,eventtype,type,edit,scopeeventid,leagueid)
     if(type == undefined) {
         type = 0;
     }
-    var editTable = '<a href="#" onclick="openGraphEdit(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
-    var closeTable = '<a href="#" onclick="closeTable(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
+    var closeTable = '<a href="#" title="Lukk tabell" onclick="closeTable(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
     var tableheaderLink = createEventLink(eventtype,type,leagueid);
     table.empty();
     table.attr('class','tablesorter playerinfo');
-    table.append('<caption class="tableheader">'+tableheaderLink+(edit ? editTable+closeTable : '')+'</caption><tbody>');
+    table.append('<caption class="tableheader">'+tableheaderLink+(edit ? closeTable : '')+'</caption><tbody>');
     for (var i=0; i<array.length; i++) {
         var string = '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>';
         if(type == 0) {
@@ -1688,16 +1684,23 @@ function updateAllMatches(array, scorers, selectedteamid)
     }
 }
 
-function updatePlayerMinutes(array,table)
+function updatePlayerMinutes(array,table, scopeeventid)
 {
+    if(scopeeventid != undefined){
+        var closeTable = '<a href="#" onclick="closeTable(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
+    }
+    var tableheaderLink = '<a href="#" style="cursor:pointer" onclick="getEventsTotal(11,'+leagueidselected+');return false;">Spilleminutter</a>';
+  
+    
     table.empty();
-    table.append('<caption class="tableheader" onclick="getTotalPlayerMinutes()">Spilleminutter</caption>');
+    table.attr('class','tablesorter playerinfo');
+    table.append('<caption class="tableheader">'+tableheaderLink+(scopeeventid != undefined ? closeTable : '')+'</caption>');
     table.append('<tr><th style="width: 55%"><th style="width: 32%"><th style="width: 13%"></tr>');
     table.append('<tbody>');
     for (var i=0; i<array.length; i++) {
         table.append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
             '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
-            '<td>'+array[i].minutesplayed+'</td></tr>');
+            '<td>'+array[i].eventcount+'</td></tr>');
     }
     table.append('</tbody>');
     if(array.length == 0){
@@ -1794,9 +1797,15 @@ function updateTeamInfoTable(array)
         $('#team_attendance_avg').html('Ikke funnet');
         $('#team_attendance_max').html('Ikke funnet');
     }
-    $('#team_over3').html(array.overgoals.over3+'%');
-    $('#team_over4').html(array.overgoals.over4+'%');
-    $('#team_surface').html(array.teamtoleague[0].surface);
+    if(array.overgoals.over3.length != 0){
+        $('#team_over3').html(array.overgoals.over3+'%');
+    }
+    if(array.overgoals.over4.length != 0){
+        $('#team_over4').html(array.overgoals.over4+'%');
+    }
+    if(array.teamtoleague[0].surface.length != 0){
+        $('#team_surface').html(array.teamtoleague[0].surface);
+    }
     $('#team_tops_table').show();
 }
 function addSuspensionTable(array, reason)
@@ -1880,6 +1889,7 @@ function startLoad()
     $('#allEventsSelectType').hide();
     $('#nationalteam').hide();
     $('#info_click').hide();
+    $('#info_scope_click').hide();
     $('#label_event').hide();
     $('#label_league').hide();
     
@@ -1924,9 +1934,6 @@ function updateMatchTable(array)
 {   
     var prefix = '#matches_';
     $(prefix +'table').empty();
-    
-    var string = array.streak;
-    //console.log(string);
     
     var hlineup = getLineupArrayFullnameLink(array.homelineup);
     var alineup =  getLineupArrayFullnameLink(array.awaylineup);
@@ -1984,11 +1991,15 @@ function updateMatchTable(array)
                 '<td align="center">'+sortedLineupAway[i]+'</td>'+
             '</tr>');
     }
+    var attendance = 'Ikke funnet';
+    if(array.attendance !== null){
+        attendance = array.attendance;
+    }
     $(prefix +'table').append('<tr>'+
         '<td>&nbsp</td></tr>'+
         '<tr><td colspan="3" align="center">'+getMatchLinkText(array.matchid,'Offisiell kamprapport')+'</td></tr>'+
         '<tr><td colspan="3" align="center">Dommer: '+getRefereeLink(array.refereeid,array.refereename)+'</td></tr>'+
-        (array.attendance != 0 ? '<tr><td colspan="3" align="center">Tilskuere: '+array.attendance+'</td></tr>' : '') +
+        (array.attendance != 0 ? '<tr><td colspan="3" align="center">Tilskuere: '+attendance+'</td></tr>' : '') +
         '<tr><td>&nbsp</td></tr>');
    
     

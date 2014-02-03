@@ -150,7 +150,7 @@ table.tablesorter{
 }
 table.playerinfo {
     table-layout: auto;
-    display: inline-block;
+    display: inline-table;
     font-size: 8pt;
     margin: 17px;
     overflow: visible;
@@ -164,6 +164,7 @@ table.emptytable {
     display: inline-table;
     font-size: 8pt;
     margin: 17px;
+    margin-top:40px;
     overflow: visible;
     border-collapse:collapse;
     width: 300px;

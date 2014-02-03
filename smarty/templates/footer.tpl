@@ -2,7 +2,7 @@
     <body>
         <hr>
             <center>
-                <text style="font-size: 7pt" >FotballSentralen.com | <a href="mailto:kontakt@fotballsentralen.com">Kontakt<a> | Informasjonen er hentet fra <a href="http://www.fotball.no">fotball.no<a></text>
+                <text style="font-size: 7pt" >FotballSentralen.com | <a href="mailto:kontakt@fotballsentralen.com">Kontakt</a> | Informasjonen er hentet fra <a href="http://www.fotball.no">fotball.no<a></text>
             <br/>
             <br/>
             <!-- Start: Kode for proisp.no knapp -->

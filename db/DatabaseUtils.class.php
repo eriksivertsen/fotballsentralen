@@ -5,6 +5,7 @@ include "dbConnection.php";
 class DatabaseUtils {
     
     public static $whitelist = array('localhost', '127.0.0.1');
+//    public static $whitelist = array();
     
     public function getTransfers()
     {
@@ -354,7 +355,6 @@ class DatabaseUtils {
             return self::getGoalsAsSubstitutes('playerid',$leagueid,$season);
         }
         if($eventtype == 80){
-            $leagueid = 0;
             return self::getPlayPercentage($season,$leagueid,$teamid);
         }
         if(!empty($teamids)){
@@ -378,7 +378,7 @@ class DatabaseUtils {
         "LIMIT $limit";
         
         //echo $q;
-        
+        $start = microtime(true);
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -391,6 +391,8 @@ class DatabaseUtils {
                 'teamid' => $row['teamid']
             );
         }
+        $end = microtime(true);
+//        $data[] = array('time' => number_format($end - $start,3));
         return $data;
     }
     
@@ -462,31 +464,33 @@ class DatabaseUtils {
     public function cmp($a, $b) {
         return $b['eventcount'] - $a['eventcount'];
     }
-    public function getTotalPlayerminutes($season,$limit, $leagueid)
+    public function getTotalPlayerminutes($season,$limit, $leagueid,$teamid = 0 )
     {
         if($leagueid == 8){
             $leagueid = '3,4,5,6';
         }
-        $teamid = 0;
         if($leagueid == 11){
             $teamid = implode(" , ", DatabaseLeague::getCustomLeagueTeams($leagueid));
             $leagueid = 0;
         }
+       
         
-        $q = "SELECT pp.playerid,pp.playername,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played` FROM playtable p " . 
+        $q = "SELECT p.playername, total.*  FROM (SELECT p.playerid,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played`, YEAR(m.dateofmatch) as year FROM playtable p " . 
         "JOIN matchtable m ON m.matchid = p.matchid " .
-        "JOIN playertable pp ON pp.playerid = p.playerid AND p.teamid = pp.teamid AND pp.year = ". $season . " " . 
-        "JOIN teamtable t ON t.teamid = pp.teamid ".
+        "JOIN teamtable t ON t.teamid = p.teamid ".
         "JOIN leaguetable l ON m.leagueid = l.leagueid " .
-        "WHERE pp.playerid != -1 " .
-        "AND l.year = pp.year AND p.ignore = 0 " .
+        "WHERE p.playerid != -1 " .
+        "AND l.year = $season AND p.ignore = 0 " .
         ($leagueid == 0 ? '' : ' AND l.java_variable IN ('.$leagueid.' ) ')      .  
         ($teamid == 0 ? '' : ' AND p.teamid IN ('.$teamid.' ) ')      .
         "GROUP BY p.playerid ".
         "ORDER BY SUM(p.minutesplayed) DESC " .
-        "LIMIT " . $limit;
-               
-        
+        "LIMIT " . $limit . ")  AS total 
+        JOIN playertable p 
+        ON total.playerid = p.`playerid` 
+        AND total.teamid = p.`teamid` 
+        AND total.year = p.year";
+
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -494,7 +498,7 @@ class DatabaseUtils {
             $data[] = array(
                 'playerid' => $row['playerid'],
                 'playername' => $row['playername'],
-                'minutesplayed'=> $row['minutes played'],
+                'eventcount'=> $row['minutes played'],
                 'teamid' => $row['teamid'],
                 'teamname' => $row['teamname']
             );
@@ -504,7 +508,7 @@ class DatabaseUtils {
     
     public function getSuspList($leagueid)
     {
-        $year = 2013;
+        $year = 2014;
         $q = "SELECT e.* FROM eventtable e
             JOIN matchtable m ON e.`matchid` = m.`matchid` 
             JOIN playertable p ON e.playerid = p.playerid and e.teamid = p.teamid and p.leagueid = m.leagueid
@@ -723,6 +727,9 @@ class DatabaseUtils {
     
     public function getGoalScoreresMatch(array $matchid)
     {
+        if(empty($matchid)){
+            return array();
+        }
         $matchids = implode($matchid,',');
         $q = "SELECT 
         e.matchid, p.`playername`,p.`playerid`,e.`eventtype`, e.`minute`,e.teamid
@@ -1158,13 +1165,13 @@ class DatabaseUtils {
     {
         DatabaseUtils::setInternalMatchHit($matchid);
         
-        $q = "SELECT e.*,p.`playername`,m.teamwonid, m.attendance, m.homescore,m.awayscore, home.`teamname` AS homename, away.`teamname` AS awayname,home.`teamid` AS homeid, away.`teamid` AS awayid, r.refereeid, r.refereename
+        $q = "SELECT e.*,p.`playername`,m.teamwonid, m.attendance, m.homescore,m.awayscore, home.`teamname` AS homename, away.`teamname` AS awayname,home.`teamid` AS homeid, away.`teamid` AS awayid, r.refereeid, r.refereename, l.year 
         FROM eventtable e 
         JOIN leaguetable l ON l.`leagueid` = e.`leagueid`
         JOIN matchtable m ON m.`matchid` = e.`matchid`
         JOIN teamtable home ON home.`teamid` = m.`hometeamid`
         JOIN teamtable away ON away.`teamid` = m.`awayteamid`
-        JOIN refereetable r on r.refereeid = m.refereeid
+        LEFT JOIN refereetable r on r.refereeid = m.refereeid
         JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`year` = l.`year` AND p.`teamid` = e.`teamid`
         WHERE e.`matchid` = $matchid
         AND e.`ignore` = 0
@@ -1180,6 +1187,7 @@ class DatabaseUtils {
         $playerOutId = 0;
         $playerOutName = '';
         $teamWonId = -1;
+        $year = 0;
         
         while($row = mysql_fetch_array($result))
         {
@@ -1187,6 +1195,7 @@ class DatabaseUtils {
             $event = $row['eventtype'];
             $homeId = $row['homeid'];
             $awayId = $row['awayid'];
+            $year = $row['year'];
             
             if($event == 6){
                 $playerInId = $row['playerid'];
@@ -1248,8 +1257,8 @@ class DatabaseUtils {
         if($teamWonId == $data['events'][0]['homeid']){
             $type = 'home';
         }
-        $data['homelineup'] = DatabaseTeam::getLineup($homeId, 2013, $matchid);
-        $data['awaylineup'] = DatabaseTeam::getLineup($awayId, 2013, $matchid);
+        $data['homelineup'] = DatabaseTeam::getLineup($homeId, $year, $matchid);
+        $data['awaylineup'] = DatabaseTeam::getLineup($awayId, $year, $matchid);
         if($teamWonId == 0){
             DatabaseTeam::getStreakString($homeId,$matchid,$type);
             DatabaseTeam::getStreakString($awayId,$matchid,$type);
@@ -1390,7 +1399,7 @@ class DatabaseUtils {
             $q .= " AND e.`ignore` = 0 
             GROUP BY e.`playerid`) AS goals 
             ON goals.playerid = minutes.playerid 
-            JOIN playertable p ON p.`playerid` = minutes.playerid AND p.`teamid` = minutes.teamid AND p.`year` = 2013
+            JOIN playertable p ON p.`playerid` = minutes.playerid AND p.`teamid` = minutes.teamid AND p.`year` = $season
             JOIN teamtable t ON t.`teamid` = p.`teamid`
             ORDER BY percentage ASC ";
             

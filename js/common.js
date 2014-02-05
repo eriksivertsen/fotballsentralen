@@ -1307,6 +1307,7 @@ function getTeamInfoFull(teamid,fromPage)
                 stopLoad();
                 return;
             }
+            $('#noData').hide();
             updateTeamInfoTable(array);
             updateBreadcrumb(0, teamid, array.teamtoleague);
             updateLeagueTable(array.leaguetable,$('#team_leaguetable'),array.teamtoleague[0].leaguename, teamid);
@@ -1935,7 +1936,7 @@ function getMatch(matchid)
         timeout: timeout,
         data: {action: "getMatch", matchid: matchid},
         error: function () {
-            stopLoad()
+            stopLoad();
         },
         success: function(json) {
             

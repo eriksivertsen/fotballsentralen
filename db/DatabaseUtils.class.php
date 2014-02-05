@@ -4,7 +4,7 @@ include "dbConnection.php";
 //Methods that do not go under the other Database-categories.
 class DatabaseUtils {
     
-    public static $whitelist = array('localhost', '127.0.0.1');
+    public static $whitelist = array('localhost', '127.0.0.1','46.9.149.168');
 //    public static $whitelist = array();
     
     public function getTransfers()

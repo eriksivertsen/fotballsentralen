@@ -1231,16 +1231,25 @@ function getLeagueInfo(leagueid,teamid)
             if(json.topscorer.length > 0){
                 $('#league_topscorer').html(getPlayerLink(json.topscorer[0].playerid,json.topscorer[0].playername + ' - ' + json.topscorer[0].eventcount + ' mål'));
                 setTeamLogo($('#league_topscorer_logo'),json.topscorer[0].teamid);
-            }   
+            }
+            else{
+                $('#league_topscorer').html('Ingen funnet');
+            }
             if(json.hometeam.length > 0){
                 var hometeam = json.hometeam[0];
                 $('#league_hometeam').html(getTeamLink(hometeam.teamid,hometeam.teamname + ' (' + hometeam.wins + '-' + hometeam.draws + "-"+hometeam.loss+') - ' +hometeam.goals+'-'+hometeam.conceded));
                 setTeamLogo($('#league_hometeam_logo'),hometeam.teamid);
             }
+            else{
+                $('#league_hometeam').html('Ingen funnet');
+            }
             if(json.awayteam.length > 0){
                 var awayteam = json.awayteam[0];
                 $('#league_awayteam').html(getTeamLink(awayteam.teamid,awayteam.teamname + ' (' + awayteam.wins + '-' + awayteam.draws + "-"+awayteam.loss+') - ' +awayteam.goals+'-'+awayteam.conceded));
                 setTeamLogo($('#league_awayteam_logo'),awayteam.teamid);
+            }
+            else{
+                $('#league_awayteam').html('Ingen funnet');
             }
             updateLeagueTable(json.leaguetable,$('#leaguetable'),'Tabell');
             updateLeagueTable(json.leaguetablehome,$('#leaguetablehome'),'Hjemmetabell');
@@ -1312,6 +1321,8 @@ function getTeamInfoFull(teamid,fromPage)
             
             if(array.yellow[0] != null){
                 $('#team_yellowcard').html(array.yellow[0].count + getPerMatch(array.yellow[0].count,matchcount));
+            }else{
+                 $('#team_yellowcard').html('');
             }
             
             var redCards = parseInt((array.red[0] != undefined ? array.red[0].count : 0));
@@ -1732,7 +1743,6 @@ function updateTeamInfoTable(array)
     if(array.length == 0){
         return ;
     }
-    
     if(array.realteamid == -1){
         setTeamLogo( $('#team_logo'),array.teamtoleague[0].teamid);
     }else{
@@ -1747,12 +1757,18 @@ function updateTeamInfoTable(array)
         else if(array.topscorercount > 2){
             $('#team_topscorer').append(' ('+(array.topscorercount-1) +' andre spillere)');
         }
+    }else{
+         $('#team_topscorer').html('');
     }
     if(array.winpercentage.length != 0){//array.mostminutes[0].playerid
         $('#team_winpercentage').html(getPlayerLink(array.winpercentage[0].playerid,array.winpercentage[0].playername)+' - '+array.winpercentage[0].percentage+' %');
+    }else{
+        $('#team_winpercentage').html('');
     }
     if(array.mostminutes.length != 0){//array.mostminutes[0].playerid
         $('#team_minutes').html(getPlayerLink(array.mostminutes[0].playerid,array.mostminutes[0].playername)+' - '+array.mostminutes[0].minutes+' minutter');
+    }else{
+         $('#team_minutes').html('');
     }
     if(array.mostyellow.length != 0){
         $('#team_yellow').html(getPlayerLink(array.mostyellow[0].playerid,array.mostyellow[0].playername)+' - '+array.mostyellow[0].events+' gul'+(array.mostyellow[0].events == 1 ? 't' : 'e') +' kort');
@@ -1779,10 +1795,14 @@ function updateTeamInfoTable(array)
     if(array.homestats.length != 0){
         var stat = array.homestats[0]
         $('#team_home').html(stat.points +' poeng: '+stat.wins +'-'+stat.draws+'-'+stat.loss+ ' (' + stat.goals+'-'+stat.conceded+')');
+    }else{
+        $('#team_home').html('');
     }
     if(array.awaystats.length != 0){
         stat = array.awaystats[0]
         $('#team_away').html(stat.points +' poeng: '+stat.wins +'-'+stat.draws+'-'+stat.loss+ ' (' + stat.goals+'-'+stat.conceded+')');
+    }else{
+        $('#team_away').html('');
     }
 
     if(array.cleansheets.length != 0){

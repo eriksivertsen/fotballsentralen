@@ -105,7 +105,6 @@
 
 <br/>
 
-<center><text id="noData_team" style="font-size: 9pt">Ingen data denne sesongen!</text></center>
 <table id="teamplayerinfo" class="tablesorter playerinfo"></table>
 
 <div id="pies">

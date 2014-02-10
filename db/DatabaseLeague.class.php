@@ -6,6 +6,9 @@ class DatabaseLeague {
     
     public function getLeagueInfo($leagueid,$teamid,$season)
     {
+        if($season == 0){
+            $season = Constant::ALL_STRING;
+        }
         DatabaseUtils::setLeagueHit($leagueid);
         
         $events = array (
@@ -46,10 +49,13 @@ class DatabaseLeague {
     
     public function getTeamsJSON($leagueId, $season)
     {
+        if($season == 0){
+            $season = Constant::ALL_STRING;
+        }
         $q = "SELECT t.*,l.lastupdate FROM teamtable t 
             JOIN matchtable m ON m.hometeamid = t.teamid
             JOIN leaguetable l ON l.leagueid = m.leagueid
-            WHERE l.java_variable = {$leagueId} and l.year = {$season}
+            WHERE l.java_variable = {$leagueId} and l.year IN ( {$season} )
             GROUP BY m.`hometeamid`
             ORDER BY t.teamname ASC";
         $data = array();
@@ -115,7 +121,7 @@ class DatabaseLeague {
             ON t.teamid = m.hometeamid 
             JOIN leaguetable l 
             ON m.`leagueid` = l.`leagueid` 
-        WHERE l.`year` = {$season} 
+        WHERE l.`year` IN ( {$season} )
             AND m.`result` NOT REGEXP '- : -|(Utsatt)' 
             AND l.java_variable IN ( {$leagueid} ) ";
        
@@ -143,7 +149,7 @@ class DatabaseLeague {
             ON t.teamid = m.awayteamid 
             JOIN leaguetable l 
             ON m.`leagueid` = l.`leagueid` 
-        WHERE l.`year` = {$season} AND l.`java_variable` IN ( {$leagueid} ) ";
+        WHERE l.`year` IN ( {$season} ) AND l.`java_variable` IN ( {$leagueid} ) ";
         
         if($teamid != 0){
             $q .= " AND m.awayteamid IN (".$teamid.") ";
@@ -232,7 +238,7 @@ class DatabaseLeague {
         "FROM matchtable m " .
         "JOIN teamtable t ON t.teamid = {$team} " .
         "JOIN leaguetable l ON m.`leagueid` = l.`leagueid`  " .
-        "WHERE l.`year` = {$season}  " .
+        "WHERE l.`year` IN ( {$season} ) " .
         ($leagueid == 0 ? ' ' : ' AND l.java_variable IN ('.$leagueid.') ') .
         ($teamid == 0 ? ' ' : ' AND t.teamid IN ('.$teamid.' ) ') .
         "AND m.`result` NOT REGEXP '- : -|(Utsatt)' " .
@@ -294,7 +300,7 @@ class DatabaseLeague {
                 JOIN leaguetable l 
                 ON l.`leagueid` = e.`leagueid` 
             WHERE l.`java_variable` IN ($leagueid) 
-                AND l.`year` = $year 
+                AND l.`year` IN ( $year )
                 AND e.`eventtype` IN ($eventtype) 
                 AND e.`ignore` = 0 
             GROUP BY e.`$groupby`) AS grouped";

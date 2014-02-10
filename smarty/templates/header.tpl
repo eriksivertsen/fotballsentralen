@@ -10,6 +10,7 @@
                 <td>
                     <label class="selectlabel">
                         <select id="season" onchange="selectSeason()">
+                            <option value="0">Totalt</option>
                             <option value="2011">2011</option>
                             <option value="2012">2012</option>
                             <option value="2013">2013</option>

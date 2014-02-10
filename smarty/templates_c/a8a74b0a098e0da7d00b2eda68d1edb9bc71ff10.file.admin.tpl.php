@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-10-29 19:50:35
+<?php /* Smarty version Smarty-3.1.12, created on 2014-02-05 11:19:52
          compiled from "smarty\templates\admin.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:313885242e61f351b06-27550423%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a8a74b0a098e0da7d00b2eda68d1edb9bc71ff10' => 
     array (
       0 => 'smarty\\templates\\admin.tpl',
-      1 => 1383076037,
+      1 => 1391599185,
       2 => 'file',
     ),
   ),
@@ -52,8 +52,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <div style="margin:50px">
         <table id="settings_table" class="settings">
             <tr>
-                <td>Liga</td><td>Aktiv</td><td>Tropp Enkel</td><td>Tropp Dobbel</td><td>Lagoppstilling Enkel</td><td>Lagoppstilling Dobbel</td>
+                <td>Liga</td><td>Aktiv</td><td>Tropp hvert lag</td><td>Tropp begge lag</td><td>Lagoppstilling hvert lag</td><td>Lagoppstilling begge lag</td>
             </tr>
+            <!--
             <tr>
                 <td>
                 Premier League (beta)
@@ -114,6 +115,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     <input id="300_lineup_double" type="checkbox" disabled="true"/>
                 </td>
             </tr>
+            -->
             <tr>
                 <td>
                 Tippeligaen

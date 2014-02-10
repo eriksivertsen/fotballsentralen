@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-01-27 16:06:33
+<?php /* Smarty version Smarty-3.1.12, created on 2014-02-10 08:30:09
          compiled from "smarty\templates\player.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2302350a8208dbc1742-06689911%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2fd8608f4a45b10a71bf952fa500cc4388128b60' => 
     array (
       0 => 'smarty\\templates\\player.tpl',
-      1 => 1390838774,
+      1 => 1392021007,
       2 => 'file',
     ),
   ),
@@ -25,9 +25,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <td><h4><text id="playername"></text> <text id="player_number"></text></h4></td>
         </thead>
         <tr>
-            <td>Spilletid i <text id="player_playingminutes_year"></text>:</td>
+            <td>Spilletid <text id="player_playingminutes_year"></text>:</td>
             <td><text id="player_playingminutes"></text></td>
-        </tr
+        </tr>
 
         <tr>
             <td>Seiersprosent med:</td>

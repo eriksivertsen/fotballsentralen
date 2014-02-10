@@ -24,6 +24,8 @@ var leagueidselected;
 var eventselected;
 var typeselected;
 
+var CURRENT_SEASON = 2014;
+
 var title = 'FotballSentralen.com';
 var season = 2013;
 var suspendedLeagueLand = 138918;
@@ -582,12 +584,15 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
     var playername;
     var playerid; 
     
-    
     $('#breadcrumbs').empty();
+    var ses = season;
+    if(season == 0){
+        ses = 'Totalt';
+    }
     
     //ALL
     if(teamid == 0 && leagueid == 0){
-        $('#breadcrumbs').append('<li>'+season+'</li>');
+        $('#breadcrumbs').append('<li>'+ses+'</li>');
         $('#breadcrumbs').append('<li><a href="#" onclick="getTeam(0,0)">Norge</a></li>');
         $("#breadcrumbs").breadcrumbs("home");
         $('#league_name').html('Norge');
@@ -604,7 +609,7 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
         playername = json[0].playername;
         playerid = json[0].playerid;
         
-        $('#breadcrumbs').append('<li>'+season+'</li>');
+        $('#breadcrumbs').append('<li>'+ses+'</li>');
         $('#breadcrumbs').append('<li><a onclick="getTeam(0,0)">Norge</a></li>');
         
         $('#league_name').html(getLeagueName(leagueidfound));
@@ -658,7 +663,7 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
     else if(leagueid != 0){
         
         
-        $('#breadcrumbs').append('<li>'+season+'</li>');
+        $('#breadcrumbs').append('<li>'+ses+'</li>');
         $('#breadcrumbs').append('<li><a href="index.php">Norge</a></li>');
 
         $('#league_name').html(getLeagueName(leagueid));
@@ -820,8 +825,12 @@ function getEventsTotal(eventtype,leagueid)
         },
         success: function(json) {
             var array = json;
+            var ses = season;
+            if(season == 0){
+                ses = ' totalt';
+            }
             $('#allEvents').empty();
-            $('#allEvents').append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueid+')">'+tableheader+'&nbspi&nbsp'+ getLeagueName(leagueid)+',&nbsp' + season+'</caption>');
+            $('#allEvents').append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueid+')">'+tableheader+'&nbspi&nbsp'+ getLeagueName(leagueid)+',&nbsp' + ses+'</caption>');
             $('#allEvents').append('<thead ><tr><td><b>Spiller<b></td><td><b>Lag<b></td><td><b>Antall<b></td></tr></thead>');
             for (var i=0; i<array.length; i++) {
                 $('#allEvents').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
@@ -962,7 +971,7 @@ function updateTeamPlayers(teamidarray, dangerlistarray, winarray)
         var img = '<img src="images/events/yellowtiny.png" style="margin-left:3px;" title="Må sone karantene ved neste gule kort"></img>';
         $('#teamplayerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
             '<td>'+array[i].shirtnumber+'</td>'+
-            '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+' ' + (dangerlistarray[array[i].playerid] != undefined ? img : '') +'</td>'+
+            '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+' ' + (dangerlistarray[array[i].playerid] != undefined && season == CURRENT_SEASON ? img : '') +'</td>'+
             '<td>'+array[i].minutesplayed+'</td>'+
             '<td>'+array[i].started+'</td>'+
             '<td>'+array[i].subbedin+'</td>'+
@@ -1065,8 +1074,12 @@ function getPlayerFull(playerid,fromString,teamid)
             setTeamLogo($('#player_logo'),json.playertoleague[0].teamid);
            
             $('#player_table').show();
-            $('#player_playingminutes').html(json.playingminutes + ' %');
-            $('#player_playingminutes_year').html(season);
+            $('#player_playingminutes').html(json.playingminutes);
+            if(season != 0){
+                $('#player_playingminutes_year').html('i ' + season);
+            }else{
+                $('#player_playingminutes_year').html('totalt');
+            }
             $('#player_height').html('Ukjent');
             $('#player_dateofbirth').html('Ukjent');
             $('#player_position').html('Ukjent');

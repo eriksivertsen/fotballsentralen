@@ -12,11 +12,16 @@ class DatabaseAdmin {
             DatabaseAdmin::updateLoginOk($row['userid']);
             return $row['userid'];
         }
+        DatabaseAdmin::updateLoginFailed($username);
         return -1;
     }
     
     private function updateLoginOk($userid){
         $q = "UPDATE matchobserve_user SET lastlogin = NOW() WHERE userid = ".$userid;
+        mysql_query($q);
+    }
+    private function updateLoginFailed($username){
+        $q = "UPDATE matchobserve_user SET lastloginfailed = NOW() WHERE mail = '".$username . "'";
         mysql_query($q);
     }
     

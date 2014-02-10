@@ -4,9 +4,9 @@
             <td><h4><text id="playername"></text> <text id="player_number"></text></h4></td>
         </thead>
         <tr>
-            <td>Spilletid i <text id="player_playingminutes_year"></text>:</td>
+            <td>Spilletid <text id="player_playingminutes_year"></text>:</td>
             <td><text id="player_playingminutes"></text></td>
-        </tr
+        </tr>
 
         <tr>
             <td>Seiersprosent med:</td>

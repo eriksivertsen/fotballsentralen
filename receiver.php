@@ -49,21 +49,33 @@ if(isset($_POST['action'])){
         echo json_encode($events);
     }
     if($_POST['action'] == 'getEventsTotal'){
+        $season = $_POST['season'];
+        $leagueid = $_POST['leagueid'];
+        if($season == 0){
+            $season = '2011,2012,2013,2014';
+        }
+        if(!isset($leagueid)){
+            $leagueid = 0;
+        }
         if($_POST['eventtype'] == 11){
             $dbUtils->setEventPageHit(11);
-            echo json_encode($dbUtils->getTotalPlayerminutes($_POST['season'],200,$_POST['leagueid']));
+            echo json_encode($dbUtils->getTotalPlayerminutes($season,200,$leagueid));
         }
         else{
             $dbUtils->setEventPageHit($_POST['eventtype']);
-            echo json_encode($dbUtils->getEventInfoTotalJSON($_POST['eventtype'],200,$_POST['season'],$_POST['leagueid']));
+            echo json_encode($dbUtils->getEventInfoTotalJSON($_POST['eventtype'],200,$season,$leagueid));
         }
     }
     if($_POST['action'] == 'getTotalPlayerminutes'){
         
     }
     if($_POST['action'] == 'getEventsTotalTeam'){
+        $season = $_POST['season'];
+        if($season == 0){
+            $season = '2011,2012,2013,2014';
+        }
         $dbUtils->setEventPageTeamHit($_POST['eventtype']);
-        echo json_encode($dbTeam->getEventInfoTotalTeam($_POST['eventtype'],200,$_POST['season'],$_POST['leagueid']));
+        echo json_encode($dbTeam->getEventInfoTotalTeam($_POST['eventtype'],200,$season,$_POST['leagueid']));
     }
     if($_POST['action'] == 'getPlayerInfo'){
         $events = $dbPlayer->getPlayerInfo($_POST['playerid'],$_POST['season'],$_POST['from'],$_POST['teamid']);

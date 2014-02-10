@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-01-26 11:50:26
+<?php /* Smarty version Smarty-3.1.12, created on 2014-02-05 12:33:32
          compiled from "smarty\templates\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2520451692e292e1372-85071265%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '6652bf75f43eb8665356b88e8a0e2401680ee1b9' => 
     array (
       0 => 'smarty\\templates\\header.tpl',
-      1 => 1390737024,
+      1 => 1391603610,
       2 => 'file',
     ),
   ),
@@ -31,6 +31,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <td>
                     <label class="selectlabel">
                         <select id="season" onchange="selectSeason()">
+                            <option value="0">Totalt</option>
                             <option value="2011">2011</option>
                             <option value="2012">2012</option>
                             <option value="2013">2013</option>

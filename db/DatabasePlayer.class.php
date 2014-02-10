@@ -4,6 +4,9 @@ class DatabasePlayer {
     
     public function getPlayerInfo($playerid,$season,$from,$teamid)
     {
+        if($season == 0){
+            $season = Constant::ALL_STRING;
+        }
         if(isset($from) && !empty($from)){
             DatabaseUtils::setPlayerHitFrom($playerid,$from);
         }else{
@@ -40,7 +43,7 @@ class DatabasePlayer {
                 JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
                 JOIN teamtable t ON t.teamid = p.teamid
                 WHERE p.`playerid` = {$playerid}
-                AND l.`year` = {$season} 
+                AND l.`year` IN ( {$season} )
                 GROUP by t.teamid
                 ORDER BY m.`dateofmatch` DESC
                 LIMIT 1";
@@ -68,7 +71,7 @@ class DatabasePlayer {
                 JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
                 JOIN teamtable t ON t.teamid = p.teamid
                 WHERE p.`playerid` = {$playerid}
-                AND l.`year` = {$season} 
+                AND l.`year` IN ( {$season} )
                 GROUP by t.teamid";
 
         $data = array();
@@ -97,7 +100,7 @@ class DatabasePlayer {
         JOIN matchtable m ON p.`matchid` = m.`matchid`
         JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
         WHERE p.`playerid` = {$playerid}
-        AND l.year = {$season}
+        AND l.year IN ( {$season} )
         AND p.ignore = 0  " .
         ($teamid == 0 ? '' : ' AND p.teamid = '.$teamid.' ') .              
         "GROUP BY p.`playerid`,p.`matchid`
@@ -108,15 +111,15 @@ class DatabasePlayer {
         home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
         unix_timestamp(m.dateofmatch) as timestamp
         FROM playtable p 
-        JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = {$season}
         JOIN matchtable m ON p.matchid = m.matchid
+        JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = YEAR(m.dateofmatch) 
         JOIN teamtable home ON m.hometeamid = home.teamid
         JOIN teamtable away ON m.awayteamid = away.teamid
         JOIN leaguetable l ON m.`leagueid` = l.`leagueid`
         WHERE pt.`playerid` = {$playerid}
         AND p.ignore = 0 " .
         ($teamid == 0 ? '' : ' AND p.teamid = '.$teamid.' ') .       
-        "AND l.year = {$season}
+        "AND l.year IN ( {$season} )
         GROUP BY pt.`teamid`,p.`playerid`,p.`matchid`";
         
         $data = array();
@@ -182,25 +185,24 @@ class DatabasePlayer {
             COUNT(*) AS `event count` 
             FROM
             eventtable e 
+            JOIN matchtable m 
+                ON e.matchid = m.matchid 
             JOIN playertable t 
                 ON t.playerid = e.playerid 
                 AND e.teamid = t.teamid 
-                AND t.year = {$season}
+                AND t.year = YEAR(m.dateofmatch)
             JOIN teamtable tt 
                 ON tt.teamid = t.teamid 
-            JOIN matchtable m 
-                ON e.matchid = m.matchid 
             JOIN leaguetable l on l.leagueid = m.leagueid  
             WHERE e.eventtype = {$eventtype}
             AND e.playerid != - 1 
-            AND l.year = {$season}
+            AND l.year IN ( {$season} )
             AND e.ignore = 0
             GROUP BY e.playerid 
             ORDER BY COUNT(*) DESC) t,
             (SELECT 
             @rownum := 0) r) AS showRank 
         WHERE playerid = {$playerid} ;";
-        
 
         
         $data = array();
@@ -216,6 +218,7 @@ class DatabasePlayer {
     }
     public function getPlayingMinutes($playerid, $season,$postteamid)
     {
+        
         $q = "SELECT 
         SUM(minutesplayed) AS total,
         p.`teamid` AS teamid
@@ -226,7 +229,7 @@ class DatabasePlayer {
         JOIN leaguetable l 
         ON l.`leagueid` = m.`leagueid` 
         WHERE p.`playerid` = {$playerid} 
-        AND l.`year` = {$season} " .
+        AND l.`year` IN ( {$season} ) " .
         ($postteamid == 0 ? '' : ' AND p.teamid = '.$postteamid.' ') .              
         "AND p.ignore = 0";
         
@@ -240,6 +243,10 @@ class DatabasePlayer {
         if(!isset($teamid)){
             return;
         }
+        
+        if($season == Constant::ALL_STRING){
+            return $totalplayer . ' minutter';
+        }
         $q2 = "SELECT 
         (COUNT(*) * 90) AS total,
         m.`hometeamid` AS teamid
@@ -251,7 +258,7 @@ class DatabasePlayer {
             m.`hometeamid` = {$teamid}
             OR m.`awayteamid` = {$teamid}
         ) 
-        AND l.`year` = {$season}
+        AND l.`year` IN ( {$season} )
         AND m.`result` NOT REGEXP '- : -|(Utsatt)' ";
                
         $result = mysql_query($q2);
@@ -260,7 +267,7 @@ class DatabasePlayer {
             $totalteam = $row['total'];
         }
         
-        return number_format($totalplayer / $totalteam * 100 , 2);
+        return '' .number_format($totalplayer / $totalteam * 100 , 2) . ' %';
     }
     public function getWinPercentageFromStart($playerid,$season,$teamid)
     {
@@ -270,14 +277,14 @@ class DatabasePlayer {
         JOIN playtable pl ON p.`playerid` = pl.`playerid` AND pl.`matchid` = m.`matchid` AND pl.ignore = 0 " .
         ($teamid == 0 ? '' : ' AND p.teamid = '.$teamid.' ') .
         "WHERE p.`playerid` = {$playerid}
-        AND l.`year` = {$season} 
+        AND l.`year` IN ( {$season} )
         AND m.`result` NOT REGEXP '- : -|(Utsatt)'
         AND START = 1) AS totalmatches_started, (SELECT COUNT(*) AS totalmatches_won FROM playertable p 
         JOIN matchtable m ON (p.`teamid` = m.`awayteamid` OR p.`teamid` = m.`hometeamid`)
         JOIN leaguetable l ON l.`leagueid` = m.`leagueid` AND l.`year` = p.`year`
         JOIN playtable pl ON p.`playerid` = pl.`playerid` AND pl.`matchid` = m.`matchid` AND pl.ignore = 0
         WHERE p.`playerid` = {$playerid}
-        AND l.`year` = {$season} " .
+        AND l.`year` IN ( {$season} ) " .
         ($teamid == 0 ? '' : ' AND p.teamid = '.$teamid.' ') .
         "AND m.`result` NOT REGEXP '- : -|(Utsatt)'
         AND m.`teamwonid` = p.`teamid`
@@ -297,14 +304,14 @@ class DatabasePlayer {
         JOIN leaguetable l ON l.`leagueid` = m.`leagueid` AND l.`year` = p.`year`
         JOIN playtable pl ON p.`playerid` = pl.`playerid` AND pl.`matchid` = m.`matchid` AND pl.ignore = 0
         WHERE p.`playerid` = {$playerid}
-        AND l.`year` = {$season}
+        AND l.`year` IN ( {$season} )
         AND m.`result` NOT REGEXP '- : -|(Utsatt)'
         AND START = 0) AS totalmatches_started, (SELECT COUNT(*) AS totalmatches_won FROM playertable p 
         JOIN matchtable m ON (p.`teamid` = m.`awayteamid` OR p.`teamid` = m.`hometeamid`)
         JOIN leaguetable l ON l.`leagueid` = m.`leagueid` AND l.`year` = p.`year`
         JOIN playtable pl ON p.`playerid` = pl.`playerid` AND pl.`matchid` = m.`matchid` AND pl.ignore = 0
         WHERE p.`playerid` = {$playerid}
-        AND l.`year` = {$season}
+        AND l.`year` IN ( {$season} )
         AND m.`result` NOT REGEXP '- : -|(Utsatt)'
         AND m.`teamwonid` = p.`teamid`
         AND START = 1) AS totalmatches_won;
@@ -389,7 +396,7 @@ class DatabasePlayer {
                 JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
             WHERE p.`playerid` = {$playerid} 
             AND p.`start` = 1 
-            AND l.`year` = {$season}
+            AND l.`year` IN ( {$season} )
             AND (
                 (
                     m.hometeamid = p.`teamid`

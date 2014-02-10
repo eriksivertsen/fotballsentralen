@@ -31,8 +31,9 @@
     <div style="margin:50px">
         <table id="settings_table" class="settings">
             <tr>
-                <td>Liga</td><td>Aktiv</td><td>Tropp Enkel</td><td>Tropp Dobbel</td><td>Lagoppstilling Enkel</td><td>Lagoppstilling Dobbel</td>
+                <td>Liga</td><td>Aktiv</td><td>Tropp hvert lag</td><td>Tropp begge lag</td><td>Lagoppstilling hvert lag</td><td>Lagoppstilling begge lag</td>
             </tr>
+            <!--
             <tr>
                 <td>
                 Premier League (beta)
@@ -93,6 +94,7 @@
                     <input id="300_lineup_double" type="checkbox" disabled="true"/>
                 </td>
             </tr>
+            -->
             <tr>
                 <td>
                 Tippeligaen

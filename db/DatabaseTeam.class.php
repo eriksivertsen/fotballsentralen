@@ -5,6 +5,9 @@ class DatabaseTeam {
     
     public function getTeamInfo($teamid,$season)
     {
+        if($season == 0){
+            $season = Constant::ALL_STRING;
+        }
         $allmatches = self::getAllMatches($teamid,'both', $season);
         $matchids = array();
         foreach($allmatches as $array){
@@ -99,7 +102,7 @@ class DatabaseTeam {
             LEFT JOIN eventtable own ON own.`matchid` = m.`matchid` AND own.`eventtype` = 9 AND own.`minute` >= 45
             WHERE 
             (m.`hometeamid` = {$teamid} OR m.`awayteamid` = {$teamid}) 
-            AND l.`year` = {$season}
+            AND l.`year` IN ( {$season} )
             AND e.`minute` >= 45
             AND e.`teamid` != {$teamid}
             AND m.`result` NOT LIKE '- : -'
@@ -118,7 +121,7 @@ class DatabaseTeam {
             LEFT JOIN eventtable own ON own.`matchid` = m.`matchid` AND own.`eventtype` = 9 AND own.minute < 45
             WHERE 
             (m.`hometeamid` = {$teamid} OR m.`awayteamid` = {$teamid}) 
-            AND l.`year` = {$season}
+            AND l.`year` IN ({$season})
             AND e.`minute` < 45
             AND e.`teamid` != {$teamid}
             AND m.`result` NOT LIKE '- : -'
@@ -157,7 +160,7 @@ class DatabaseTeam {
                 JOIN leaguetable l 
                 ON e.leagueid = l.leagueid 
             WHERE e.minute <= 45 
-                AND l.year = {$season} 
+                AND l.year IN ({$season})
                 AND e.eventtype IN (4, 8) 
                 AND e.ignore = 0
                 AND e.teamid = {$teamid}
@@ -171,7 +174,7 @@ class DatabaseTeam {
                 JOIN leaguetable l 
                     ON e.leagueid = l.leagueid 
                 WHERE e.minute >= 45 
-                AND l.year = {$season} 
+                AND l.year IN ({$season})
                 AND e.eventtype IN (4, 8) 
                 AND e.ignore = 0
                 AND e.teamid = {$teamid}
@@ -225,7 +228,7 @@ class DatabaseTeam {
             JOIN leaguetable l 
                 ON l.leagueid = e.leagueid 
             WHERE e.eventtype IN (4, 8, 9) 
-            AND l.year = {$season} 
+            AND l.year IN ( {$season} )
             AND e.ignore = 0
             AND m.hometeamid = {$teamid}
             GROUP BY m.hometeamid ) AS home JOIN 
@@ -239,7 +242,7 @@ class DatabaseTeam {
             JOIN leaguetable l 
                 ON l.leagueid = e.leagueid 
             WHERE e.eventtype IN (4, 8, 9) 
-            AND l.year = {$season} 
+            AND l.year IN ( {$season} )
             AND m.awayteamid = {$teamid}
             AND e.ignore = 0
             GROUP BY m.awayteamid ) AS away ON home.teamid = away.teamid";
@@ -279,7 +282,7 @@ class DatabaseTeam {
     
     public function getAttendance($teamid,$season)
     {
-        $q = "SELECT AVG(attendance) AS average, MAX(attendance) AS `max` FROM matchtable m JOIN leaguetable l ON l.`leagueid` = m.leagueid WHERE l.`year` = {$season} AND m.`hometeamid` = {$teamid} AND m.result NOT LIKE '- : -' and m.attendance > 0 ";
+        $q = "SELECT AVG(attendance) AS average, MAX(attendance) AS `max` FROM matchtable m JOIN leaguetable l ON l.`leagueid` = m.leagueid WHERE l.`year` IN ( {$season} ) AND m.`hometeamid` = {$teamid} AND m.result NOT LIKE '- : -' and m.attendance > 0 ";
           
         $result = mysql_query($q);
         $value = array();
@@ -305,7 +308,7 @@ class DatabaseTeam {
         $q = "SELECT playerid,COUNT(*) as topscorer FROM eventtable e " .
         "LEFT JOIN leaguetable l ON e.leagueid = l.`leagueid` " . 
         "WHERE eventtype IN (4,8) ".
-        "AND l.`year` = {$season} AND e.ignore = 0 " .
+        "AND l.`year` IN ( {$season} ) AND e.ignore = 0 " .
         ($leagueid == '0' ? '' : ' AND l.`java_variable` IN ('.$leagueid.') ') .
         ($teamid == '0' ? '' : ' AND e.teamid  IN ('.$teamid.') ') .
         "GROUP BY playerid  " . 
@@ -442,7 +445,7 @@ class DatabaseTeam {
             LEFT JOIN playertable_altom pta ON pta.`playerid` = pt.`playerid_altom`
             LEFT JOIN playertable_nifs ptn ON ptn.`playerid` = pt.`playerid_nifs`
             WHERE p.`teamid` = $teamid
-            AND l.year = $season
+            AND l.year IN ( $season )
             AND p.start = 1
             AND p.matchid = $matchid
             ORDER BY is_goalkeeper DESC
@@ -529,7 +532,7 @@ class DatabaseTeam {
             "JOIN teamtable away ON m.`awayteamid` = away.`teamid` "      .
             "WHERE " . $homeaway . " " .
             "AND m.`dateofmatch` {$date} NOW() " .
-            ($season == '' ? '' : 'AND l.year = '.$season.' ') .
+            ($season == '' ? '' : 'AND l.year IN ( '.$season.' ) ') .
             ($type == 'latest' ? ' AND m.result NOT REGEXP \'- : -|(Utsatt)\'' : '' ) .
             "ORDER BY m.`dateofmatch` {$order} " .
             "LIMIT {$limit}";
@@ -566,7 +569,7 @@ class DatabaseTeam {
         $q = "SELECT (m.`homescore` + m.awayscore) AS totalgoals FROM matchtable m 
         JOIN leaguetable l ON m.`leagueid` = l.`leagueid` 
         WHERE m.`result` NOT REGEXP '- : -|(Utsatt)' 
-        AND l.year = {$season} AND 
+        AND l.year IN ( {$season} ) AND  
         {$where}  
         ORDER BY m.`dateofmatch` ASC";
         
@@ -606,7 +609,7 @@ class DatabaseTeam {
     {
         $q = "SELECT COUNT(*) as sum FROM matchtable m 
             JOIN leaguetable l ON m.leagueid = l.leagueid
-            WHERE l.year = {$season} AND m.`result` NOT REGEXP '- : -|(Utsatt)'  AND ((m.hometeamid = {$teamid} AND m.awayscore = 0) OR (m.awayteamid = {$teamid} AND m.homescore = 0)) ";
+            WHERE l.year  IN  ({$season}) AND m.`result` NOT REGEXP '- : -|(Utsatt)'  AND ((m.hometeamid = {$teamid} AND m.awayscore = 0) OR (m.awayteamid = {$teamid} AND m.homescore = 0)) ";
         
         $result = mysql_query($q);
         $count = 0;
@@ -621,7 +624,7 @@ class DatabaseTeam {
         $q = "SELECT p.`playerid`,p.`playername`,COUNT(*) AS events FROM eventtable e 
         JOIN leaguetable l ON l.`leagueid` = e.`leagueid`
         JOIN playertable p ON p.`playerid` = e.`playerid` AND p.teamid = e.teamid AND p.year = l.year
-        WHERE e.eventtype IN ({$eventtypes}) AND e.teamid = {$teamid} AND l.`year` = {$season} AND e.ignore = 0
+        WHERE e.eventtype IN ({$eventtypes}) AND e.teamid = {$teamid} AND l.`year` IN ( {$season} ) AND e.ignore = 0
         GROUP BY e.`playerid`
         ORDER BY events DESC
         LIMIT 1;";
@@ -645,12 +648,12 @@ class DatabaseTeam {
         $q = "SELECT p.`playerid`,p.`playername`,SUM(e.`minutesplayed`) AS minutes FROM playtable e 
         JOIN matchtable m  ON e.`matchid` = m.`matchid`
         JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
-        JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`teamid` = e.`teamid` AND p.year = l.year
-        WHERE e.teamid={$teamid} AND l.`year` = {$season}
+        JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`teamid` = e.`teamid` AND p.year = YEAR(m.dateofmatch) 
+        WHERE e.teamid={$teamid} AND l.`year` IN ( {$season} )
         AND e.ignore = 0 
         GROUP BY e.`playerid`
         ORDER BY minutes DESC
-        LIMIT 1;";
+        LIMIT 1";
         
         $data = array();
         $result = mysql_query($q);
@@ -669,7 +672,7 @@ class DatabaseTeam {
     {
         $q = "SELECT m.* FROM matchtable m 
         JOIN leaguetable l ON m.`leagueid` = l.`leagueid` 
-        WHERE m.`awayteamid` = {$teamid} OR m.`hometeamid` = {$teamid} AND l.year = {$season} ORDER BY m.`dateofmatch` ASC";
+        WHERE m.`awayteamid` = {$teamid} OR m.`hometeamid` = {$teamid} AND l.year  IN( {$season}) ORDER BY m.`dateofmatch` ASC";
         
         $data = array();
         $result = mysql_query($q);
@@ -722,12 +725,12 @@ class DatabaseTeam {
             t.teamid
         FROM
             (SELECT tt.teamid,tt.teamname,COUNT(*) AS `event count` FROM eventtable e
-        JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = {$season}
+        JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year IN ( {$season} )
         JOIN teamtable tt ON tt.teamid = t.teamid
         JOIN matchtable m ON e.matchid = m.matchid
         JOIN leaguetable l ON l.leagueid = m.leagueid
         WHERE e.eventtype IN ( {$eventtype} )
-        AND l.year = {$season}
+        AND l.year IN ( {$season} )
         AND e.ignore = 0
         GROUP BY e.teamid, m.leagueid
         ORDER BY `event count` DESC) t,
@@ -753,13 +756,14 @@ class DatabaseTeam {
             p.`playerid`,p.`playername`,e.`minute`,e.`matchid`,m.`result`,home.`teamname` as homename,away.`teamname` as awayname,e.teamid as teamid
             FROM
             eventtable e 
-            JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`teamid` = e.`teamid` AND p.year = {$season}
             JOIN matchtable m 
                 ON e.matchid = m.matchid 
                 AND (
                 m.hometeamid = {$teamid} 
                 OR m.awayteamid = {$teamid}
                 )
+            JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`teamid` = e.`teamid` AND p.year = YEAR(m.dateofmatch)
+            
                 JOIN teamtable home ON m.`hometeamid` = home.`teamid` 
                 JOIN teamtable away ON m.`awayteamid` = away.`teamid` 
                 JOIN leaguetable l ON m.leagueid = l.leagueid
@@ -769,7 +773,7 @@ class DatabaseTeam {
                 AND e.teamid = {$teamid}) 
                 OR (e.eventtype = 9 and e.teamid != {$teamid})
                 )
-                AND l.year = {$season} 
+                AND l.year IN ( {$season} )
                 AND e.ignore = 0 
                 ORDER BY e.minute asc;";
                 
@@ -784,13 +788,14 @@ class DatabaseTeam {
              p.`playerid`,p.`playername`,e.`minute`,e.`matchid`,m.`result`,home.`teamname` as homename,away.`teamname` as awayname, e.teamid as teamid
             FROM
             eventtable e 
-            JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`teamid` = e.`teamid` AND p.year = {$season}
-            JOIN matchtable m 
+        JOIN matchtable m 
                 ON e.matchid = m.matchid 
                 AND (
                 m.hometeamid = {$teamid} 
                 OR m.awayteamid =  {$teamid} 
                 )
+            JOIN playertable p ON p.`playerid` = e.`playerid` AND p.`teamid` = e.`teamid` AND p.year = YEAR(m.dateofmatch)
+            
                 JOIN leaguetable l ON l.leagueid = m.leagueid
             JOIN teamtable home ON m.`hometeamid` = home.`teamid` 
                 JOIN teamtable away ON m.`awayteamid` = away.`teamid`     
@@ -802,7 +807,7 @@ class DatabaseTeam {
                 ) 
                 OR (e.eventtype = 9 
                 AND e.teamid =  {$teamid} )
-            ) AND l.year = {$season} AND e.ignore = 0 ORDER BY e.minute asc;
+            ) AND l.year IN ( {$season} ) AND e.ignore = 0 ORDER BY e.minute asc;
             ";
 
         $result = mysql_query($q);
@@ -915,17 +920,17 @@ class DatabaseTeam {
         JOIN matchtable m ON e.matchid = m.matchid
         JOIN leaguetable l ON m.leagueid = l.leagueid
         WHERE p.`teamid` = {$teamid}
-        and l.year = {$season}
+        and l.year  IN ( {$season} )
         AND p.ignore = 0 
         GROUP BY p.`playerid`";
         
         $q2 = "SELECT pt.shirtnumber, p.`playerid`,pt.`playername`, SUM(p.minutesplayed) AS `minutes played`, SUM(p.start) AS `started`
         FROM playtable p 
-        JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = {$season}
         JOIN matchtable m ON p.`matchid` = m.`matchid`
+        JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = YEAR(m.dateofmatch)
         JOIN leaguetable l ON m.`leagueid` = l.`leagueid`
         WHERE pt.`teamid` = {$teamid}
-        AND l.`year` = {$season}
+        AND l.`year`  IN ( {$season} )
         AND p.ignore = 0
         GROUP BY p.`playerid`
         order by pt.shirtnumber asc";
@@ -977,14 +982,14 @@ class DatabaseTeam {
         
         $q = "SELECT pp.playerid,pp.playername,t.teamname,t.teamid,SUM(p.minutesplayed) AS `minutes played` FROM playtable p " . 
         "JOIN matchtable m ON m.matchid = p.matchid " .
-        "JOIN playertable pp ON pp.playerid = p.playerid AND p.teamid = pp.teamid AND pp.year = ". $season . " " . 
+        "JOIN playertable pp ON pp.playerid = p.playerid AND p.teamid = pp.teamid AND pp.year = YEAR(m.dateofmatch) ".
         "JOIN teamtable t ON t.teamid = pp.teamid ".
         "JOIN leaguetable l ON m.leagueid = l.leagueid " .
         "WHERE pp.playerid != -1 " .
         ($teamid == 0 ? '' : ' AND t.teamid IN ( '.$teamid.' )') .
         "AND p.start = " . $start. " " .
         ($leagueid == '0' ? '' : ' AND l.java_variable IN ('.$leagueid.') ') .
-        "AND l.year = " . $season . "  AND p.ignore = 0 " .
+        "AND l.year IN ( " . $season . " ) AND p.ignore = 0 " .
         "GROUP BY p.playerid ".
         "ORDER BY SUM(p.minutesplayed) DESC " .
         ($teamid == 0 || $limit == 1 ? ' LIMIT 10  ' : ' ') ;
@@ -1026,13 +1031,13 @@ class DatabaseTeam {
         
         $q = 
         "SELECT tt.teamid,tt.teamname,COUNT(*) AS `event count`, eventtype FROM eventtable e " .
-        "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = " .$season . " " . 
-        "JOIN teamtable tt ON tt.teamid = t.teamid " .
         "JOIN matchtable m ON e.matchid = m.matchid  ".
+        "JOIN playertable t ON t.playerid = e.playerid AND e.teamid = t.teamid AND t.year = YEAR(m.dateofmatch) ". 
+        "JOIN teamtable tt ON tt.teamid = t.teamid " .
         "JOIN leaguetable  l ON l.leagueid = m.leagueid " .        
         "WHERE e.eventtype IN ( ".$eventtype . ")" .
         "AND e.playerid != -1 ".
-        "AND l.year = "  . $season .  " "  .
+        "AND l.year IN ( "  . $season .  " ) "  .
         ($leagueid == '0' ? '' : ' AND l.java_variable IN ('.$leagueid.') ')  .     
         ($teamid == '0' ? '' : ' AND e.teamid IN ('.$teamid.') ')  .     
         "AND e.ignore = 0 " .    
@@ -1062,7 +1067,7 @@ class DatabaseTeam {
             LEFT JOIN city_weatherurl c1 ON c1.city = t.city
             LEFT JOIN city_weatherurl c2 ON c2.city = t.teamname
             WHERE t.teamid = {$teamid}
-            AND l.year = {$season}
+            AND l.year IN ( {$season} )
             GROUP BY m.hometeamid
             ORDER BY t.teamname ASC";
         $data = array();
@@ -1100,7 +1105,7 @@ class DatabaseTeam {
             LEFT JOIN playertable_altom pta ON pta.`playerid` = pt.`playerid_altom`
             LEFT JOIN playertable_nifs ptn ON ptn.`playerid` = pt.`playerid_nifs`
             WHERE p.`teamid` = $teamid
-            AND l.year = $season
+            AND l.year IN ( $season )
             GROUP BY p.`playerid`
             ORDER BY starts DESC
             LIMIT 11";
@@ -1163,7 +1168,7 @@ class DatabaseTeam {
             AND pl.`year` = l.`year`
         WHERE p.`teamid` = {$teamid} 
         AND p.`start` = 1 
-        AND l.`year` = {$season}
+        AND l.`year` IN ( {$season} )
         AND p.ignore = 0 
         GROUP BY p.`playerid` 
         HAVING COUNT(*) >= 5

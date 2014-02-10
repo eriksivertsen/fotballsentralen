@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-01-27 16:04:00
+<?php /* Smarty version Smarty-3.1.12, created on 2014-02-05 10:57:14
          compiled from "smarty\templates\team.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:17686519c9f3b2cd230-75441698%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '41140c1a05ff8499ae74082b8b528f19487df6c6' => 
     array (
       0 => 'smarty\\templates\\team.tpl',
-      1 => 1390838609,
+      1 => 1391597793,
       2 => 'file',
     ),
   ),
@@ -126,7 +126,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
 <br/>
 
-<center><text id="noData_team" style="font-size: 9pt">Ingen data denne sesongen!</text></center>
 <table id="teamplayerinfo" class="tablesorter playerinfo"></table>
 
 <div id="pies">

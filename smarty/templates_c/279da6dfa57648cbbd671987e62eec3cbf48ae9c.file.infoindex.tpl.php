@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-01-27 16:06:33
+<?php /* Smarty version Smarty-3.1.12, created on 2014-02-10 08:08:23
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1390838790,
+      1 => 1392019701,
       2 => 'file',
     ),
   ),
@@ -142,9 +142,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             $('#info_form').show('fast');
             $('#info_click').hide();
         }
+        function openExtraInfo(){
+            $('#extra_form').show('fast');
+            $('#extra_click').hide();
+        }
         function closeInfo(){
             $('#info_form').hide('fast');
             $('#info_click').show();
+        }
+        function closeExtraInfo(){
+            $('#extra_form').hide('fast');
+            $('#extra_click').show();
         }
   
         function controlHash()
@@ -309,6 +317,16 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 </div> 
                 <button id="scope_close" onclick="closeScopeInfo();return false;">Lukk</button>
             </div>
+            <div id="extra_form" hidden="true" align="center" style="font-size:10pt">
+                <div style="width:500px;margin-right:10px;text-align: center">
+                    Er du en gambler? Eller er du bare nysgjerrig på norsk fotball? Da kan vi hjelpe deg! Vi har i det siste jobbet 
+                    med å utvikle en tjeneste som sender ut mail når lagoppstillingene på fotball.no blir tilgjengelig. Dette kommer til
+                    å være en betalingstjeneste, der man betaler en viss sum per liga og får tilsendt lagoppstillinger per kamp. I tillegg til
+                    begge lagene vil det være utfyllende informasjon om disse spillerene, og om laget mangler noen spillere fra tidligere kamper.
+                
+                </div>
+                <button id="extra_close" onclick="closeExtraInfo();return false;">Lukk</button>
+            </div>
             <div id="feedback_form" hidden="true" align="right" style="font-size:9pt">
                 <table style="font-size:9pt;">
                     <tr>
@@ -355,6 +373,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <a href="#" id="feedback_click" style="font-size: 8pt" title="Hjelp FotballSentralen bli bedre!" onclick="showPopup();return false;">Feedback</a>
                 <br/>
                 <a href="#" id="info_click" style="font-size: 8pt" onclick="openInfo();return false;">Ny på FotballSentralen?</a>
+                <!--
+                <br/>
+                <a href="#" id="extra_click" style="font-size: 8pt" onclick="openExtraInfo();return false;">Lagoppstillinger Live</a>
+                -->
                 <a href="#" id="info_scope_click" style="font-size: 8pt" onclick="openScopeInfo();return false;">Hva er dette?</a>
             </div>
             

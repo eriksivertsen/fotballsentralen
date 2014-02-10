@@ -32,4 +32,5 @@ mysql_query('SET CHARACTER SET utf8');
 // Then you need to make sure the database you want
 // is selected.
 mysql_select_db($db);
+include_once 'Constant.class.php';
 ?>

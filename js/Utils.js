@@ -345,9 +345,9 @@ function createEventLink(eventtype, type, leagueid)
     }    
     var string = getEventFromId(eventtype,type);
     if(type == 0){
-        return '<a href="#" style="cursor:pointer" onclick=getEventsTotal('+eventtype+','+leagueid+')>'+string+'</a>';
+        return '<a href="#" style="cursor:pointer" onclick="getEventsTotal('+eventtype+','+leagueid+');return false;">'+string+'</a>';
     }else{
-        return '<a href="#" style="cursor:pointer" onclick=getEventsTotalTeam('+eventtype+','+leagueid+')>'+string+'</a>';
+        return '<a href="#" style="cursor:pointer" onclick="getEventsTotalTeam('+eventtype+','+leagueid+');return false;">'+string+'</a>';
     }
 }
 

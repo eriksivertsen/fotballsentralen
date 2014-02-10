@@ -1267,15 +1267,15 @@ function getLeagueInfo(leagueid,teamid)
             updateLeagueTable(json.leaguetable,$('#leaguetable'),'Tabell');
             updateLeagueTable(json.leaguetablehome,$('#leaguetablehome'),'Hjemmetabell');
             updateLeagueTable(json.leaguetableaway,$('#leaguetableaway'),'Bortetabell');
-            updateEventTable(json.topscorer,$('#totalgoals'),10);
-            updateEventTable(json.yellow_red,$('#yellow_red'),1);
-            updateEventTable(json.red,$('#redcard'),3);
-            updateEventTable(json.goal,$('#goals'),4);
-            updateEventTable(json.penalty,$('#penalty'),8);
-            updateEventTable(json.owngoal,$('#owngoal'),9);
-            updateEventTable(json.subout,$('#subsout'),7);
-            updateEventTable(json.subin,$('#subsin'),6);
-            updateEventTable(json.yellow, $('#yellowcard'), 2);
+            updateEventTableMin(json.topscorer,$('#totalgoals'),10);
+            updateEventTableMin(json.yellow_red,$('#yellow_red'),1);
+            updateEventTableMin(json.red,$('#redcard'),3);
+            updateEventTableMin(json.goal,$('#goals'),4);
+            updateEventTableMin(json.penalty,$('#penalty'),8);
+            updateEventTableMin(json.owngoal,$('#owngoal'),9);
+            updateEventTableMin(json.subout,$('#subsout'),7);
+            updateEventTableMin(json.subin,$('#subsin'),6);
+            updateEventTableMin(json.yellow, $('#yellowcard'), 2);
             updatePlayerMinutes(json.minutes, $('#playingminutes'));
             
             updateBreadcrumb(leagueid, teamid, null);
@@ -1443,39 +1443,6 @@ function updateLeagueTable(leaguetable, tablename, tableheader, selectedteamid)
     tablename.show();
 }
 
-function getEventsFromDB(leagueid, teamid)
-{
-    if(!allowClicks){
-        return;
-    }
-    $.ajax({
-        type: "POST",
-        url: "receiver.php",
-        dataType: "json",
-        timeout: timeout,
-        data: {
-            action: "getEvents", 
-            teamid: teamid, 
-            leagueid: leagueid
-        },
-        error: function () {
-            stopLoad()
-        },
-        success: function(json) {
-            var array = json;
-            
-            updateEventTable(array.red,$('#redcard'),3);
-            updateEventTable(array.goal,$('#goals'),4);
-            updateEventTable(array.penalty,$('#penalty'),8);
-            updateEventTable(array.owngoal,$('#owngoal'),9);
-            updateEventTable(array.subout,$('#subsout'),7);
-            updateEventTable(array.subin,$('#subsin'),6);
-            updateEventTable(array.yellow, $('#yellowcard'), 2);
-           
-        }
-    });
-}
-
 function updatePreviewTable(array,team)
 {   
     var prefix = '#preview_'+team+'_';
@@ -1529,8 +1496,12 @@ function updatePreviewTable(array,team)
     $(prefix + 'secondhalf_g').html(array.scoringpercentagehalfs[0].secondhalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_second+'%)');
     $(prefix + 'secondhalf_c').html(array.concededpercentagehalfs[0].second_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_second+'%)');
 }
-function updateEventTable(array,table,eventtype){
-    updateEventTable(array,table,eventtype,0,false,-1,leagueidselected);
+function updateEventTableMin(array,table,eventtype){
+    var league = leagueidselected
+    if(league == '3,4,5,6'){
+        league = '8';
+    }
+    updateEventTable(array,table,eventtype,0,false,-1,league);
 }
 function updateEventTable(array,table,eventtype,type,edit,scopeeventid,leagueid)
 {
@@ -1713,6 +1684,10 @@ function updatePlayerMinutes(array,table, scopeeventid)
 {
     if(scopeeventid != undefined){
         var closeTable = '<a href="#" onclick="closeTable(\''+(scopeeventid >= 0 ? scopeeventid : '')+'\');return false;"><img style="margin-left:3px" src="images/x.png"></img></a>';
+    }
+    var le = leagueidselected;
+    if(leagueidselected == '3,4,5,6'){
+        leagueidselected = '8';
     }
     var tableheaderLink = '<a href="#" style="cursor:pointer" onclick="getEventsTotal(11,'+leagueidselected+');return false;">Spilleminutter</a>';
   

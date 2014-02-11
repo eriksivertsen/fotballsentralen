@@ -3,8 +3,14 @@ include "dbConnection.php";
 
 class DatabaseTeam {
     
-    public function getTeamInfo($teamid,$season)
+    public function getTeamInfo($teamid,$season,$from)
     {
+        if(isset($from) && !empty($from)){
+            DatabaseUtils::setTeamSearchHit($teamid,$season);
+        }else{
+            DatabaseUtils::setTeamHit($teamid,$season);
+        }
+        
         if($season == 0){
             $season = Constant::ALL_STRING;
         }

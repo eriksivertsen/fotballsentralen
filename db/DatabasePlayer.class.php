@@ -8,9 +8,9 @@ class DatabasePlayer {
             $season = Constant::ALL_STRING;
         }
         if(isset($from) && !empty($from)){
-            DatabaseUtils::setPlayerHitFrom($playerid,$from);
+            DatabaseUtils::setPlayerHitFrom($playerid,$from,$season);
         }else{
-            DatabaseUtils::setPlayerHit($playerid);
+            DatabaseUtils::setPlayerHit($playerid,$season);
         }
         $events = array (
             'yellow' => self::getEventRankPlayer($playerid,2,$season),

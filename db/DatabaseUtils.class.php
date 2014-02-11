@@ -5,7 +5,7 @@ include "dbConnection.php";
 class DatabaseUtils {
     
     public static $whitelist = array('localhost', '127.0.0.1','46.9.149.168');
-    
+//     public static $whitelist = array();
     public function getTransfers()
     {
         $q = "SELECT p.`playerid`,p.`playername`, fromteam.`teamid` AS fromteamid, fromteam.`teamname` AS fromteamname, toteam.`teamid` AS toteamid, toteam.`teamname` AS toteamname, SUBSTRING(datefound FROM 1 FOR 11) AS datefound
@@ -142,71 +142,71 @@ class DatabaseUtils {
         return $data;
     }
     
-    public function setTeamHit($id)
+    public function setTeamHit($id,$season)
     {
         if(!in_array($_SERVER['HTTP_HOST'], self::$whitelist) && !in_array($_SERVER['REMOTE_ADDR'], self::$whitelist)){
             $q = "UPDATE teamtable SET webpagehits=webpagehits+1, last_visit=NOW() WHERE teamid = $id";
             mysql_query($q);
-            DatabaseUtils::setHit($id,'team');
+            DatabaseUtils::setHit($id,'team',$season);
         }
     }
-    public function setPlayerHit($id)
+    public function setPlayerHit($id,$season)
     {
         if(!in_array($_SERVER['HTTP_HOST'], self::$whitelist) && !in_array($_SERVER['REMOTE_ADDR'], self::$whitelist)){           
             $q = "UPDATE playertable SET webpagehits=webpagehits+1, last_visit=NOW() WHERE playerid = $id";
             mysql_query($q);
-            DatabaseUtils::setHit($id,'player');
+            DatabaseUtils::setHit($id,'player',$season);
         }
     }
-    public function setLeagueHit($id)
+    public function setLeagueHit($id,$season)
     {
         if($id == '3,4,5,6'){
             $id = '8';
         }        
-        DatabaseUtils::setHit($id,'league');
+        DatabaseUtils::setHit($id,'league',$season);
     }
     public function setPreviewHit($id)
     {
-        DatabaseUtils::setHit($id,'preview');
+        DatabaseUtils::setHit($id,'preview',0);
     }
     public function setRefereeHit($id)
     {
-        DatabaseUtils::setHit($id, 'referee');
+        DatabaseUtils::setHit($id, 'referee',0);
     }
     public function setExternalMatchHit($id)
     {
-        DatabaseUtils::setHit($id,'match');
+        DatabaseUtils::setHit($id,'match',0);
     }
     public function setInternalMatchHit($id)
     {
-        DatabaseUtils::setHit($id,'match_internal');
+        DatabaseUtils::setHit($id,'match_internal',0);
     }
-    public function setPlayerHitFrom($id,$from)
+    public function setPlayerHitFrom($id,$from,$season)
     {
-        DatabaseUtils::setHit($id,$from);
+        DatabaseUtils::setHit($id,$from,$season);
     }
-    public function setTeamSearchHit($id)
+    public function setTeamSearchHit($id,$season)
     {
-        DatabaseUtils::setHit($id,'team_search');
+        DatabaseUtils::setHit($id,'team_search',$season);
     }
-    public function setEventPageHit($id)
-    {
-        if($id == '4,8'){
-            $id = 10;
-        }
-        DatabaseUtils::setHit($id,'eventtotal');
-    }
-    public function setEventPageTeamHit($id)
+    public function setEventPageHit($id,$season)
     {
         if($id == '4,8'){
             $id = 10;
         }
-        DatabaseUtils::setHit($id,'eventtotal_team');
+        DatabaseUtils::setHit($id,'eventtotal',$season);
     }
-    public function setHit($id,$type)
+    public function setEventPageTeamHit($id,$season)
+    {
+        if($id == '4,8'){
+            $id = 10;
+        }
+        DatabaseUtils::setHit($id,'eventtotal_team',$season);
+    }
+    public function setHit($id,$type,$season)
     {
         if(!in_array($_SERVER['HTTP_HOST'], self::$whitelist) && !in_array($_SERVER['REMOTE_ADDR'], self::$whitelist) && $id != 0){
-            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip) VALUES ('$type',$id,'".$_SERVER['REMOTE_ADDR']."')";
+            $q = "INSERT INTO clicktable (clicktype,clicked_id,ip,season) VALUES ('$type',$id,'".$_SERVER['REMOTE_ADDR']."',$season)";
             mysql_query($q);
         }
     }
@@ -399,6 +399,9 @@ class DatabaseUtils {
     
     public function getPlayPercentage($season,$leagueid,$teamid)
     {
+        if($season == Constant::ALL_STRING){
+            return array();
+        }
        $q="SELECT 
             SUM(minutesplayed) AS total,
             p.`playerid`,
@@ -1378,7 +1381,7 @@ class DatabaseUtils {
             else if($teamid != 0){
                 $q .= " and p.`teamid` IN (" .$teamid . ") ";
             }
-            $q .= " AND p.`igfnore` = 0 
+            $q .= " AND p.`ignore` = 0 
             GROUP BY p.`playerid` 
             HAVING SUM(p.`minutesplayed`) > 500) AS minutes 
             JOIN 

@@ -51,30 +51,30 @@ if(isset($_POST['action'])){
     if($_POST['action'] == 'getEventsTotal'){
         $season = $_POST['season'];
         $leagueid = $_POST['leagueid'];
-        if($season == 0){
-            $season = '2011,2012,2013,2014';
-        }
         if(!isset($leagueid)){
             $leagueid = 0;
         }
         if($_POST['eventtype'] == 11){
-            $dbUtils->setEventPageHit(11);
+            $dbUtils->setEventPageHit(11,$season);
+            if($season == 0){
+                $season = Constant::ALL_STRING;
+            }
             echo json_encode($dbUtils->getTotalPlayerminutes($season,200,$leagueid));
         }
         else{
-            $dbUtils->setEventPageHit($_POST['eventtype']);
+            $dbUtils->setEventPageHit($_POST['eventtype'],$season);
+            if($season == 0){
+                $season = Constant::ALL_STRING;
+            }
             echo json_encode($dbUtils->getEventInfoTotalJSON($_POST['eventtype'],200,$season,$leagueid));
         }
     }
-    if($_POST['action'] == 'getTotalPlayerminutes'){
-        
-    }
     if($_POST['action'] == 'getEventsTotalTeam'){
         $season = $_POST['season'];
+        $dbUtils->setEventPageTeamHit($_POST['eventtype'],$season);
         if($season == 0){
-            $season = '2011,2012,2013,2014';
+            $season = Constant::ALL_STRING;
         }
-        $dbUtils->setEventPageTeamHit($_POST['eventtype']);
         echo json_encode($dbTeam->getEventInfoTotalTeam($_POST['eventtype'],200,$season,$_POST['leagueid']));
     }
     if($_POST['action'] == 'getPlayerInfo'){
@@ -86,13 +86,7 @@ if(isset($_POST['action'])){
         echo json_encode($events);
     }
     if($_POST['action'] == 'getTeamInfo'){
-        $from = $_POST['from'];
-        if(isset($from) && !empty($from)){
-            DatabaseUtils::setTeamSearchHit($_POST['teamid']);
-        }else{
-            DatabaseUtils::setTeamHit($_POST['teamid']);
-        }
-        $events = $dbTeam->getTeamInfo($_POST['teamid'],$_POST['season']);
+        $events = $dbTeam->getTeamInfo($_POST['teamid'],$_POST['season'],$_POST['from']);
         echo json_encode($events);
     }
     if($_POST['action'] == 'getNationalTeam'){

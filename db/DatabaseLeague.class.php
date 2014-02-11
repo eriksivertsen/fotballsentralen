@@ -6,10 +6,10 @@ class DatabaseLeague {
     
     public function getLeagueInfo($leagueid,$teamid,$season)
     {
+        DatabaseUtils::setLeagueHit($leagueid,$season);
         if($season == 0){
             $season = Constant::ALL_STRING;
         }
-        DatabaseUtils::setLeagueHit($leagueid);
         
         $events = array (
             'lastupdate' => DatabaseUtils::getLastUpdate($leagueid,$season),

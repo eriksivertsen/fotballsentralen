@@ -930,16 +930,16 @@ class DatabaseTeam {
         AND p.ignore = 0 
         GROUP BY p.`playerid`";
         
-        $q2 = "SELECT pt.shirtnumber, p.`playerid`,pt.`playername`, SUM(p.minutesplayed) AS `minutes played`, SUM(p.start) AS `started`
+        $q2 = "SELECT total.*, p.shirtnumber, p.playername FROM (
+        SELECT  p.`playerid`,p.teamid, SUM(p.minutesplayed) AS `minutes played`, SUM(p.start) AS `started`
         FROM playtable p 
         JOIN matchtable m ON p.`matchid` = m.`matchid`
-        JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = YEAR(m.dateofmatch)
         JOIN leaguetable l ON m.`leagueid` = l.`leagueid`
-        WHERE pt.`teamid` = {$teamid}
+        WHERE p.`teamid` = {$teamid}
         AND l.`year`  IN ( {$season} )
         AND p.ignore = 0
-        GROUP BY p.`playerid`
-        order by pt.shirtnumber asc";
+        GROUP BY p.`playerid`) as total 
+        JOIN playertable p on p.playerid = total.playerid and p.teamid = total.teamid GROUP by p.playerid order by p.shirtnumber asc ";
         
         
         $data = array();

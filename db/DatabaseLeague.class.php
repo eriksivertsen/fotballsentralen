@@ -10,6 +10,9 @@ class DatabaseLeague {
         if($season == 0){
             $season = Constant::ALL_STRING;
         }
+       
+        $leagueHome = DatabaseLeague::getLeagueTableHome($leagueid, $season, $teamid);
+        $leagueAway =  DatabaseLeague::getLeagueTableAway($leagueid, $season, $teamid);
         
         $events = array (
             'lastupdate' => DatabaseUtils::getLastUpdate($leagueid,$season),
@@ -24,12 +27,11 @@ class DatabaseLeague {
             'minutes' => DatabaseUtils::getTotalPlayerminutes($season,10,$leagueid,$teamid),
             'topscorer' => DatabaseUtils::getEventInfoTotalJSON('4,8',10,$season,$leagueid),
             'topscorercount' => DatabaseTeam::getTopscorerCount($teamid,$leagueid,$season),
-            'hometeam' => DatabaseLeague::getBestHometeam($leagueid, $season, $teamid),
-            'awayteam' => DatabaseLeague::getBestAwayteam($leagueid, $season, $teamid),
+            'hometeam' => array_slice($leagueHome,0,1),
+            'awayteam' => array_slice($leagueAway,0,1),
             'leaguetable' => DatabaseLeague::getLeagueTable($season, $leagueid, $teamid),
-            'leaguetablehome' => DatabaseLeague::getLeagueTableHome($leagueid, $season, $teamid),
-            'leaguetableaway' => DatabaseLeague::getLeagueTableAway($leagueid, $season, $teamid),
-            'playingminutes_percentage' => DatabaseUtils::getPlayPercentage($season,$leagueid,$teamid)
+            'leaguetablehome' => $leagueHome,
+            'leaguetableaway' => $leagueAway
          );
         return $events;
     }

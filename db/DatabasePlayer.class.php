@@ -106,22 +106,21 @@ class DatabasePlayer {
         "GROUP BY p.`playerid`,p.`matchid`
         ORDER BY m.dateofmatch DESC";
         
-        $q2 = "SELECT p.`playerid`,pt.`playername` as playername, p.minutesplayed AS `minutes played`, p.start AS `start`,
-        home.teamid as homeid, away.teamid as awayid, pt.shirtnumber, pt.is_goalkeeper,
+        $q2 = "SELECT total.*, p.playername, p.is_goalkeeper, p.shirtnumber FROM (SELECT p.teamid,p.`playerid`,p.minutesplayed AS `minutes played`, p.start AS `start`,
+        home.teamid as homeid, away.teamid as awayid,
         home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
         unix_timestamp(m.dateofmatch) as timestamp
         FROM playtable p 
         JOIN matchtable m ON p.matchid = m.matchid
-        JOIN playertable pt ON p.`playerid` = pt.`playerid` AND p.`teamid` = pt.`teamid` AND pt.year = YEAR(m.dateofmatch) 
         JOIN teamtable home ON m.hometeamid = home.teamid
         JOIN teamtable away ON m.awayteamid = away.teamid
         JOIN leaguetable l ON m.`leagueid` = l.`leagueid`
-        WHERE pt.`playerid` = {$playerid}
+        WHERE p.`playerid` = {$playerid}
         AND p.ignore = 0 " .
         ($teamid == 0 ? '' : ' AND p.teamid = '.$teamid.' ') .       
         "AND l.year IN ( {$season} )
-        GROUP BY pt.`teamid`,p.`playerid`,p.`matchid`";
-        
+        GROUP BY p.`teamid`,p.`playerid`,p.`matchid` ) as total
+        LEFT JOIN playertable p ON p.playerid = total.playerid AND p.teamid = total.teamid GROUP by total.matchid";
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))

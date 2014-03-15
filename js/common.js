@@ -1149,13 +1149,13 @@ function getPlayerFull(playerid,fromString,teamid)
             $("#playerinfo").tablesorter({widgets: ['zebra']});
             $('#player_totalgoals_text').html('Mål:');
             $('#player_totalgoals').html(totgoals);
-            if(json.info[0].position == 'Keeper' || array[0].number == '1' || json.info[0].is_goalkeeper == 1){
+            
+            if(json.info[0].position == 'Keeper' || array[0].number == '1' || array[0].is_goalkeeper == '1'){
                 $('#player_totalgoals_text').html('Clean sheets:');
                 $('#player_totalgoals').html(json.cleansheets);
                 $('#player_position').html('Keeper');
             }
             
-           
             $('#player_winpercentage').html(json.winpercentage + ' %');
             $('#similarplayers').empty();
             var string = '';

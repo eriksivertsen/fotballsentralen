@@ -1094,7 +1094,7 @@ function getPlayerFull(playerid,fromString,teamid)
             setTeamLogo($('#player_logo'),json.playertoleague[0].teamid);
            
             $('#player_table').show();
-            $('#player_playingminutes').html(json.playingminutes);
+            
             if(season != 0){
                 $('#player_playingminutes_year').html('i ' + season);
             }else{
@@ -1129,6 +1129,7 @@ function getPlayerFull(playerid,fromString,teamid)
             var subbedin = 0;
             var subbedoff = 0;
             var owngoal = 0;
+            var totMins = 0;
 
             for (var i=0; i<array.length; i++) {
                 $('#playerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
@@ -1148,7 +1149,7 @@ function getPlayerFull(playerid,fromString,teamid)
                    
                     '</tr>');
                 
-                
+                totMins += parseInt(array[i].minutesplayed);
                 goals += parseInt(array[i].goals);
                 penalty += parseInt(array[i].penalty);
                 red += parseInt(array[i].redcards);
@@ -1166,6 +1167,7 @@ function getPlayerFull(playerid,fromString,teamid)
             $('#playerinfo').append('<tr><td><b>Totalt</b></td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>'+
             '<td><b>'+start+'</b></td><td><b>'+minutes+'</b></td><td><b>'+subbedin+'</b></td><td><b>'+subbedoff+'</b></td><td><b>'+goals+'</b></td><td><b>'+penalty+'</b></td><td><b>'+owngoal+'</b></td><td><b>'+yellow+'</b></td><td><b>'+red+'</b></td></tr>');
             $('#playerinfo').append('</tbody>');
+            $('#player_playingminutes').html(totMins + ' minutter');
             $("#playerinfo").tablesorter({widgets: ['zebra']});
             $('#player_totalgoals_text').html('Mål:');
             $('#player_totalgoals').html(totgoals);

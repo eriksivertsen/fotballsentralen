@@ -115,8 +115,15 @@ function getPlayerLinkWithId(playerid,playername)
 }
 function getTeamLink(teamid,teamname,is_national)
 {
-    if(teamid == -1 || is_national == 1){
+    if(teamid == -1){
         return teamname;
+    }
+    if(is_national == 1){
+        if(teamname == 'Norge'){
+            return teamname + '<img src="images/national.png" style="cursor: pointer;vertical-align: middle; margin-left:3px; margin-bottom:3px">';
+        }else{
+            return teamname;
+        }
     }
     return '<a href="#" onclick="getTeam(0,'+teamid+');return false;">'+teamname+'</a>';
     //return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';

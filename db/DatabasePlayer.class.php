@@ -24,7 +24,6 @@ class DatabasePlayer {
             'cleansheetrank' => DatabaseUtils::getCleanSheetPlayerRank($playerid,$season),
             'playerinfo' => self::getPlayerInfoJSON($playerid,$season,$teamid),
             'playertoleague' => self::getPlayerToLeague($playerid,$season),
-            'playingminutes' => self::getPlayingMinutes($playerid, $season,$teamid),
             'winpercentage' => self::getWinPercentageFromStart($playerid, $season, $teamid),
             'info' => self::getPlayerDetails($playerid),
             'similar' => self::getSimilarPlayers($playerid),
@@ -102,9 +101,9 @@ class DatabasePlayer {
         LEFT JOIN eventtable_national e ON e.matchid = p.matchid AND e.playerid = p.playerid AND e.ignore = 0
         JOIN matchtable_national m ON p.`matchid` = m.`matchid`
         WHERE p.`playerid` = {$playerid}
-        AND year(m.dateofmatch) IN ( {$season} )
-        AND m.leagueid = $teamid 
-        AND p.ignore = 0  " .           
+        AND year(m.dateofmatch) IN ( {$season} ) " .
+        ($teamid == 0 ? "" : " AND m.leagueid =  " . $teamid . ""  ) .
+        " AND p.ignore = 0  " .           
         "GROUP BY p.`playerid`,p.`matchid`
         ORDER BY m.dateofmatch DESC";
         
@@ -118,9 +117,10 @@ class DatabasePlayer {
         JOIN teamtable_national away ON m.awayteamid = away.teamid
         WHERE p.`playerid` = {$playerid}
         AND p.ignore = 0      
-        AND year(m.dateofmatch) IN ( {$season} )
-        AND m.leagueid = $teamid
-        GROUP BY p.`teamid`,p.`playerid`,p.`matchid` ) as total
+        AND year(m.dateofmatch) IN ( {$season} ) " .
+        ($teamid == 0 ? "" : " AND m.leagueid =  " . $teamid . ""  ) .
+        " AND p.ignore = 0  " . 
+        "GROUP BY p.`teamid`,p.`playerid`,p.`matchid` ) as total
         LEFT JOIN playertable_national p ON p.playerid = total.playerid GROUP by total.matchid";
         $data = array();
         $result = mysql_query($q);
@@ -240,7 +240,16 @@ class DatabasePlayer {
                 $data[$row['matchid']]['is_goalkeeper'] = $row['is_goalkeeper'];
             }
         }
+        $nationalArray = DatabasePlayer::getPlayerInfoNational($playerid,$season,0);
+        if(!empty($nationalArray)){
+            foreach($nationalArray as $match){
+                array_push($data, $match);
+            }    
+            uasort($data,"DatabaseUtils::date");
+        }
         $json = array();
+        
+        
         foreach($data as $value){
             $json[] = $value;
         }

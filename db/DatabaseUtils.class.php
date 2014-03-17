@@ -467,6 +467,9 @@ class DatabaseUtils {
     public function cmp($a, $b) {
         return $b['eventcount'] - $a['eventcount'];
     }
+    public function date($a, $b) {
+        return $b['timestamp'] - $a['timestamp'];
+    }
     public function getTotalPlayerminutes($season,$limit, $leagueid,$teamid = 0 )
     {
         if($leagueid == 8){

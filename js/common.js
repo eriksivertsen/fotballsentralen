@@ -1047,6 +1047,7 @@ function getPlayerFull(playerid,fromString,teamid)
                     $('#teamSelect').empty();
                     $('#teamSelect').append('<option value=0>Alle lag</option>');
                     var arr = json.teams[0].nationalleague.split(",");
+                    $('#teamSelect').append('<option value='+json.teams[0].teamid+'>'+json.teams[0].teamname+'</option>');
                     for (var i=0; i<arr.length; i++) {
                         $('#teamSelect').append('<option value='+arr[i]+'>'+getNationalLeague(arr[i])+'</option>');
                     }

@@ -113,9 +113,9 @@ function getPlayerLinkWithId(playerid,playername)
     return '<a id="match_'+playerid+'" href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>';
     //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
-function getTeamLink(teamid,teamname)
+function getTeamLink(teamid,teamname,is_national)
 {
-    if(teamid == -1){
+    if(teamid == -1 || is_national == 1){
         return teamname;
     }
     return '<a href="#" onclick="getTeam(0,'+teamid+');return false;">'+teamname+'</a>';
@@ -134,8 +134,11 @@ function getMatchLink(matchid,hometeam,awayteam)
     }
     return '';
 }
-function getMatchResultLink(matchid,result)
+function getMatchResultLink(matchid,result,is_national)
 {
+    if(is_national == 1){
+        return result;
+    }
     if(matchid !== undefined){
         return getMatchLinkTextInternal(matchid,result);
     }
@@ -538,5 +541,31 @@ function getNationalTeamName(teamid){
         case 1: return 'A-lag';
         case 2: return 'U-21';
     }
+}
+
+function getNationalLeague(leagueid){
+    leagueid = parseInt(leagueid);
+    switch(leagueid){
+        case 39901: return 'Norge Menn U21';
+        case 39903: return 'Norge Menn U20';
+        case 39904: return 'Norge Menn G19';
+        case 39906: return 'Norge Menn U23';
+        case 39907: return 'Norge Menn U18';
+        case 39908: return 'Norge Menn U17';
+        case 39909: return 'Norge Menn U16';
+        case 39899: return 'Norge A-lag';
+    }
+}
+
+function getNationalTeam(leagueidarray){
+    if(leagueidarray == undefined || leagueidarray.length == 0){
+        return '';
+    }
+    var arr = leagueidarray.split(",");
+    var retVal = '';
+    for (var i=0; i<arr.length; i++) {
+        retVal += '<img src="images/national.png" title="'+getNationalLeague(arr[i])+'" style="cursor: pointer;vertical-align: middle; margin-left:3px; margin-bottom:3px">';
+    }
+    return retVal;
 }
 

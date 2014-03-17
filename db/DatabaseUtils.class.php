@@ -5,7 +5,6 @@ include "dbConnection.php";
 class DatabaseUtils {
     
     public static $whitelist = array('localhost', '127.0.0.1','46.9.149.168');
-//     public static $whitelist = array();
     public function getTransfers()
     {
         $q = "SELECT p.`playerid`,p.`playername`, fromteam.`teamid` AS fromteamid, fromteam.`teamname` AS fromteamname, toteam.`teamid` AS toteamid, toteam.`teamname` AS toteamname, SUBSTRING(datefound FROM 1 FOR 11) AS datefound
@@ -1263,12 +1262,6 @@ class DatabaseUtils {
         }
         $data['homelineup'] = DatabaseTeam::getLineup($homeId, $year, $matchid);
         $data['awaylineup'] = DatabaseTeam::getLineup($awayId, $year, $matchid);
-        if($teamWonId == 0){
-            DatabaseTeam::getStreakString($homeId,$matchid,$type);
-            DatabaseTeam::getStreakString($awayId,$matchid,$type);
-        }else{
-            $data['streak'] = DatabaseTeam::getStreakString($teamWonId,$matchid,$type);
-        }
         $data['homerealteamid'] = DatabaseTeam::getSecondTeamId($homeId);
         $data['awayrealteamid'] = DatabaseTeam::getSecondTeamId($awayId);
         return $data;

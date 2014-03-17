@@ -913,14 +913,14 @@ class DatabaseTeam {
     
     public function getTeamPlayerJSON($teamid,$season)
     {
-        $q = "SELECT p.`playerid`,
+        $q = "SELECT * FROM (SELECT p.`playerid`,
         SUM(IF(e.`eventtype` = \"4\", 1,0)) AS `goals scored`, 
         SUM(IF(e.eventtype = \"8\", 1,0)) AS `penalty`,
         SUM(IF(e.eventtype = \"9\", 1,0)) AS `own goals`,
         SUM(IF(e.eventtype = \"2\", 1,0)) AS `yellow cards`, 
         (SUM(IF(e.eventtype = \"3\", 1,0)) + SUM(IF(e.eventtype = \"1\", 1,0))) AS `red cards`,
         SUM(IF(e.eventtype = \"7\", 1,0)) AS `subbed in` ,
-        SUM(IF(e.eventtype = \"6\", 1,0)) AS `subbed off` 
+        SUM(IF(e.eventtype = \"6\", 1,0)) AS `subbed off`
         FROM playtable p 
         LEFT JOIN eventtable e ON e.matchid = p.matchid AND e.playerid = p.playerid AND e.teamid = p.teamid AND e.ignore = 0
         JOIN matchtable m ON e.matchid = m.matchid
@@ -928,7 +928,16 @@ class DatabaseTeam {
         WHERE p.`teamid` = {$teamid}
         and l.year  IN ( {$season} )
         AND p.ignore = 0 
-        GROUP BY p.`playerid`";
+        GROUP BY p.`playerid`) as team
+        LEFT JOIN
+        (SELECT GROUP_CONCAT(DISTINCT (mn.`leagueid`) SEPARATOR ',') AS nationalleague, pn.playerid 
+    FROM playtable_national pn 
+      JOIN matchtable_national mn 
+        ON mn.`matchid` = pn.`matchid` 
+    WHERE YEAR(mn.`dateofmatch`) IN ($season)  and pn.ignore = 0 
+    GROUP BY pn.`playerid`) AS `national` 
+    ON national.playerid = team.`playerid`  ";
+        
         
         $q2 = "SELECT total.*, p.shirtnumber, p.playername FROM (
         SELECT  p.`playerid`,p.teamid, SUM(p.minutesplayed) AS `minutes played`, SUM(p.start) AS `started`
@@ -958,6 +967,7 @@ class DatabaseTeam {
         while($row = mysql_fetch_array($result))
         {
             if(isset($data[$row['playerid']])){
+                $data[$row['playerid']]['nationalleague'] = $row['nationalleague'];
                 $data[$row['playerid']]['goals'] = $row['goals scored'];
                 $data[$row['playerid']]['penalty'] = $row['penalty'];
                 $data[$row['playerid']]['owngoals'] = $row['own goals'];

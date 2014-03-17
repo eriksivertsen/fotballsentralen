@@ -25,7 +25,7 @@
                         <select id="leagueselect" onchange="selectLeague()">
                             <option value="0">Norge</option>
                             <option value="1">Tippeligaen</option>
-                            <option value="2">Adeccoligaen</option>
+                            <option value="2">1.divisjon</option>
                             <option value="8">2.divisjon</option>
                             <option value="3">2.div avdeling 1</option>
                             <option value="4">2.div avdeling 2</option>
@@ -53,7 +53,7 @@
             </li>
             <li class="menu">
                 <a class="fNiv" href="#" onclick="getTeam(2,0);return false;">
-                    <img onclick="getTeam(2,0)" title="Adeccoligaen" src="images/adecco.png" onmouseover="this.src='images/adecco-hover.png'" onmouseout="this.src='images/adecco.png'" style="cursor:pointer;"/>
+                    <img onclick="getTeam(2,0)" title="1.divisjon" src="images/adecco.png" onmouseover="this.src='images/adecco-hover.png'" onmouseout="this.src='images/adecco.png'" style="cursor:pointer;"/>
                 </a>
                 <ul id="1div" style="display: none;"></ul>
             </li>

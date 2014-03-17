@@ -971,7 +971,7 @@ function updateTeamPlayers(teamidarray, dangerlistarray, winarray)
         var img = '<img src="images/events/yellowtiny.png" style="margin-left:3px;" title="Må sone karantene ved neste gule kort"></img>';
         $('#teamplayerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'>'+
             '<td>'+array[i].shirtnumber+'</td>'+
-            '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+' ' + (dangerlistarray[array[i].playerid] != undefined && season == CURRENT_SEASON ? img : '') +'</td>'+
+            '<td>'+getPlayerLink(array[i].playerid,array[i].playername)+' ' + (dangerlistarray[array[i].playerid] != undefined && season == CURRENT_SEASON ? img : '') +  ' ' +getNationalTeam(array[i].nationalleague) + '</td>'+
             '<td>'+array[i].minutesplayed+'</td>'+
             '<td>'+array[i].started+'</td>'+
             '<td>'+array[i].subbedin+'</td>'+
@@ -1042,13 +1042,32 @@ function getPlayerFull(playerid,fromString,teamid)
                 return;
             }
             if(json.teams.length == 1){
-                $('#teamSelect').hide();
+                if(json.teams[0].nationalleague != undefined){
+                    $('#player_label').show();
+                    $('#teamSelect').empty();
+                    $('#teamSelect').append('<option value=0>Alle lag</option>');
+                    var arr = json.teams[0].nationalleague.split(",");
+                    for (var i=0; i<arr.length; i++) {
+                        $('#teamSelect').append('<option value='+arr[i]+'>'+getNationalLeague(arr[i])+'</option>');
+                    }
+                    $('#teamSelect').show();
+                }else{
+                    $('#player_label').hide();
+                    $('#teamSelect').hide();
+                }
             }else{
                 $('#teamSelect').empty();
                 $('#teamSelect').append('<option value=0>Alle lag</option>');
                 for(var team in json.teams){
                     $('#teamSelect').append('<option value='+json.teams[team].teamid+'>'+json.teams[team].teamname+'</option>');
                 }
+                if(json.teams[0].nationalleague != undefined){
+                    var arra = json.teams[0].nationalleague.split(",");
+                    for (var i=0; i<arra.length; i++) {
+                        $('#teamSelect').append('<option value='+arra[i]+'>'+getNationalLeague(arra[i])+'</option>');
+                    }
+                }   
+                
                 if(teamid != 0){
                     $('#teamSelect').val(teamid);
                 }
@@ -1112,9 +1131,9 @@ function getPlayerFull(playerid,fromString,teamid)
 
             for (var i=0; i<array.length; i++) {
                 $('#playerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
-                    '<td>'+getTeamLink(array[i].homeid,array[i].hometeamname)+'</td>'+
-                    '<td>'+getTeamLink(array[i].awayid,array[i].awayteamname)+'</td>'+
-                    '<td>'+getMatchResultLink(array[i].matchid,array[i].result)+'</td>'+
+                    '<td>'+getTeamLink(array[i].homeid,array[i].hometeamname,array[i].is_national)+'</td>'+
+                    '<td>'+getTeamLink(array[i].awayid,array[i].awayteamname,array[i].is_national)+'</td>'+
+                    '<td>'+getMatchResultLink(array[i].matchid,array[i].result,array[i].is_national)+'</td>'+
                     '<td>'+(array[i].start == 0 ? 'Nei' : 'Ja' )+'</td>'+
                     '<td>'+array[i].minutesplayed+'</td>'+
                     '<td>'+(array[i].subbedin == 0 ? 'Nei' : 'Ja' )+'</td>'+

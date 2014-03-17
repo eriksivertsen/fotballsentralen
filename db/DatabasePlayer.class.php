@@ -64,12 +64,14 @@ class DatabasePlayer {
     }
     public function getTeams($playerid,$season)
     {            
-            $q = "SELECT pl.playerid,pl.playername,p.teamid,t.teamname,l.java_variable 
+            $q = "SELECT pl.playerid,pl.playername,p.teamid,t.teamname,l.java_variable,group_concat(distinct(mn.leagueid) separator ', ') as nationalleague
                 FROM playtable p
                 JOIN matchtable m ON m.`matchid` = p.`matchid`
                 JOIN playertable pl ON pl.playerid = p.playerid
                 JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
                 JOIN teamtable t ON t.teamid = p.teamid
+                LEFT JOIN playtable_national pn ON pn.`playerid` = p.`playerid`
+                LEFT JOIN matchtable_national mn ON mn.`matchid` = pn.`matchid` AND  YEAR(mn.dateofmatch) IN ( $season )
                 WHERE p.`playerid` = {$playerid}
                 AND l.`year` IN ( {$season} )
                 GROUP by t.teamid";
@@ -80,13 +82,95 @@ class DatabasePlayer {
         {
             $data[] = array(
                 'teamid' => $row['teamid'],
-                'teamname' => $row['teamname']
+                'teamname' => $row['teamname'],
+                'nationalleague' => $row['nationalleague']
             );
         }
         return $data;
     }
+    public function getPlayerInfoNational($playerid,$season,$teamid)
+    {
+        $q = "SELECT p.`playerid`,p.`matchid`,p.teamid,
+        SUM(IF(e.`eventtype` = \"4\", 1,0)) AS `goals scored`, 
+        SUM(IF(e.eventtype = \"8\", 1,0)) AS `penalty`,
+        SUM(IF(e.eventtype = \"9\", 1,0)) AS `own goals`,
+        SUM(IF(e.eventtype = \"2\", 1,0)) AS `yellow cards`, 
+        (SUM(IF(e.eventtype = \"3\", 1,0)) + SUM(IF(e.eventtype = \"1\", 1,0))) AS `red cards`,
+        SUM(IF(e.eventtype = \"6\", 1,0)) AS `subbed in` ,
+        SUM(IF(e.eventtype = \"7\", 1,0)) AS `subbed off` 
+        FROM playtable_national p 
+        LEFT JOIN eventtable_national e ON e.matchid = p.matchid AND e.playerid = p.playerid AND e.ignore = 0
+        JOIN matchtable_national m ON p.`matchid` = m.`matchid`
+        WHERE p.`playerid` = {$playerid}
+        AND year(m.dateofmatch) IN ( {$season} )
+        AND m.leagueid = $teamid 
+        AND p.ignore = 0  " .           
+        "GROUP BY p.`playerid`,p.`matchid`
+        ORDER BY m.dateofmatch DESC";
+        
+        $q2 = "SELECT total.*, p.playername, p.is_goalkeeper, p.shirtnumber FROM (SELECT p.teamid,p.`playerid`,p.minutesplayed AS `minutes played`, p.start AS `start`,
+        home.teamid as homeid, away.teamid as awayid,
+        home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
+        unix_timestamp(m.dateofmatch) as timestamp
+        FROM playtable_national p 
+        JOIN matchtable_national m ON p.matchid = m.matchid
+        JOIN teamtable_national home ON m.hometeamid = home.teamid
+        JOIN teamtable_national away ON m.awayteamid = away.teamid
+        WHERE p.`playerid` = {$playerid}
+        AND p.ignore = 0      
+        AND year(m.dateofmatch) IN ( {$season} )
+        AND m.leagueid = $teamid
+        GROUP BY p.`teamid`,p.`playerid`,p.`matchid` ) as total
+        LEFT JOIN playertable_national p ON p.playerid = total.playerid GROUP by total.matchid";
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[$row['matchid']] = array(
+                'goals' => $row['goals scored'],
+                'penalty' => $row['penalty'],
+                'yellowcards' => $row['yellow cards'],
+                'redcards' => $row['red cards'],
+                'subbedin' => $row['subbed in'],
+                'owngoal' => $row['own goals'],
+                'subbedoff' => $row['subbed off'],
+                'teamid' => $row['teamid']
+            );
+        }
+        $result = mysql_query($q2);
+        while($row = mysql_fetch_array($result))
+        {
+            if(isset( $data[$row['matchid']])) {
+                $data[$row['matchid']]['is_national']= 1;
+                $data[$row['matchid']]['minutesplayed']= $row['minutes played'];
+                $data[$row['matchid']]['start'] = $row['start'];
+                $data[$row['matchid']]['hometeamname'] = $row['homename'];
+                $data[$row['matchid']]['awayteamname'] = $row['awayname'];
+                $data[$row['matchid']]['homeid'] = $row['homeid'];
+                $data[$row['matchid']]['awayid'] = $row['awayid'];
+                $data[$row['matchid']]['result'] = $row['result'];
+                $data[$row['matchid']]['dateofmatch'] = $row['dateofmatch'];
+                $data[$row['matchid']]['timestamp'] = $row['timestamp'];
+                $data[$row['matchid']]['matchid'] = $row['matchid'];
+                $data[$row['matchid']]['playername'] = $row['playername'];
+                $data[$row['matchid']]['number'] = $row['shirtnumber'];
+                $data[$row['matchid']]['is_goalkeeper'] = $row['is_goalkeeper'];
+            }
+        }
+        $json = array();
+        foreach($data as $value){
+            $json[] = $value;
+        }
+        return $json;
+    }    
     public function getPlayerInfoJSON($playerid,$season,$teamid)
     {
+        //39906, 39901, 39904, 39903, 39907, 39908, 39909, 39899
+        if($teamid == '39901' || $teamid == '39906' || $teamid == '39904' || 
+                $teamid == '39903' || $teamid == '39907' ||$teamid == '39908' 
+                ||$teamid == '39909' || $teamid == '39899' ){
+            return DatabasePlayer::getPlayerInfoNational($playerid,$season,$teamid);
+        }
         $q = "SELECT p.`playerid`,p.`matchid`,p.teamid,
         SUM(IF(e.`eventtype` = \"4\", 1,0)) AS `goals scored`, 
         SUM(IF(e.eventtype = \"8\", 1,0)) AS `penalty`,
@@ -140,6 +224,7 @@ class DatabasePlayer {
         while($row = mysql_fetch_array($result))
         {
             if(isset( $data[$row['matchid']])) {
+                $data[$row['matchid']]['is_national']= 0;
                 $data[$row['matchid']]['minutesplayed']= $row['minutes played'];
                 $data[$row['matchid']]['start'] = $row['start'];
                 $data[$row['matchid']]['hometeamname'] = $row['homename'];
@@ -160,7 +245,6 @@ class DatabasePlayer {
             $json[] = $value;
         }
         return $json;
-    
     }    
     public function getEventRankPlayer($playerid,$eventtype,$season)
     {

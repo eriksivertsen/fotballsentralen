@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-12-10 18:19:22
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-19 13:26:15
          compiled from "smarty\templates\main.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2243450b0caef60c5f3-55980832%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'ad3342d91c48a987ea8de39e00385b406c1dc521' => 
     array (
       0 => 'smarty\\templates\\main.tpl',
-      1 => 1386699538,
+      1 => 1395235476,
       2 => 'file',
     ),
   ),
@@ -45,6 +45,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
         <script type="text/javascript" src="js/common.js"></script>
         <script type="text/javascript" src="js/Utils.js"></script>
+        <script type="text/javascript" src="js/futsal.js"></script>
         <script type="text/javascript" src="js/scope.js"></script>
         <link href="favicon.ico" rel="icon" type="image/x-icon" />
         <link href="css/ticker-style.css" rel="stylesheet" type="text/css" />

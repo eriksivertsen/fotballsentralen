@@ -126,7 +126,6 @@
   
         function controlHash()
         {            
-            var url = window.location;
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
                 setSeason(2013);
@@ -148,6 +147,15 @@
             if(type == 'player'){
                 if(id != playeridselected || type != typeselected){
                     getPlayer(id);
+                }
+            }
+            if(type == 'futsal'){
+                if(id == ''){
+                    getFutsalLeague();
+                }else if(id == 'player'){
+                    getFutsalPlayer(specialid);
+                }else if(id == 'team'){
+                    getFutsalTeam(specialid);
                 }
             }
             if(type == 'events'){
@@ -385,6 +393,18 @@
             
             <div id="scope">
                 {include file="scope.tpl"}
+            </div>
+            
+             <div id="futsal_player">
+                {include file="futsal/player.tpl"}
+            </div>
+
+            <div id="futsal_team">
+                {include file="futsal/team.tpl"}
+            </div>
+            
+            <div id="futsal_league">
+                {include file="futsal/league.tpl"}
             </div>
             
             <div id="match_main">

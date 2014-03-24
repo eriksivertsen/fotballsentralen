@@ -49,7 +49,6 @@ class DatabaseUtils {
         
         $q = "SELECT teamname,teamid FROM teamtable WHERE teamid != -1 GROUP BY teamid ";
         
-       
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
@@ -57,6 +56,28 @@ class DatabaseUtils {
                 'label' => $row['teamname'],
                 'id' => $row['teamid'],
                 'type' => 'team'
+           );
+        }
+        $q = "SELECT CONCAT(playername, ' (futsal)') as playername,playerid FROM playertable_futsal WHERE real_playerid is null GROUP BY playerid";
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data['searcharray'][] = array(
+                'label' => $row['playername'],
+                'id' => $row['playerid'],
+                'type' => 'futsalplayer'
+           );
+        }
+        
+        $q = "SELECT concat(teamname ,' (futsal)') as teamname,teamid FROM teamtable_futsal WHERE teamid != -1 GROUP BY teamid ";
+        
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data['searcharray'][] = array(
+                'label' => $row['teamname'],
+                'id' => $row['teamid'],
+                'type' => 'futsalteam'
            );
         }
         return $data;
@@ -335,6 +356,9 @@ class DatabaseUtils {
         
     public function getEventInfoTotalJSON($eventtype, $limit, $season, $leagueid)
     {
+        if($leagueid == '12'){
+            return DatabaseFutsal::getEventlist($eventtype,$season,0,$limit);
+        }
         if(!isset($leagueid)){
             $leagueid = '0';
         }

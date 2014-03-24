@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-02-05 10:57:14
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-19 13:08:20
          compiled from "smarty\templates\team.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:17686519c9f3b2cd230-75441698%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '41140c1a05ff8499ae74082b8b528f19487df6c6' => 
     array (
       0 => 'smarty\\templates\\team.tpl',
-      1 => 1391597793,
+      1 => 1395234498,
       2 => 'file',
     ),
   ),
@@ -19,16 +19,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_519c9f3b338ab7_79561069',
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_519c9f3b338ab7_79561069')) {function content_519c9f3b338ab7_79561069($_smarty_tpl) {?><table>
+<?php if ($_valid && !is_callable('content_519c9f3b338ab7_79561069')) {function content_519c9f3b338ab7_79561069($_smarty_tpl) {?><table style="width:100%">
     <tr>
-        <td style="vertical-align: top;">
-            <img id="team_logo" style="margin-left:25px;margin-right: 15px;">
-            <br/>
+        <td style="width:25%;vertical-align: top;">
+            <center>
+                <img id="team_logo" style="margin-top:10px">
+            </center>
         </td>
-        <td>
-            <table id="team_tops_table" style="font-size: 9pt;">
+        <td style="width: 40%;vertical-align: top;">
+            <table id="team_tops_table" style="font-size: 12px;">
                 <thead>
-                    <td><h4><text id="teamname"></text></h4></td>
+                    <td><h2><text id="teamname"></text></h2></td>
                 </thead>
                 <tr>
                     <td>Toppscorer:</td>
@@ -104,27 +105,29 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 </tr>
             </table>
         </td>
+        <td style="width: 35%;">
+            <div id="team_table">
+                <table id="team_tables">
+                    <tr>
+                        <td>
+                            <table id="team_leaguetable" class="tablesorter playerinfo"> </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
     </tr>
 </table>
-<div id="team_tops">
-    
-</div>
-<br/>
-<div id="team_table">
-    <table id="team_tables">
-        <tr>
-            <td>
-                <table id="team_leaguetable" class="tablesorter playerinfo"> </table>
-            </td>
-            <td>
-                <table id="team_latestmatches" class="tablesorter matchinfo"></table>
-                <table id="team_nextmatches" class="tablesorter matchinfo"></table>
-            </td>
-        </tr>
-    </table>
-</div>
 
-<br/>
+<table>
+    <tr>
+        <td>
+            <table id="team_latestmatches" class="tablesorter matchinfo"></table>
+            <table id="team_nextmatches" class="tablesorter matchinfo"></table>
+        </td>
+    </tr>
+</table>
+
 
 <table id="teamplayerinfo" class="tablesorter playerinfo"></table>
 

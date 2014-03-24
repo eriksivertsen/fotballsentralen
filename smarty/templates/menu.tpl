@@ -26,7 +26,11 @@
                             getPlayerSearch(ui.item.id);
                         }else if(ui.item.type == 'team'){
                             getTeamInfoSearch(ui.item.id);
-                        }
+                        }else if(ui.item.type == 'futsalteam'){
+                            getFutsalTeam(ui.item.id);
+                        }else if(ui.item.type == 'futsalplayer'){
+                            getFutsalPlayer(ui.item.id);
+                        }    
                     }
                 });
                                 

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2013-12-23 23:18:51
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-24 09:33:19
          compiled from "smarty\templates\menu.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3245450ad1b4d2d7528-96294350%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'a9652aca521fe5d2f352c6744a89492c955c5006' => 
     array (
       0 => 'smarty\\templates\\menu.tpl',
-      1 => 1387840561,
+      1 => 1395653596,
       2 => 'file',
     ),
   ),
@@ -54,7 +54,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                             getPlayerSearch(ui.item.id);
                         }else if(ui.item.type == 'team'){
                             getTeamInfoSearch(ui.item.id);
-                        }
+                        }else if(ui.item.type == 'futsalteam'){
+                            getFutsalTeam(ui.item.id);
+                        }else if(ui.item.type == 'futsalplayer'){
+                            getFutsalPlayer(ui.item.id);
+                        }    
                     }
                 });
                                 

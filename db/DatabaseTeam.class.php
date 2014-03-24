@@ -1027,6 +1027,9 @@ class DatabaseTeam {
     
     public function getEventInfoTotalTeam($eventtype, $limit, $season, $leagueid)
     {
+        if($leagueid == '12'){
+            return DatabaseFutsal::getEventlistTeam($eventtype,$season,0,$limit);
+        }
         if($leagueid == '8'){
             $leagueid = '3,4,5,6';
         }

@@ -32,6 +32,7 @@
                             <option value="5">2.div avdeling 3</option>
                             <option value="6">2.div avdeling 4</option>
                             <option value="11">Nord-Norge United</option>
+                            <option value="12">Eliteserien Futsal</option>
                         </select> 
                     </label>
                 </td>
@@ -93,6 +94,7 @@
                     <li><a href="#" onclick="getEventsTotal(70,leagueidselected);return false;">Mål&nbspsom&nbspinnbytter</a></li>
                     <li><a href="#" onclick="getEventsTotal(9,leagueidselected);return false;">Selvmål</a></li>
                     <li><a href="#" onclick="getEventsTotal(2,leagueidselected);return false;">Gule&nbspkort</a></li>
+                    <li><a href="#" onclick="getEventsTotal(13,leagueidselected);return false;">Røde&nbspkort</a></li>
                     <li><a href="#" onclick="getEventsTotal(3,leagueidselected);return false;">Rødt&nbspkort&nbsp(direkte)</a></li>
                     <li><a href="#" onclick="getEventsTotal(1,leagueidselected);return false;">Rødt&nbspkort&nbsp(to&nbspgule)</a></li>
                     <li><a href="#" onclick="getEventsTotal(6,leagueidselected);return false;">Byttet&nbspinn</a></li>
@@ -123,6 +125,12 @@
             <li class="menu">
                 <a class="fNiv" href="#" onclick="getTeam(11,0);return false;">
                     <img onclick="getTeam(11,0)" title="Nord-Norge United" src="images/nnunited.png" onmouseover="this.src='images/nnunited-hover.png'" onmouseout="this.src='images/nnunited.png'" style="cursor:pointer;"/>
+                </a>
+                <ul id="1div" style="display: none;"></ul>
+            </li>
+            <li class="menu">
+                <a class="fNiv" href="#" onclick="getFutsalLeague();return false;">
+                    <img onclick="getFutsalLeague()" title="Eliteserien Futsal" src="images/futsal.png" onmouseover="this.src='images/futsal-hover.png'" onmouseout="this.src='images/futsal.png'" style="cursor:pointer;"/>
                 </a>
                 <ul id="1div" style="display: none;"></ul>
             </li>

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-02-10 08:08:23
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-22 00:16:02
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1392019701,
+      1 => 1395447286,
       2 => 'file',
     ),
   ),
@@ -157,7 +157,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   
         function controlHash()
         {            
-            var url = window.location;
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
                 setSeason(2013);
@@ -179,6 +178,15 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             if(type == 'player'){
                 if(id != playeridselected || type != typeselected){
                     getPlayer(id);
+                }
+            }
+            if(type == 'futsal'){
+                if(id == ''){
+                    getFutsalLeague();
+                }else if(id == 'player'){
+                    getFutsalPlayer(specialid);
+                }else if(id == 'team'){
+                    getFutsalTeam(specialid);
                 }
             }
             if(type == 'events'){
@@ -421,6 +429,21 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             
             <div id="scope">
                 <?php echo $_smarty_tpl->getSubTemplate ("scope.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
+            </div>
+            
+             <div id="futsal_player">
+                <?php echo $_smarty_tpl->getSubTemplate ("futsal/player.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
+            </div>
+
+            <div id="futsal_team">
+                <?php echo $_smarty_tpl->getSubTemplate ("futsal/team.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+
+            </div>
+            
+            <div id="futsal_league">
+                <?php echo $_smarty_tpl->getSubTemplate ("futsal/league.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
             </div>
             

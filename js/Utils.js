@@ -25,21 +25,22 @@ weekday[6]="Lørdag";
 
 var eventArray = new Array();
 
-eventArray[50] = {name:'Seiersprosent',types:'0'};
-eventArray[11] = {name:'Spilleminutter',types:'0'};
-eventArray[80] = {name:'Spilletid i prosent',types:'0'};
-eventArray[10] = {name:'Toppscorer',types:'0,1'};
-eventArray[60] = {name:'Måleffektivitet',types:'0'};
-eventArray[8] = {name:'Straffemål',types:'0,1'};
-eventArray[12] = {name:'Clean sheets',types:'0,1'};
-eventArray[70] = {name:'Mål som innbytter',types:'0,1'};
+eventArray[1] = {name:'Rødt&nbspkort&nbsp(to gule)',types:'0,1'};
+eventArray[2] = {name:'Gule&nbspkort',types:'0,1'};
+eventArray[3] = {name:'Rødt&nbspkort&nbsp(direkte)',types:'0,1'};
 eventArray[4] = {name:'Spillemål',types:'0,1'};
+eventArray[6] = {name:'Byttet&nbspinn',types:'0,1'};
+eventArray[7] = {name:'Byttet&nbsput',types:'0,1'};
+eventArray[8] = {name:'Straffemål',types:'0,1'};
 eventArray[9] = {name:'Selvmål',types:'0,1'};
-eventArray[2] = {name:'Gule kort',types:'0,1'};
-eventArray[3] = {name:'Rødt kort (direkte)',types:'0,1'};
-eventArray[1] = {name:'Rødt kort (to gule)',types:'0,1'};
-eventArray[6] = {name:'Byttet inn',types:'0,1'};
-eventArray[7] = {name:'Byttet ut',types:'0,1'};
+eventArray[10] = {name:'Toppscorer',types:'0,1'};
+eventArray[11] = {name:'Spilleminutter',types:'0'};
+eventArray[12] = {name:'Clean&nbspsheets',types:'0,1'};
+eventArray[13] = {name:'Røde&nbspkort',types:'0,1'};
+eventArray[50] = {name:'Seiersprosent',types:'0'};
+eventArray[60] = {name:'Måleffektivitet',types:'0'};
+eventArray[70] = {name:'Mål&nbspsom&nbspinnbytter',types:'0,1'};
+eventArray[80] = {name:'Spilletid&nbspi&nbspprosent',types:'0'};
 
 var tableArray = new Array();
 tableArray[0] = 'Totalt';
@@ -105,6 +106,14 @@ function getPlayerLink(playerid,playername)
     return '<a href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>';
     //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
+function getFutsalPlayerLink(playerid,playername)
+{
+    if(playerid == -1){
+        return playername;
+    }
+    return '<a href="#" onclick="getFutsalPlayer('+playerid+');return false;">'+playername+'</a>';
+    //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
+}
 function getPlayerLinkWithId(playerid,playername)
 {
     if(playerid == -1){
@@ -113,14 +122,14 @@ function getPlayerLinkWithId(playerid,playername)
     return '<a id="match_'+playerid+'" href="#" onclick="getPlayer('+playerid+');return false;">'+playername+'</a>';
     //return '<a href="index.php?season='+season+'&player_id='+playerid+'">'+playername+'</a>';
 }
-function getTeamLink(teamid,teamname,is_national)
+function getTeamLink(teamid,teamname,leagueid)
 {
     if(teamid == -1){
         return teamname;
     }
-    if(is_national == 1){
-        if(teamname == 'Norge'){
-            return teamname + '<img src="images/national.png" style="cursor: pointer;vertical-align: middle; margin-left:3px; margin-bottom:3px">';
+    if(leagueid != undefined && leagueid != 0){
+        if(teamid == 1){
+            return getNationalLeague(leagueid) + '<img src="images/national.png" style="vertical-align: middle; margin-left:3px; margin-bottom:3px">';
         }else{
             return teamname;
         }
@@ -128,6 +137,16 @@ function getTeamLink(teamid,teamname,is_national)
     return '<a href="#" onclick="getTeam(0,'+teamid+');return false;">'+teamname+'</a>';
     //return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
 }
+function getFutsalTeamLink(teamid,teamname)
+{
+    if(teamid == -1){
+        return teamname;
+    }
+    return '<a href="#" onclick="getFutsalTeam('+teamid+');return false;">'+teamname+'</a>';
+    //return '<a href="index.php?season='+season+'&team_id='+teamid+'">'+teamname+'</a>';
+}
+
+
 function getLeagueLink(leagueid)
 {
     return '<a href="#" onclick="getTeam('+leagueid+',0);return false;">'+getLeagueName(leagueid)+'</a>';
@@ -332,13 +351,16 @@ function getTableRowId(array, i, id)
 }
 function getTableRowSelected(array)
 {
-    var arrayString = '<td>'+array.join('</td><td>')+'</td>';
+    var arrayString = '<td><b>'+array.join('</b></td><td><b>')+'</b></td>';
     return '<tr class=selected>'+arrayString+'</tr>';
 }
 function getEventFromId(eventid, type)
 {
     if(eventid == '4,8'){
         eventid = 10;
+    }
+    if(eventid == '1,3'){
+        eventid = 13;
     }
     var typeString = '';
     if(type == 1){
@@ -374,7 +396,7 @@ function getLeagueName(leagueid)
         case getTippeligaen():
             return 'Tippeligaen';
         case getAdeccoligaen():
-            return 'Adeccoligaen';
+            return '1.divisjon';
         case getAndreDiv():
             return '2.divisjon';
         case getAndreDiv1():
@@ -387,6 +409,8 @@ function getLeagueName(leagueid)
             return '2.divisjon&nbspavdeling&nbsp4';
         case 11: 
             return 'Nord&#8209;Norge&nbspUnited';
+            case 12: 
+            return 'Eliteserien&nbspFutsal';
     }
 }
 function getDateString(date)
@@ -426,6 +450,15 @@ function getDoubleDigit(digit){
 function setTeamLogo(id,teamid){
     id.attr("src",'images/logos/'+teamid+'.png');
     id.attr("onclick",'getTeam(0,'+teamid+')');
+    id.css("cursor",'pointer');
+    id.error(function (){
+        id.attr("src",'images/logos/blank.png');
+    });
+    id.show();
+}
+function setFutsalTeamLogo(id,teamid){
+    id.attr("src",'images/logos/'+teamid+'.png');
+    id.attr("onclick",'getFutsalTeam('+teamid+')');
     id.css("cursor",'pointer');
     id.error(function (){
         id.attr("src",'images/logos/blank.png');
@@ -560,7 +593,7 @@ function getNationalLeague(leagueid){
         case 39907: return 'Norge Menn U18';
         case 39908: return 'Norge Menn U17';
         case 39909: return 'Norge Menn U16';
-        case 39899: return 'Norge A-lag';
+        case 39899: return 'Norge A-Lag';
     }
 }
 
@@ -571,7 +604,7 @@ function getNationalTeam(leagueidarray){
     var arr = leagueidarray.split(",");
     var retVal = '';
     for (var i=0; i<arr.length; i++) {
-        retVal += '<img src="images/national.png" title="'+getNationalLeague(arr[i])+'" style="cursor: pointer;vertical-align: middle; margin-left:3px; margin-bottom:3px">';
+        retVal += '<img src="images/national.png" title="'+getNationalLeague(arr[i])+'" style="vertical-align: middle; margin-left:3px; margin-bottom:3px">';
     }
     return retVal;
 }

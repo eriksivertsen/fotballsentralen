@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-02-05 12:33:32
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-24 11:24:19
          compiled from "smarty\templates\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2520451692e292e1372-85071265%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '6652bf75f43eb8665356b88e8a0e2401680ee1b9' => 
     array (
       0 => 'smarty\\templates\\header.tpl',
-      1 => 1391603610,
+      1 => 1395660233,
       2 => 'file',
     ),
   ),
@@ -46,13 +46,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                         <select id="leagueselect" onchange="selectLeague()">
                             <option value="0">Norge</option>
                             <option value="1">Tippeligaen</option>
-                            <option value="2">Adeccoligaen</option>
+                            <option value="2">1.divisjon</option>
                             <option value="8">2.divisjon</option>
                             <option value="3">2.div avdeling 1</option>
                             <option value="4">2.div avdeling 2</option>
                             <option value="5">2.div avdeling 3</option>
                             <option value="6">2.div avdeling 4</option>
                             <option value="11">Nord-Norge United</option>
+                            <option value="12">Eliteserien Futsal</option>
                         </select> 
                     </label>
                 </td>
@@ -74,7 +75,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </li>
             <li class="menu">
                 <a class="fNiv" href="#" onclick="getTeam(2,0);return false;">
-                    <img onclick="getTeam(2,0)" title="Adeccoligaen" src="images/adecco.png" onmouseover="this.src='images/adecco-hover.png'" onmouseout="this.src='images/adecco.png'" style="cursor:pointer;"/>
+                    <img onclick="getTeam(2,0)" title="1.divisjon" src="images/adecco.png" onmouseover="this.src='images/adecco-hover.png'" onmouseout="this.src='images/adecco.png'" style="cursor:pointer;"/>
                 </a>
                 <ul id="1div" style="display: none;"></ul>
             </li>
@@ -114,6 +115,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     <li><a href="#" onclick="getEventsTotal(70,leagueidselected);return false;">Mål&nbspsom&nbspinnbytter</a></li>
                     <li><a href="#" onclick="getEventsTotal(9,leagueidselected);return false;">Selvmål</a></li>
                     <li><a href="#" onclick="getEventsTotal(2,leagueidselected);return false;">Gule&nbspkort</a></li>
+                    <li><a href="#" onclick="getEventsTotal(13,leagueidselected);return false;">Røde&nbspkort</a></li>
                     <li><a href="#" onclick="getEventsTotal(3,leagueidselected);return false;">Rødt&nbspkort&nbsp(direkte)</a></li>
                     <li><a href="#" onclick="getEventsTotal(1,leagueidselected);return false;">Rødt&nbspkort&nbsp(to&nbspgule)</a></li>
                     <li><a href="#" onclick="getEventsTotal(6,leagueidselected);return false;">Byttet&nbspinn</a></li>
@@ -144,6 +146,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <li class="menu">
                 <a class="fNiv" href="#" onclick="getTeam(11,0);return false;">
                     <img onclick="getTeam(11,0)" title="Nord-Norge United" src="images/nnunited.png" onmouseover="this.src='images/nnunited-hover.png'" onmouseout="this.src='images/nnunited.png'" style="cursor:pointer;"/>
+                </a>
+                <ul id="1div" style="display: none;"></ul>
+            </li>
+            <li class="menu">
+                <a class="fNiv" href="#" onclick="getFutsalLeague();return false;">
+                    <img onclick="getFutsalLeague()" title="Eliteserien Futsal" src="images/futsal.png" onmouseover="this.src='images/futsal-hover.png'" onmouseout="this.src='images/futsal.png'" style="cursor:pointer;"/>
                 </a>
                 <ul id="1div" style="display: none;"></ul>
             </li>

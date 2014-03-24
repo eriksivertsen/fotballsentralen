@@ -7,6 +7,7 @@ class DatabaseStats {
     {
         $q = "SELECT trending.clicked_id,
             trending.clicktype,
+            trending.season,
             trending.ip,
             trending.time,
             p.`playername` AS name1,
@@ -44,6 +45,7 @@ class DatabaseStats {
                 
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'playerid' => $row['clicked_id'],
                     'playername' => $playername,
                     'time' => $row['time'],
@@ -52,6 +54,7 @@ class DatabaseStats {
             }else if($row['clicktype']=='team' || $row['clicktype']=='team_search'){
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'teamid' => $row['clicked_id'],
                     'teamname' => $row['teamname'],
                     'time' => $row['time'],
@@ -60,6 +63,7 @@ class DatabaseStats {
             }else if($row['clicktype']=='preview' || $row['clicktype'] == 'match_internal'){
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'matchid' => $row['clicked_id'],
                     'hometeam' => $row['hometeam'] . ' - ' . $row['awayteam'],
                     'time' => $row['time'],
@@ -68,6 +72,7 @@ class DatabaseStats {
             }else if($row['clicktype']=='league'){
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'matchid' => $row['clicked_id'],
                     'name' => $row['leaguename'],
                     'time' => $row['time'],
@@ -76,6 +81,7 @@ class DatabaseStats {
             }else if($row['clicktype']=='suspension'){
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'matchid' => $row['clicked_id'],
                     'name' => $row['leaguename2'],
                     'time' => $row['time'],
@@ -85,6 +91,7 @@ class DatabaseStats {
             else if($row['clicktype']=='scope'){
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'matchid' => $row['clicked_id'],
                     'name' => $row['scopename'],
                     'time' => $row['time'],
@@ -93,6 +100,7 @@ class DatabaseStats {
             }else{
                 $data[] = array(
                     'type' => $row['clicktype'],
+                    'season' => $row['season'],
                     'clicked_id' => $row['clicked_id'],
                     'name' => ' ',
                     'time' => $row['time'],

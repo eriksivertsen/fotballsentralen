@@ -20,6 +20,7 @@
         <script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
         <script type="text/javascript" src="js/common.js"></script>
         <script type="text/javascript" src="js/Utils.js"></script>
+        <script type="text/javascript" src="js/futsal.js"></script>
         <script type="text/javascript" src="js/scope.js"></script>
         <link href="favicon.ico" rel="icon" type="image/x-icon" />
         <link href="css/ticker-style.css" rel="stylesheet" type="text/css" />

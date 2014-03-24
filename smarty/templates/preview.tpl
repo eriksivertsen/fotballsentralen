@@ -14,11 +14,7 @@
             <td align="center"><h4><text id="preview_away_name"></text></h4>
             <img id="preview_away_logo" style="margin-left:15px;margin-right: 15px; float: bottom; vertical-align: middle;"></td>
         </tr>
-        <tr>
-            <td><text id="preview_home_streak"></text></td>
-            <td align="center"></td>
-            <td><text id="preview_away_streak"></text></td>
-        </tr
+        
         <tr></tr>
         <tr>
             <td align="center"><text id="preview_home_lastlineup"></text></td>

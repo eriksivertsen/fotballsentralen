@@ -7,6 +7,7 @@ require_once('db/DatabasePreview.class.php');
 require_once('db/DatabasePlayer.class.php');
 require_once('db/DatabaseAdmin.class.php');
 require_once('db/DatabaseScope.class.php');
+require_once('db/DatabaseFutsal.class.php');
 
 
 $dbScope = new DatabaseScope();
@@ -17,6 +18,7 @@ $dbLeague = new DatabaseLeague();
 $dbPlayer = new DatabasePlayer();
 $dbPreview = new DatabasePreview();
 $dbAdmin= new DatabaseAdmin();
+$dbFutsal = new DatabaseFutsal();
 
 if(isset($_POST['action'])){
     
@@ -174,6 +176,15 @@ if(isset($_POST['action'])){
     }
     if($_POST['action'] == 'changePassword'){
         echo json_encode($dbAdmin->changePassword($_POST['userid'],$_POST['password']));
+    }
+    if($_POST['action'] == 'getFutsalLeague'){
+        echo json_encode($dbFutsal->getLeague($_POST['season']));
+    }
+    if($_POST['action'] == 'getFutsalTeam'){
+        echo json_encode($dbFutsal->getTeam($_POST['teamid'],$_POST['season']));
+    }
+    if($_POST['action'] == 'getFutsalPlayer'){
+        echo json_encode($dbFutsal->getPlayer($_POST['playerid'],$_POST['teamid'],$_POST['season']));
     }
 }
 

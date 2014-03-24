@@ -56,7 +56,10 @@ function selectLeague()
     leagueidselected = $('#leagueselect').val();
     if(leagueidselected == 0){
         getTeam(0,0);
-    }else{
+    }else if(leagueidselected == 12) { // Futsal
+        getFutsalLeague();
+    } 
+    else{
         getTeam(leagueidselected);
     }
 }
@@ -82,6 +85,15 @@ function selectSeason()
     season = $('#season').val();
     getLeagues();
     
+    if($('#futsal_league').is(":visible")){
+       getFutsalLeague();
+    }
+    if($('#futsal_player').is(":visible")){
+       getFutsalPlayer(playeridselected);
+    }
+    if($('#futsal_team').is(":visible")){
+       getFutsalTeam(teamidselected);
+    }
     if($('#player').is(":visible")){
        getPlayer(playeridselected);
     }
@@ -595,7 +607,7 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
         $('#breadcrumbs').append('<li>'+ses+'</li>');
         $('#breadcrumbs').append('<li><a href="#" onclick="getTeam(0,0)">Norge</a></li>');
         $("#breadcrumbs").breadcrumbs("home");
-        $('#league_name').html('Norge');
+        $('#league_name').html('Norge ' + ses);
         document.title = title;
         return;
     }
@@ -612,7 +624,7 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
         $('#breadcrumbs').append('<li>'+ses+'</li>');
         $('#breadcrumbs').append('<li><a onclick="getTeam(0,0)">Norge</a></li>');
         
-        $('#league_name').html(getLeagueName(leagueidfound));
+        $('#league_name').html(getLeagueName(leagueidfound) + ' ' + ses);
         
         if(leagueidfound == getAdeccoligaen()){
              $('#breadcrumbs').append('<li>'+getLeagueLink(getAdeccoligaen(), 'Adeccoligaen')+'</li>');
@@ -666,7 +678,7 @@ function updateBreadcrumb(leagueid,teamid,jsonarray)
         $('#breadcrumbs').append('<li>'+ses+'</li>');
         $('#breadcrumbs').append('<li><a href="index.php">Norge</a></li>');
 
-        $('#league_name').html(getLeagueName(leagueid));
+        $('#league_name').html(getLeagueName(leagueid) + ' ' + ses);
         
         if(leagueid == getAdeccoligaen()){
               $('#breadcrumbs').append('<li>'+getLeagueLink(getAdeccoligaen())+'</li>');
@@ -766,6 +778,7 @@ function getTotalPlayerMinutes(){
             $('#allEventsSelectType').val(11);
             $('#allEventsSelectType').show();
             $('#allEventsSelect').show();
+            $('[id^="event_top"]').show();
             $('#playerminutes').show();
             $('#playerminutes_table').show();
             $('#events').show();
@@ -777,6 +790,9 @@ function getEventsTotal(eventtype,leagueid)
 {
     if(!allowClicks){
         return;
+    }
+    if(leagueid == undefined){
+        leagueid = 0;
     }
     $('#allEventsSelectType').val(eventtype);
     $('#allEventsSelect').val(leagueid);
@@ -791,8 +807,11 @@ function getEventsTotal(eventtype,leagueid)
     if(eventtype == 10){
         // topscorer hack
         eventtype = '4,8';
+    }else if(eventtype == 13){
+        eventtype = '1,3';
     }
-    if(eventtype == 50 || eventtype == 60 || eventtype == 80){
+    
+    if(eventtype == 50 || eventtype == 60 || eventtype == 80 || eventtype == 11){
         $('#teamradio').prop('disabled',true);
     }else{
         $('#teamradio').prop('disabled',false);
@@ -832,11 +851,32 @@ function getEventsTotal(eventtype,leagueid)
             $('#allEvents').empty();
             $('#allEvents').append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueid+')">'+tableheader+'&nbspi&nbsp'+ getLeagueName(leagueid)+',&nbsp' + ses+'</caption>');
             $('#allEvents').append('<thead ><tr><td><b>Spiller<b></td><td><b>Lag<b></td><td><b>Antall<b></td></tr></thead>');
+            
+            
             for (var i=0; i<array.length; i++) {
                 $('#allEvents').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>'+
                     '<td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
                     '<td align=center>'+array[i].eventcount+'</td></tr>');
             }
+            if(array.length >= 3) {
+                setTeamLogo($('#event_top_logo_1'),array[0].teamid);
+                setTeamLogo($('#event_top_logo_2'),array[1].teamid);
+                setTeamLogo($('#event_top_logo_3'),array[2].teamid);
+
+                $('#event_top_1_info').html(array[0].eventcount + ': ' +getPlayerLink(array[0].playerid,array[0].playername));
+                $('#event_top_2_info').html(array[1].eventcount + ': ' +getPlayerLink(array[1].playerid,array[1].playername));
+                $('#event_top_3_info').html(array[2].eventcount + ': ' +getPlayerLink(array[2].playerid,array[2].playername));
+                
+                $('[id^="event_top"]').show();
+            }else{
+                $('#event_top_logo_1').html('');
+                $('#event_top_logo_2').html('');
+                $('#event_top_logo_3').html('');
+                $('#event_top_1_info').html('');
+                $('#event_top_2_info').html('');
+                $('#event_top_3_info').html('');
+            }
+            
             stopLoad();
             $('#allEventsSelectType').show();
             $('#allEventsSelect').show();
@@ -865,6 +905,8 @@ function getEventsTotalTeam(eventtype, leagueid)
     if(eventtype == 10){
         eventtype = '4,8';
         // goal hack
+    }else if(eventtype == 13){
+        eventtype = '1,3';
     }
     $('#teamradio').prop('checked',true);
     
@@ -893,12 +935,37 @@ function getEventsTotalTeam(eventtype, leagueid)
         success: function(json) {
             $('#allEvents').empty();
             var array = json;
-            $('#allEvents').append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueid+')">'+tableheader+'&nbspi&nbsp'+getLeagueName(leagueid)+',&nbsp'+season+'</caption>');
+            var ses = season;
+            if(season == 0){
+                ses = 'totalt';
+            }
+            $('#allEvents').append('<caption class="tableheader" onclick="getEventsTotal('+eventtype+','+leagueid+')">'+tableheader+'&nbspi&nbsp'+getLeagueName(leagueid)+',&nbsp'+ses+'</caption>');
             $('#allEvents').append('<thead><tr><td><b>Lag<b></td><td><b>Antall<b></td></tr></thead>');
             for (var i=0; i<array.length; i++) {
                 $('#allEvents').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getTeamLink(array[i].teamid,array[i].teamname)+'</td>'+
                     '<td>'+array[i].eventcount+'</td></tr>');
             }
+            
+            if(array.length >= 3) {
+                setTeamLogo($('#event_top_logo_1'),array[0].teamid);
+                setTeamLogo($('#event_top_logo_2'),array[1].teamid);
+                setTeamLogo($('#event_top_logo_3'),array[2].teamid);
+
+                $('#event_top_1_info').html(array[0].eventcount + ': ' +getTeamLink(array[0].teamid,array[0].teamname));
+                $('#event_top_2_info').html(array[1].eventcount + ': ' +getTeamLink(array[1].teamid,array[1].teamname));
+                $('#event_top_3_info').html(array[2].eventcount + ': ' +getTeamLink(array[2].teamid,array[2].teamname));
+                
+                $('[id^="event_top"]').show();
+            }else{
+                $('#event_top_logo_1').html('');
+                $('#event_top_logo_2').html('');
+                $('#event_top_logo_3').html('');
+                $('#event_top_1_info').html('');
+                $('#event_top_2_info').html('');
+                $('#event_top_3_info').html('');
+            }
+            
+            
             stopLoad();
             $('#allEventsSelectType').show();
             $('#allEventsSelect').show();
@@ -1048,6 +1115,9 @@ function getPlayerFull(playerid,fromString,teamid)
                     $('#teamSelect').append('<option value=0>Alle lag</option>');
                     var arr = json.teams[0].nationalleague.split(",");
                     $('#teamSelect').append('<option value='+json.teams[0].teamid+'>'+json.teams[0].teamname+'</option>');
+                    if(arr.length > 1){
+                        $('#teamSelect').append('<option value="-1">Norge</option>');
+                    }
                     for (var i=0; i<arr.length; i++) {
                         $('#teamSelect').append('<option value='+arr[i]+'>'+getNationalLeague(arr[i])+'</option>');
                     }
@@ -1064,6 +1134,9 @@ function getPlayerFull(playerid,fromString,teamid)
                 }
                 if(json.teams[0].nationalleague != undefined){
                     var arra = json.teams[0].nationalleague.split(",");
+                    if(arra.length > 1){
+                        $('#teamSelect').append('<option value="-1">Norge</option>');
+                    }
                     for (var i=0; i<arra.length; i++) {
                         $('#teamSelect').append('<option value='+arra[i]+'>'+getNationalLeague(arra[i])+'</option>');
                     }
@@ -1092,6 +1165,17 @@ function getPlayerFull(playerid,fromString,teamid)
             updateBreadcrumb(0, 1, json.playertoleague);
             
             setTeamLogo($('#player_logo'),json.playertoleague[0].teamid);
+           
+           
+            $('#player_nationalmatches').html('Ingen');
+            $('#player_nationalgoals').html('Ingen');
+            if(json.national.matches != undefined && json.national.matches > 0){
+                $('#player_nationalmatches').html(json.national.matches);
+            }
+            if(json.national.goals != undefined){
+                $('#player_nationalgoals').html(json.national.goals);
+            }
+                 
            
             $('#player_table').show();
             
@@ -1133,8 +1217,8 @@ function getPlayerFull(playerid,fromString,teamid)
 
             for (var i=0; i<array.length; i++) {
                 $('#playerinfo').append('<tr class='+(i % 2 == 0 ? 'odd' : '')+'><td>'+getDateStringMilli(array[i].timestamp)+'</td>'+
-                    '<td>'+getTeamLink(array[i].homeid,array[i].hometeamname,array[i].is_national)+'</td>'+
-                    '<td>'+getTeamLink(array[i].awayid,array[i].awayteamname,array[i].is_national)+'</td>'+
+                    '<td>'+getTeamLink(array[i].homeid,array[i].hometeamname,array[i].leagueid)+'</td>'+
+                    '<td>'+getTeamLink(array[i].awayid,array[i].awayteamname,array[i].leagueid)+'</td>'+
                     '<td>'+getMatchResultLink(array[i].matchid,array[i].result,array[i].is_national)+'</td>'+
                     '<td>'+(array[i].start == 0 ? 'Nei' : 'Ja' )+'</td>'+
                     '<td>'+array[i].minutesplayed+'</td>'+
@@ -1345,7 +1429,11 @@ function getTeamInfoFull(teamid,fromPage)
             $('#noData').hide();
             updateTeamInfoTable(array);
             updateBreadcrumb(0, teamid, array.teamtoleague);
-            updateLeagueTable(array.leaguetable,$('#team_leaguetable'),array.teamtoleague[0].leaguename, teamid);
+            var ses = season;
+            if(season == 0){
+                ses = '';
+            }
+            updateLeagueTable(array.leaguetable,$('#team_leaguetable'),array.teamtoleague[0].leaguename + ' ' + ses, teamid);
             $('#rankingteam').append('<h4>Lagranking i Norge</h4>');
             
             updateTeamRankList(array.yellowred,1); 
@@ -1376,7 +1464,7 @@ function getTeamInfoFull(teamid,fromPage)
                 updateNextMatches(array.nextmatches);
             }
             
-            updateAllMatches(array.allmatches, array.goalscorers, teamid);
+            updateAllMatches($('#team_allmatches'),array.allmatches, array.goalscorers, teamid);
             updateGoalPie(array.scoringminute,$("#scoringminute"), 'scored');
             updateGoalPie(array.concededminute, $("#concededminute"), 'conceded');
             stopLoad();
@@ -1455,10 +1543,17 @@ function updateLeagueTable(leaguetable, tablename, tableheader, selectedteamid)
     for(var key in leaguetable){
         pos++;
         var value = leaguetable[key];
+        var teamname = value.teamname.toString();
+        var link = getTeamLink(value.teamid,teamname);
+        if($('#futsal_league').is(":visible") || $('#futsal_team').is(":visible") || $('#futsal_player').is(":visible")){
+            link = getFutsalTeamLink(value.teamid,teamname);
+        }
         if(selectedteamid != undefined && selectedteamid == value.teamid){
-            tablename.append(getTableRowSelected([pos,getTeamLink(value.teamid,value.teamname.toString().substring(0,12)),value.played,value.wins,value.draws,value.loss,""+value.goals+"-"+ value.conceded+"",value.mf,value.points],pos));
+            tablename.append(getTableRowSelected([pos,link,value.played,value.wins,value.draws,value.loss,""+value.goals+"-"+ value.conceded+"",value.mf,value.points],pos));
+            $('#futsal_team_scored').html(value.goals);
+            $('#futsal_team_conceded').html(value.conceded);
         }else{
-            tablename.append(getTableRow([pos,getTeamLink(value.teamid,value.teamname.toString().substring(0,12)),value.played,value.wins,value.draws,value.loss,""+value.goals+"-"+ value.conceded+"",value.mf,value.points],pos));
+            tablename.append(getTableRow([pos,link,value.played,value.wins,value.draws,value.loss,""+value.goals+"-"+ value.conceded+"",value.mf,value.points],pos));
         }
     }
     tablename.append('</tbody>');
@@ -1538,9 +1633,17 @@ function updateEventTable(array,table,eventtype,type,edit,scopeeventid,leagueid)
     for (var i=0; i<array.length; i++) {
         var string = '<tr class='+(i % 2 == 0 ? 'odd' : '')+'>';
         if(type == 0) {
-           string += '<td style=max-width:140px;overflow:hidden>'+getPlayerLink(array[i].playerid,array[i].playername)+'</td>';
+            var playerLink = getPlayerLink(array[i].playerid,array[i].playername);
+            if($('#futsal_league').is(":visible")){
+                playerLink = getFutsalPlayerLink(array[i].playerid,array[i].playername);
+            }
+           string += '<td style=max-width:140px;overflow:hidden>'+playerLink+'</td>';
         }
-        string += '<td style=max-width:100px;overflow:hidden>'+getTeamLink(array[i].teamid,array[i].teamname)+' </td>';
+        var teamLink = getTeamLink(array[i].teamid,array[i].teamname);
+        if($('#futsal_league').is(":visible")){
+            teamLink = getFutsalTeamLink(array[i].teamid,array[i].teamname);
+        }
+        string += '<td style=max-width:100px;overflow:hidden>'+teamLink+' </td>';
         
         if(type == 1){
             string += '<td> </td>';
@@ -1638,16 +1741,11 @@ function updateNextMatches(array)
 {
     updateMatches(array, $('#team_nextmatches'), 'Neste 5 kamper', true);
 }
-function updateAllMatches(array, scorers, selectedteamid)
+function updateAllMatches(tablename, array, scorers, selectedteamid)
 {
-    var tablename = $('#team_allmatches');
-    
     tablename.empty();
     tablename.append('<caption class="tableheader">Alle kamper</caption>');
-    //<th>Målscorere</th>
     tablename.append(getTableHeader(['Dato','Hjemmelag&nbsp','Bortelag&nbsp','Resultat','Målscorere']))
-    //tablename.append('<thead><th>Dato</th><th>Hjemmelag&nbsp&nbsp&nbsp&nbsp</th><th>Bortelag&nbsp&nbsp</th><th>Resultat</th><thead>');
-    //tablename.append('<tr><th style="width: 20%"><th style="width: 40%"><th style="width: 40%"><th style="width: 10%"></tr>');
     tablename.append('<tbody>');
     for (var i=0; i<array.length; i++) {
         var scorerArray = [];
@@ -1664,9 +1762,16 @@ function updateAllMatches(array, scorers, selectedteamid)
                 if(teamid == selectedteamid){
                     if(eventtype != 9){
                         if(scorerArray[p.playerid] != undefined){
-                            scorerArray[p.playerid] += ', '+ p.minute + '\'';
+                            if(p.minute !== undefined){
+                                scorerArray[p.playerid] += ', '+ p.minute + '\'';
+                            }else{
+                            }
                         }else{
-                            scorerArray[p.playerid] = getPlayerLink(p.playerid, playername) + ' ('+p.minute+'\'';
+                            if(p.minute !== undefined){
+                                scorerArray[p.playerid] = getPlayerLink(p.playerid, playername) + ' ('+p.minute+'\'';
+                            }else{
+                                scorerArray[p.playerid] = getPlayerLink(p.playerid, playername);
+                            }
                         }
                     }
                 }else{
@@ -1915,6 +2020,7 @@ function startLoad()
     $('[id^="transfer_"]').hide();
     $('[id^="match_"]').hide();
     $('[id^="news_"]').hide();
+    $('[id^="event_top"]').hide();
     $('#teamSelect').hide();
     $('#allEventsSelect').hide();
     $('#allEventsSelectType').hide();
@@ -1923,6 +2029,7 @@ function startLoad()
     $('#info_scope_click').hide();
     $('#label_event').hide();
     $('#label_league').hide();
+    $('[id^="futsal_"]').hide();
     
     $("html").css("cursor", "progress");
     spinner = new Spinner(opts).spin();

@@ -33,6 +33,14 @@
             <td><text id="player_country"></text></td>
         </tr>
         <tr>
+            <td>Landskamper:</td>
+            <td><text id="player_nationalmatches"></text></td>
+        </tr>
+        <tr>
+            <td>Landslagsmål:</td>
+            <td><text id="player_nationalgoals"></text></td>
+        </tr>
+        <tr>
             <td> </td>
             <td><text id=""></text></td>
         </tr>

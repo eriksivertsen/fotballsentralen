@@ -28,9 +28,46 @@ class DatabasePlayer {
             'info' => self::getPlayerDetails($playerid),
             'similar' => self::getSimilarPlayers($playerid),
             'cleansheets' => self::getCleanSheets($playerid,$season),
-            'teams' => self::getTeams($playerid,$season)
+            'teams' => self::getTeams($playerid,$season),
+            'national' => self::getNationalTeam($playerid)
          );
         return $events;
+    }
+    
+    public function getNationalteam($playerid)
+    {
+         $q = "SELECT 
+            matches.playerid, matches.matches, goals.goals
+            FROM
+            (SELECT 
+                COUNT(*) AS matches ,
+                p.`playerid` 
+            FROM
+                playtable_national p 
+            WHERE p.`ignore` = 0 
+            AND p.minutesplayed > 0
+                AND p.`playerid` = $playerid) AS matches 
+            LEFT JOIN 
+                (SELECT 
+                COUNT(*) AS goals ,
+                p.`playerid` 
+                FROM
+                eventtable_national p 
+                WHERE p.`ignore` = 0 
+                AND p.`playerid` = $playerid 
+                AND p.`eventtype` IN (4, 8)) AS goals 
+                ON matches.playerid = goals.playerid";
+
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data = array(
+                'matches' => $row['matches'],
+                'goals' => $row['goals'],
+            );
+        }
+        return $data;
     }
     
     public function getPlayerToLeague($playerid,$season)
@@ -110,7 +147,7 @@ class DatabasePlayer {
         $q2 = "SELECT total.*, p.playername, p.is_goalkeeper, p.shirtnumber FROM (SELECT p.teamid,p.`playerid`,p.minutesplayed AS `minutes played`, p.start AS `start`,
         home.teamid as homeid, away.teamid as awayid,
         home.teamname as `homename`,away.teamname as `awayname`, m.result,m.`teamwonid`, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch, m.matchid,
-        unix_timestamp(m.dateofmatch) as timestamp
+        unix_timestamp(m.dateofmatch) as timestamp, m.leagueid
         FROM playtable_national p 
         JOIN matchtable_national m ON p.matchid = m.matchid
         JOIN teamtable_national home ON m.hometeamid = home.teamid
@@ -142,6 +179,7 @@ class DatabasePlayer {
         {
             if(isset( $data[$row['matchid']])) {
                 $data[$row['matchid']]['is_national']= 1;
+                $data[$row['matchid']]['leagueid']= $row['leagueid'];
                 $data[$row['matchid']]['minutesplayed']= $row['minutes played'];
                 $data[$row['matchid']]['start'] = $row['start'];
                 $data[$row['matchid']]['hometeamname'] = $row['homename'];
@@ -166,6 +204,9 @@ class DatabasePlayer {
     public function getPlayerInfoJSON($playerid,$season,$teamid)
     {
         //39906, 39901, 39904, 39903, 39907, 39908, 39909, 39899
+        if($teamid == -1){
+            return DatabasePlayer::getPlayerInfoNational($playerid,$season,0);
+        }
         if($teamid == '39901' || $teamid == '39906' || $teamid == '39904' || 
                 $teamid == '39903' || $teamid == '39907' ||$teamid == '39908' 
                 ||$teamid == '39909' || $teamid == '39899' ){
@@ -225,6 +266,7 @@ class DatabasePlayer {
         {
             if(isset( $data[$row['matchid']])) {
                 $data[$row['matchid']]['is_national']= 0;
+                $data[$row['matchid']]['leagueid']= 0;
                 $data[$row['matchid']]['minutesplayed']= $row['minutes played'];
                 $data[$row['matchid']]['start'] = $row['start'];
                 $data[$row['matchid']]['hometeamname'] = $row['homename'];
@@ -240,12 +282,14 @@ class DatabasePlayer {
                 $data[$row['matchid']]['is_goalkeeper'] = $row['is_goalkeeper'];
             }
         }
-        $nationalArray = DatabasePlayer::getPlayerInfoNational($playerid,$season,0);
-        if(!empty($nationalArray)){
-            foreach($nationalArray as $match){
-                array_push($data, $match);
-            }    
-            uasort($data,"DatabaseUtils::date");
+        if($teamid == 0){
+            $nationalArray = DatabasePlayer::getPlayerInfoNational($playerid,$season,0);
+            if(!empty($nationalArray)){
+                foreach($nationalArray as $match){
+                    array_push($data, $match);
+                }    
+                uasort($data,"DatabaseUtils::date");
+            }
         }
         $json = array();
         

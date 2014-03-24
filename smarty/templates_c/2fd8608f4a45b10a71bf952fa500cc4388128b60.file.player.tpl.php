@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-02-10 08:30:09
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-21 23:29:35
          compiled from "smarty\templates\player.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2302350a8208dbc1742-06689911%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2fd8608f4a45b10a71bf952fa500cc4388128b60' => 
     array (
       0 => 'smarty\\templates\\player.tpl',
-      1 => 1392021007,
+      1 => 1395444495,
       2 => 'file',
     ),
   ),
@@ -52,6 +52,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <tr>
             <td>Land:</td>
             <td><text id="player_country"></text></td>
+        </tr>
+        <tr>
+            <td>Landskamper:</td>
+            <td><text id="player_nationalmatches"></text></td>
+        </tr>
+        <tr>
+            <td>Landslagsmål:</td>
+            <td><text id="player_nationalgoals"></text></td>
         </tr>
         <tr>
             <td> </td>

@@ -132,98 +132,14 @@
                 getTeam(0, 0);
                 return;
             }
-            if(paramArray[1] == 's'){
-                if(paramArray[2] != undefined){
-                    getScopeDatabase(paramArray[2]);
-                    return;
-                }
-            }
             
             setSeason(paramArray[1]);
             var type = paramArray[2];
             var id = paramArray[3];
             var specialid = paramArray[4];
             
-            if(type == 'player'){
-                if(id != playeridselected || type != typeselected){
-                    getPlayer(id);
-                }
-            }
-            if(type == 'futsal'){
-                if(id == ''){
-                    getFutsalLeague();
-                }else if(id == 'player'){
-                    getFutsalPlayer(specialid);
-                }else if(id == 'team'){
-                    getFutsalTeam(specialid);
-                }
-            }
-            if(type == 'events'){
-                if(id != eventselected || type != typeselected){
-                    if(leagueidselected == '' || leagueidselected == undefined){
-                        leagueidselected = 0;
-                    }
-                    getEventsTotal(id,leagueidselected);
-                }
-            }
-            if(type == 'eventsteam'){
-                if(id != eventselected || type != typeselected){
-                    if(leagueidselected == '' || leagueidselected == undefined){
-                        leagueidselected = 0;
-                    }
-                    getEventsTotalTeam(id,leagueidselected);
-                }
-            }
-            if(type == 'team'){
-                if(id != teamidselected || type != typeselected ){
-                    getTeamInfo(id,0);
-                }
-            }
-            if(type == 'nationalteam'){
-                if(id != teamidselected || type != typeselected ){
-                    getNationalTeam(id);
-                }
-            }
-            if(type == 'league'){
-                if(id != leagueidselected || type != typeselected){
-                    getTeam(id,0);
-                }
-            }
-            if(type == 'page'){
-                if(id == 'populare'){
-                    getPopulare();
-                }
-                else if(id == 'scope'){
-                    if(specialid == undefined){
-                        getScope(startTick,nrOfTicks);
-                    }else{
-                        getScopeDatabase(specialid);
-                    }
-                }
-                else if(id == 'suspension'){
-                    getSuspensionList(specialid);
-                }
-                else if(id == 'transfers'){
-                    getTransfers();
-                }                
-                else if(id == 'preview'){
-                    if(specialid != undefined){
-                        getPreview(specialid);
-                    }else{
-                        getPreviewMatches();
-                    }
-                }
-                else if(id == 'referee'){
-                    if(specialid == undefined){
-                        getReferee();
-                    }else{
-                        getRefereeId(specialid);
-                    }
-                }
-                else if(id == 'match'){
-                    getMatch(specialid);
-                }
-            }
+            setCurrentPage(type,id,specialid);
+            
         }
         
         </script> 

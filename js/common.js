@@ -85,27 +85,34 @@ function selectSeason()
     season = $('#season').val();
     getLeagues();
     
-    if($('#futsal_league').is(":visible")){
-       getFutsalLeague();
-    }
-    if($('#futsal_player').is(":visible")){
-       getFutsalPlayer(playeridselected);
-    }
-    if($('#futsal_team').is(":visible")){
-       getFutsalTeam(teamidselected);
-    }
-    if($('#player').is(":visible")){
-       getPlayer(playeridselected);
-    }
-    if($('#teamplayerinfo').is(":visible")){
-        getTeam(0, teamidselected);
-    }
-    if($('#eventoverview').is(":visible")){
-        getTeam(leagueidselected,0);
-    }
-    if($('#events').is(":visible")){
-        getEventsTotal(eventselected,leagueidselected);
-    }
+    var paramArray =  window.location.hash.split("/");
+    var type = paramArray[2];
+    var id = paramArray[3];
+    var specialid = paramArray[4];
+    
+    setCurrentPage(type,id,specialid);
+    
+//    if($('#futsal_league').is(":visible")){
+//       getFutsalLeague();
+//    }
+//    if($('#futsal_player').is(":visible")){
+//       getFutsalPlayer(playeridselected);
+//    }
+//    if($('#futsal_team').is(":visible")){
+//       getFutsalTeam(teamidselected);
+//    }
+//    if($('#player').is(":visible")){
+//       getPlayer(playeridselected);
+//    }
+//    if($('#teamplayerinfo').is(":visible")){
+//        getTeam(0, teamidselected);
+//    }
+//    if($('#eventoverview').is(":visible")){
+//        getTeam(leagueidselected,0);
+//    }
+//    if($('#events').is(":visible")){
+//        getEventsTotal(eventselected,leagueidselected);
+//    }
     if($('#playerminutes').is(":visible")){
         getTotalPlayerMinutes();
     }

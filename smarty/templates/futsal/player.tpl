@@ -1,6 +1,9 @@
-<img id="futsal_player_logo" style="margin-left:15px;margin-right: 15px; float: left; vertical-align: middle;"/>
+
 <table style="width:100%">
     <tr>
+        <td>
+            <img id="futsal_player_logo" style="margin-left:15px;margin-right: 15px; float: left; vertical-align: middle;"/>
+        </td>
         <td style="width: 40%;vertical-align: top;">
             <h3><text id="futsal_player_name"></text></h3>
             <table id="futsal_player_table" style="font-size: 12px;">

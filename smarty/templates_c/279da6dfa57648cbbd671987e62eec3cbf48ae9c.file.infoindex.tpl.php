@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-03-22 00:16:02
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-24 12:52:41
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1395447286,
+      1 => 1395665527,
       2 => 'file',
     ),
   ),
@@ -163,98 +163,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 getTeam(0, 0);
                 return;
             }
-            if(paramArray[1] == 's'){
-                if(paramArray[2] != undefined){
-                    getScopeDatabase(paramArray[2]);
-                    return;
-                }
-            }
             
             setSeason(paramArray[1]);
             var type = paramArray[2];
             var id = paramArray[3];
             var specialid = paramArray[4];
             
-            if(type == 'player'){
-                if(id != playeridselected || type != typeselected){
-                    getPlayer(id);
-                }
-            }
-            if(type == 'futsal'){
-                if(id == ''){
-                    getFutsalLeague();
-                }else if(id == 'player'){
-                    getFutsalPlayer(specialid);
-                }else if(id == 'team'){
-                    getFutsalTeam(specialid);
-                }
-            }
-            if(type == 'events'){
-                if(id != eventselected || type != typeselected){
-                    if(leagueidselected == '' || leagueidselected == undefined){
-                        leagueidselected = 0;
-                    }
-                    getEventsTotal(id,leagueidselected);
-                }
-            }
-            if(type == 'eventsteam'){
-                if(id != eventselected || type != typeselected){
-                    if(leagueidselected == '' || leagueidselected == undefined){
-                        leagueidselected = 0;
-                    }
-                    getEventsTotalTeam(id,leagueidselected);
-                }
-            }
-            if(type == 'team'){
-                if(id != teamidselected || type != typeselected ){
-                    getTeamInfo(id,0);
-                }
-            }
-            if(type == 'nationalteam'){
-                if(id != teamidselected || type != typeselected ){
-                    getNationalTeam(id);
-                }
-            }
-            if(type == 'league'){
-                if(id != leagueidselected || type != typeselected){
-                    getTeam(id,0);
-                }
-            }
-            if(type == 'page'){
-                if(id == 'populare'){
-                    getPopulare();
-                }
-                else if(id == 'scope'){
-                    if(specialid == undefined){
-                        getScope(startTick,nrOfTicks);
-                    }else{
-                        getScopeDatabase(specialid);
-                    }
-                }
-                else if(id == 'suspension'){
-                    getSuspensionList(specialid);
-                }
-                else if(id == 'transfers'){
-                    getTransfers();
-                }                
-                else if(id == 'preview'){
-                    if(specialid != undefined){
-                        getPreview(specialid);
-                    }else{
-                        getPreviewMatches();
-                    }
-                }
-                else if(id == 'referee'){
-                    if(specialid == undefined){
-                        getReferee();
-                    }else{
-                        getRefereeId(specialid);
-                    }
-                }
-                else if(id == 'match'){
-                    getMatch(specialid);
-                }
-            }
+            setCurrentPage(type,id,specialid);
+            
         }
         
         </script> 

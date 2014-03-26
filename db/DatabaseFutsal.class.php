@@ -6,6 +6,9 @@ class DatabaseFutsal {
     
     
     public function getLeague($season){
+        
+        DatabaseUtils::setHit(12,'league',$season);
+        
         if($season == 0){
             $season = Constant::ALL_STRING;
         }
@@ -19,6 +22,9 @@ class DatabaseFutsal {
     }
     
     public function getPlayer($playerid,$teamid,$season){
+        
+        DatabaseUtils::setHit($playerid,'futsal_player',$season);
+        
         if($season == 0){
             $season = Constant::ALL_STRING;
         }
@@ -31,7 +37,7 @@ class DatabaseFutsal {
     
     public function getTeam($teamid,$season){
         
-//        DatabaseUtils::setTeamHit($teamid,$season);
+        DatabaseUtils::setHit($teamid,'futsal_team',$season);
         
         if($season == 0){
             $season = Constant::ALL_STRING;

@@ -284,7 +284,9 @@ function getPreviewMatches(){
 }
 
 function setStatsType(){
-    getPreviewFull(5889643,$('#preview_stats_type').val());
+    var paramArray =  window.location.hash.split("/");
+    var specialid = paramArray[4];
+    getPreviewFull(specialid,$('#preview_stats_type').val());
 }
 
 function getPreview(matchid){

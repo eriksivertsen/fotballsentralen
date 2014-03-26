@@ -12,7 +12,9 @@ class DatabaseStats {
             trending.time,
             p.`playername` AS name1,
             p1.`playername` AS name2,
+            p2.`playername` AS futsalplayername,
             t.`teamname`,
+            t1.`teamname` as futsalteamname,
             m.`matchid`,
             home.`teamname` AS hometeam,
             away.`teamname` AS awayteam,
@@ -23,10 +25,12 @@ class DatabaseStats {
             LEFT JOIN playertable p ON p.`playerid` = trending.clicked_id AND p.year = 2012
             LEFT JOIN playertable p1 ON p1.`playerid` = trending.clicked_id AND p1.year = 2013
             LEFT JOIN teamtable t ON t.`teamid` = trending.clicked_id
+            LEFT JOIN teamtable_futsal t1 ON t1.`teamid` = trending.clicked_id
+            LEFT JOIN playertable_futsal p2 ON p2.`playerid` = trending.clicked_id
             LEFT JOIN matchtable m ON m.`matchid` = trending.clicked_id
             LEFT JOIN teamtable home ON m.`hometeamid` = home.`teamid`
             LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
-            LEFT JOIN leaguetable l on l.java_variable = trending.clicked_id
+            LEFT JOIN league l on l.java_variable = trending.clicked_id
             LEFT JOIN leaguetable l1 ON l1.`leagueid` = trending.clicked_id
             LEFT JOIN scope_hash hash ON hash.`hashcode` = trending.clicked_id
             GROUP BY TIME,ip
@@ -94,6 +98,26 @@ class DatabaseStats {
                     'season' => $row['season'],
                     'matchid' => $row['clicked_id'],
                     'name' => $row['scopename'],
+                    'time' => $row['time'],
+                    'ip' => $row['ip']
+                );
+            }
+            else if($row['clicktype']=='futsal_player'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'season' => $row['season'],
+                    'matchid' => $row['clicked_id'],
+                    'name' => $row['futsalplayername'],
+                    'time' => $row['time'],
+                    'ip' => $row['ip']
+                );
+            }
+            else if($row['clicktype']=='futsal_team'){
+                $data[] = array(
+                    'type' => $row['clicktype'],
+                    'season' => $row['season'],
+                    'matchid' => $row['clicked_id'],
+                    'name' => $row['futsalteamname'],
                     'time' => $row['time'],
                     'ip' => $row['ip']
                 );

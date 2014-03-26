@@ -154,7 +154,7 @@ if(isset($_POST['action'])){
         echo json_encode($dbPreview->getMatchesOneWeek());
     }
     if($_POST['action'] == 'getMatchInfo'){
-        echo json_encode($dbPreview->getPreview($_POST['matchid']));
+        echo json_encode($dbPreview->getPreview($_POST['matchid'],$_POST['season']));
     }
     if($_POST['action'] == 'getTransfers'){
         echo json_encode($dbUtils->getTransfers());

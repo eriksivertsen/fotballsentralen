@@ -23,6 +23,7 @@ var teamidselected;
 var leagueidselected;
 var eventselected;
 var typeselected;
+var statsSeason;
 
 var CURRENT_SEASON = 2014;
 
@@ -255,8 +256,8 @@ function getPreviewMatches(){
         },
         success: function(json) {
             updateBreadcrumbSpecific("Forhåndsstoff","getPreviewMatches()");
-            $('#preview_matches').empty();
-            $('#preview_matches').append('<h4>Kamper neste 3 dager:</h4>');
+            $('#previewmatches').empty();
+            $('#previewmatches').append('<h4>Kamper neste 3 dager:</h4>');
             var string = '';
             var leagueArray = [];
             
@@ -275,40 +276,61 @@ function getPreviewMatches(){
                 string += leagueArray[leaguekey];
             }   
             
-            $('#preview_matches').append(string);
-            $('#preview_matches').show();
+            $('#previewmatches').append(string);
+            $('#previewmatches').show();
             stopLoad();
         }
     });
 }
 
-function getPreview(matchid)
+function setStatsType(){
+    getPreviewFull(5889643,$('#preview_stats_type').val());
+}
+
+function getPreview(matchid){
+    getPreviewFull(matchid,statsSeason);
+}
+
+function getPreviewFull(matchid,statsSeasonSel)
 {
     if(!allowClicks){
         return;
     }
     startLoad();
-    //history.pushState("", "Title", 'index.php?page=preview&matchid='+matchid);
     
     window.location.hash = '/'+season+'/page/preview/'+matchid;
     $('#feedback_page').val('Forhåndsstoff');
-    
+    if(statsSeasonSel == undefined){
+        statsSeason = 1;
+    }else{
+        statsSeason = statsSeasonSel;
+    }
+    $('#preview_stats_type').val(statsSeason);
     $('#preview').show();
+    
     $('#preview_table').show();
-    $('#preview_matches').hide();
+    $('#previewmatches').hide();
     $.ajax({
         type: "POST",
         url: "receiver.php",
         dataType: "json",
         timeout: timeout,
-        data: {action: "getMatchInfo", matchid: matchid},
+        data: {action: "getMatchInfo", matchid: matchid, season: statsSeason},
         error: function () {
             stopLoad()
         },
         success: function(json) {
+            if(json.hometeam.currentposition == undefined || json.awayteam.currentposition == 0){
+                $('#noData').show();
+                $('[id^="preview_"]').hide();
+                $('#preview_label').show();
+                $('#preview_stats_type').show();
+                stopLoad();
+                return;
+            }
+            $('[id^="preview_"]').show();
             var url = json.hometeam.teamtoleague[0].weatherurl;
             $('#preview_weather').attr('src',url+'ekstern_boks_tre_dager.html');
-            $('#preview_weather').show();
             updateBreadcrumbSpecific("Forhåndsstoff","getPreviewMatches()",json.hometeam.teamtoleague[0].teamname + ' - ' +json.awayteam.teamtoleague[0].teamname,"getPreview("+matchid+")");
             
             updatePreviewTable(json.hometeam,'home');
@@ -336,11 +358,11 @@ function getPreview(matchid)
             $('#preview_officallink').html(getMatchLinkText(matchid,'Offisielle lag/tropper'));
             $('#preview_home_fsscore').html(json.hometeamFS);
             $('#preview_away_fsscore').html(json.awayteamFS);
-            var overlibString2 = 'Kortratingen baseres på hvor mange gule kort hjemme- og bortelaget har fått denne sesongen, '+
-                'og hvor mange gule kort det deles ut i gjennomsnitt i avdelingen. Dommerens snitt blir også tatt med i utregningen. '+
-                'En negativ rating betyr at det sannsynligvis blir få gule kort, en positiv motsatt. ' +
-                'En rating på +/- 10 ansees som høy.';
-            $('#preview_cardrating').html(getOverlibWidth(overlibString2,'Kortrating: ' + json.cardrating,350));
+//            var overlibString2 = 'Kortratingen baseres på hvor mange gule kort hjemme- og bortelaget har fått denne sesongen, '+
+//                'og hvor mange gule kort det deles ut i gjennomsnitt i avdelingen. Dommerens snitt blir også tatt med i utregningen. '+
+//                'En negativ rating betyr at det sannsynligvis blir få gule kort, en positiv motsatt. ' +
+//                'En rating på +/- 10 ansees som høy.';
+//            $('#preview_cardrating').html(getOverlibWidth(overlibString2,'Kortrating: ' + json.cardrating,350));
             
             
             updateSuspensions(json.suspension, json.hometeam.teamtoleague[0].teamid, 'home');
@@ -2037,6 +2059,8 @@ function startLoad()
     $('#label_event').hide();
     $('#label_league').hide();
     $('[id^="futsal_"]').hide();
+    $('[id^="preview_"]').hide();
+    $('#preview_label').hide();
     
     $("html").css("cursor", "progress");
     spinner = new Spinner(opts).spin();

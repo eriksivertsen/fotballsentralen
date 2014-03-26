@@ -1,6 +1,15 @@
 <br/>
-<ul id="preview_matches" class="ranking" style="margin-left:15px;"></ul>
+<ul id="previewmatches" class="ranking" style="margin-left:15px;"></ul>
     <center>
+        <label id="preview_label_label" style="font-size:13px" for="preview_label">Statistikk fra</label>
+        <label id="preview_label" class="selectlabel" for="preview_stats_type">
+            <select id="preview_stats_type" onchange="setStatsType()">
+                <option value="0">Alle sesonger</option>
+                <option value="1">Forrige sesong</option>
+                <option value="2">Denne sesongen</option>
+            </select>
+        </label>
+        
     <table id="preview_table" style="font-size: 9pt;">
         <tr>
             <td></td>
@@ -36,11 +45,7 @@
             <td align="center"><text id="preview_previous"></td>
             <td align="center"></td>
         </tr>
-        <tr>
-            <td align="center"></td>
-            <td align="center"><text id="preview_cardrating"></td>
-            <td align="center"></td>
-        </tr>
+        
         <tr>
             <td align="center"><text id="preview_home_surface"></text></td>
             <td align="center">Spiller på</td>

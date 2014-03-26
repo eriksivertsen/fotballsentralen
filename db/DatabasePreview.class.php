@@ -2,17 +2,21 @@
 
 class DatabasePreview {
     
-    public function getPreview($matchid)
+    public function getPreview($matchid,$season)
     {
-        $year = 2013;
+        if($season == 0){
+            $season = Constant::ALL_STRING;
+        }else if($season == 1){ // Forrige sesong
+            $season = Constant::LAST_YEAR;
+        }else{
+            $season = Constant::CURRENT_YEAR;
+        }
         DatabaseUtils::setPreviewHit($matchid);
         
         $teamArray = self::getMatchInfo($matchid);
-        $refereeStats = DatabaseUtils::getRefereeStats($year);
-        $refereeStatsSpec = (isset($refereeStats[$teamArray['refereeid']]) ? $refereeStats[$teamArray['refereeid']] : array());
-        //$fsscore = self::getFSScore($teamArray['leagueid']);
-        $homeTeamInfo = DatabaseTeam::getTeamInfo($teamArray['hometeamid'],$year);
-        $awayTeamInfo = DatabaseTeam::getTeamInfo($teamArray['awayteamid'],$year);
+        $refereeStats = DatabaseUtils::getRefereeStats($season);
+        $homeTeamInfo = DatabaseTeam::getTeamInfo($teamArray['hometeamid'],$season,'null');
+        $awayTeamInfo = DatabaseTeam::getTeamInfo($teamArray['awayteamid'],$season,'null');
         $suspensions = DatabaseUtils::getSuspList($teamArray['leagueid']);
         
         $retVal = array(
@@ -28,7 +32,7 @@ class DatabasePreview {
             'refereeid' => (isset($refereeStats[$teamArray['refereeid']]['refereeid']) ? $refereeStats[$teamArray['refereeid']]['refereeid']: ''),
             'refereestats' => (isset($refereeStats[$teamArray['refereeid']]) ? $refereeStats[$teamArray['refereeid']] : ''),
             'previousmatches' => self::getPreviousMatches($teamArray['hometeamid'], $teamArray['awayteamid']),
-            'cardrating' => self::getCardRating($homeTeamInfo,$awayTeamInfo,$refereeStatsSpec,$year, $teamArray['java_variable'])
+//            'cardrating' => self::getCardRating($homeTeamInfo,$awayTeamInfo,$refereeStatsSpec,$season, $teamArray['java_variable'])
           );
         return $retVal;
     }

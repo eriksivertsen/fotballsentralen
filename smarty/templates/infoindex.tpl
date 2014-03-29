@@ -165,6 +165,10 @@
                     Heller ingen andre i Norge har oversikt over suspensjoner i 2. divisjon!
                     <br/>
                     <br/>
+                    Fotballsentralen blir oppdatert automatisk 3 timer etter endt kamp i hver divisjon. Hvis det spilles en kamp klokken 14.00 og en kamp klokken 18.00 
+                    i samme divisjon, blir alle kampene fra denne divisjonen hentet og lastet opp på nettstedet klokken 21.00.
+                    <br/>
+                    <br/>
                     Vi har ambisjoner om å være statistikkansvarlig for flere og flere lag i Norge. Lag i 2.divisjon har ikke ressurser til å
                     oppdatere statistikken jevnlig, og vi håper at FotballSentralen kan være med på å automatisere akkurat denne prosessen for lag.
                     Sålangt er det noen lag som benytter seg av dette (bla. <a href="#" onclick="getTeam(0,139);return false">Kvik Halden</a>) men

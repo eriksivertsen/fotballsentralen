@@ -7,6 +7,8 @@ class DatabaseTeam {
     {
         if(isset($from) && !empty($from)){
             DatabaseUtils::setTeamSearchHit($teamid,$season);
+        }else if($from == 'null'){
+            // DO nothing, preview
         }else{
             DatabaseUtils::setTeamHit($teamid,$season);
         }
@@ -930,13 +932,13 @@ class DatabaseTeam {
         AND p.ignore = 0 
         GROUP BY p.`playerid`) as team
         LEFT JOIN
-        (SELECT GROUP_CONCAT(DISTINCT (mn.`leagueid`) SEPARATOR ',') AS nationalleague, pn.playerid 
+        (SELECT GROUP_CONCAT(DISTINCT (mn.`leagueid`) SEPARATOR ',') AS nationalleague, pn.playerid  as nationalid
     FROM playtable_national pn 
       JOIN matchtable_national mn 
         ON mn.`matchid` = pn.`matchid` 
     WHERE YEAR(mn.`dateofmatch`) IN ($season)  and pn.ignore = 0 
     GROUP BY pn.`playerid`) AS `national` 
-    ON national.playerid = team.`playerid`  ";
+    ON national.nationalid = team.`playerid`  ";
         
         
         $q2 = "SELECT total.*, p.shirtnumber, p.playername FROM (

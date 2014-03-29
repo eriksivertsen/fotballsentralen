@@ -123,6 +123,9 @@ function setSeason(season_){
     $('#season').val(season_);
 }
 function next() {
+    if(!allowClicks){
+        return;
+    }
     var season_ = parseInt(season);
     if($('#season').val() != '2014'){
         $('#season').val(''+(season_+1));
@@ -131,6 +134,9 @@ function next() {
 }
 
 function previous() {
+    if(!allowClicks){
+        return;
+    }
     var season_ = parseInt(season);
     if($('#season').val() != '2011'){
         $('#season').val(''+(season_-1));

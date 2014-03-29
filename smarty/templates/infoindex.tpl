@@ -128,7 +128,7 @@
         {            
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
-                setSeason(2013);
+                setSeason(2014);
                 getTeam(0, 0);
                 return;
             }

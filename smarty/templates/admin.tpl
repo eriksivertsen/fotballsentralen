@@ -33,10 +33,10 @@
             <tr>
                 <td>Liga</td><td>Aktiv</td><td>Tropp hvert lag</td><td>Tropp begge lag</td><td>Lagoppstilling hvert lag</td><td>Lagoppstilling begge lag</td>
             </tr>
-            <!--
+            
             <tr>
                 <td>
-                Premier League (beta)
+                Premier League
                 </td>
                 <td align="center">
                     <input id="100_active" type="checkbox"/>
@@ -54,6 +54,7 @@
                     <input id="100_lineup_double" type="checkbox" disabled="true"/>
                 </td>
             </tr>
+            <!--
             <tr>
                 <td>
                 Champions League (beta, engelske lag)
@@ -117,7 +118,7 @@
             </tr>
             <tr>
                 <td>
-                Adeccoligaen
+                1.divisjon
                 </td>
                 <td align="center">
                     <input id="2_active" type="checkbox"/>

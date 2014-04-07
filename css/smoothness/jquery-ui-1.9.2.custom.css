@@ -155,7 +155,8 @@ table.playerinfo {
     margin: 17px;
     overflow: visible;
     text-align: left;
-    border-collapse:collapse;
+    border-collapse:separate;
+    border-spacing: 0;
     max-width: 300px;
 }
 
@@ -182,7 +183,8 @@ table.matchinfo {
     overflow: auto;
     display: inline-table;
     width: 400px;
-    border-collapse:collapse;
+    border-collapse:separate;
+    border-spacing: 0;
     table-layout: auto;
 }
 

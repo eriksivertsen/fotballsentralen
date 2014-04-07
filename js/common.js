@@ -28,7 +28,7 @@ var statsSeason;
 var CURRENT_SEASON = 2014;
 
 var title = 'FotballSentralen.com';
-var season = 2013;
+var season = CURRENT_SEASON;
 var suspendedLeagueLand = 138918;
 var timeout = 25000; //ms
 
@@ -1641,7 +1641,9 @@ function updatePreviewTable(array,team)
     
     $(prefix + 'surface').html(array.teamtoleague[0].surface);
     $(prefix + 'lineup').html(getOverlibLineup('Foretrukken 11er. Kamper startet i parantes.', lineup, 'Lag'));
-    $(prefix + 'lastlineup').html(getOverlibLineup('Siste lagoppstilling mot ' + array.lastlineup[0].teamname,lastlineup, 'Siste lag'));
+    if(array.lastlineup[0] != undefined){
+        $(prefix + 'lastlineup').html(getOverlibLineup('Siste lagoppstilling mot ' + array.lastlineup[0].teamname,lastlineup, 'Siste lag'));
+    }
     $(prefix + 'suspensions').html('Ingen');
     $(prefix + 'over3').html(array.overgoals.over3+'%');
     $(prefix + 'over4').html(array.overgoals.over4+'%');

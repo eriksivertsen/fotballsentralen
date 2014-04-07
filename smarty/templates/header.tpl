@@ -119,7 +119,7 @@
                     <li><a href="#" onclick="getPopulare();return false;">Populære</a></li>
                     <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>
                     <li><a href="#" onclick="getTransfers();return false;">Overganger</a></li>
-                    <li><a href="#" onclick="getScopeCurrent();return false;">Statoskopet</a></li>
+                    <!--<li><a href="#" onclick="getScopeCurrent();return false;">Statoskopet</a></li>-->
                 </ul>
             </li>
             <li class="menu">

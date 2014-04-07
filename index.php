@@ -38,7 +38,7 @@ if(isset($_GET['referee_id'])){
 if(isset($_GET['season'])){
     $smarty->assign('season',$_GET['season']);
 }else{
-    $smarty->assign('season',2013);
+    $smarty->assign('season',Constant::CURRENT_YEAR);
 }
 $searcharray = $dbUtils->getSearchArray();
 $smarty->assign('searcharray', json_encode($searcharray['searcharray']));

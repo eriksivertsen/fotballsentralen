@@ -24,6 +24,7 @@ class DatabaseTeam {
         $goalscorers = DatabaseUtils::getGoalScoreresMatch($matchids);
         $teamtoleague = self::getTeamToLeague($teamid,$season);
         $latestMatches = self::getLatestMatches($teamid,'both');
+        
         if(isset($latestMatches[0]['matchid'])){
             $lastLineup = self::getLineup($teamid, $latestMatches[0]['matchid']);
         }else{
@@ -457,7 +458,6 @@ class DatabaseTeam {
             AND p.matchid = $matchid
             ORDER BY is_goalkeeper DESC
             LIMIT 11";
-        
         $data = array();
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
@@ -484,7 +484,7 @@ class DatabaseTeam {
     public function getLastFiveLineups($teamid,$season, $latestMatches){
         $lineupArray = array();
         foreach($latestMatches as $matches){
-            $lineupArray[$matches['matchid']] = self::getLineup($teamid, $season, $matches['matchid']);
+            $lineupArray[$matches['matchid']] = self::getLineup($teamid, $matches['matchid']);
         }
         return $lineupArray;
     }

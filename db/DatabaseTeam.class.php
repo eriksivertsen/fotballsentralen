@@ -25,7 +25,7 @@ class DatabaseTeam {
         $teamtoleague = self::getTeamToLeague($teamid,$season);
         $latestMatches = self::getLatestMatches($teamid,'both');
         if(isset($latestMatches[0]['matchid'])){
-            $lastLineup = self::getLineup($teamid, $season, $latestMatches[0]['matchid']);
+            $lastLineup = self::getLineup($teamid, $latestMatches[0]['matchid']);
         }else{
             $lastLineup = array();
         }
@@ -440,7 +440,7 @@ class DatabaseTeam {
         return $string;
     }
     
-    public function getLineup($teamid,$season,$matchid)
+    public function getLineup($teamid,$matchid)
     {
         $q = "SELECT pt.playerid, pt.shirtnumber,pt.is_goalkeeper, SUBSTRING_INDEX(pt.`playername`,' ',-1) AS lastname,pt.playername as fullname, pta.`position` as apos ,ptn.`position` as npos, 
             t1.teamname as t1name,t2.teamname as t2name,t1.teamid as t1id ,t2.teamid as t2id
@@ -453,7 +453,6 @@ class DatabaseTeam {
             LEFT JOIN playertable_altom pta ON pta.`playerid` = pt.`playerid_altom`
             LEFT JOIN playertable_nifs ptn ON ptn.`playerid` = pt.`playerid_nifs`
             WHERE p.`teamid` = $teamid
-            AND l.year IN ( $season )
             AND p.start = 1
             AND p.matchid = $matchid
             ORDER BY is_goalkeeper DESC

@@ -1496,9 +1496,12 @@ function getTeamInfoFull(teamid,fromPage)
             updateTeamRankList(array.cleansheetrank, 12);
             
             updateTeamPlayers(array.teamplayer, array.dangerlist, array.winpercentage);
-            if($('#season').val() == '2014'){
+            if($('#season').val() == CURRENT_SEASON){
                 updateLatestMatches(array.latestmatches, array.last5lineup);
                 updateNextMatches(array.nextmatches);
+            }else{
+                $('#team_nextmatches').hide();
+                $('#team_latestmatches').hide();
             }
             
             updateAllMatches($('#team_allmatches'),array.allmatches, array.goalscorers, teamid);

@@ -1287,8 +1287,8 @@ class DatabaseUtils {
         if($teamWonId == $data['events'][0]['homeid']){
             $type = 'home';
         }
-        $data['homelineup'] = DatabaseTeam::getLineup($homeId, $year, $matchid);
-        $data['awaylineup'] = DatabaseTeam::getLineup($awayId, $year, $matchid);
+        $data['homelineup'] = DatabaseTeam::getLineup($homeId, $matchid);
+        $data['awaylineup'] = DatabaseTeam::getLineup($awayId, $matchid);
         $data['homerealteamid'] = DatabaseTeam::getSecondTeamId($homeId);
         $data['awayrealteamid'] = DatabaseTeam::getSecondTeamId($awayId);
         return $data;

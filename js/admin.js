@@ -9,12 +9,12 @@ function getUsersLeague ()
             userid: $('#userid').val()
         },
         success: function(json) {
-            updateSettings(json);
+            updateMailsender(json);
         }
     });
 }
 
-function updateSettings(array)
+function updateMailsender(array)
 {
     // Update group radio buttons
     for(var i=0;i<7;i++){
@@ -56,7 +56,7 @@ function updateRadio(leagueid, dbvar, radioid)
     }
 }
 
-function saveSettings()
+function saveMailSettings()
 {
     var leagueArray = Array();
     for(var i=1;i<7;i++){

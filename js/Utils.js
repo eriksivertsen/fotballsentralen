@@ -421,19 +421,26 @@ function getDateString(date)
 function getDateStringMilli(milli)
 {
     var jdate = new Date();
-    jdate.setTime(milli * 1000);
+    jdate.setTime(milli);
     // + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes()
     return getDoubleDigit(jdate.getDate()) + ". "+month[jdate.getMonth()] + " " +jdate.getFullYear();
 }
 function getDateStringMilliNoYear(milli)
 {
     var jdate = new Date();
-    jdate.setTime(milli * 1000);
+    jdate.setTime(milli);
     // + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes()
-    return getDoubleDigit(jdate.getDate()) + ". "+month[jdate.getMonth()];
+    return jdate.getDate() + ". "+month[jdate.getMonth()];
 }
 
 function getMatchDateString(milliseconds)
+{
+    var date = new Date();
+    date.setTime(milliseconds);
+    return date.getDate() + '.' + month[date.getMonth()]+ ' ' +getDoubleDigit(date.getHours()) + ":" + getDoubleDigit(date.getMinutes());
+}
+
+function getNewsDateString(milliseconds)
 {
     var date = new Date();
     date.setTime(milliseconds);

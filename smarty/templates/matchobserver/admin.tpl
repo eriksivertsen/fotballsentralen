@@ -9,16 +9,7 @@
     <script type="text/javascript">
         
         $(document).ready(function() {
-            getUsersLeague();
-            $("input:checkbox").click(function() {
-                if ($(this).is(":checked")) {
-                    var group = "input:checkbox[name='" + $(this).attr("name") + "']";
-                    $(group).prop("checked", false);
-                    $(this).prop("checked", true);
-                } else {
-                    $(this).prop("checked", false);
-                }
-            });
+            
         });
          
         function logout(){
@@ -217,7 +208,7 @@
                 </td>
             </tr>
         </table>
-        <input type="button" onclick="saveSettings()" value="Lagre" style="margin:7px"/>
+        <input type="button" onclick="saveMailSettings()" value="Lagre" style="margin:7px"/>
         <input type="button" onclick="changePassword()" value="Bytt passord" style="margin:7px"/>
         <input type="button" onclick="logout()" value="Logg ut" style="margin:7px"/>
     </div>

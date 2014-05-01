@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-03-24 11:24:19
+<?php /* Smarty version Smarty-3.1.12, created on 2014-04-07 08:33:36
          compiled from "smarty\templates\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2520451692e292e1372-85071265%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '6652bf75f43eb8665356b88e8a0e2401680ee1b9' => 
     array (
       0 => 'smarty\\templates\\header.tpl',
-      1 => 1395660233,
+      1 => 1396859360,
       2 => 'file',
     ),
   ),
@@ -140,7 +140,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     <li><a href="#" onclick="getPopulare();return false;">Populære</a></li>
                     <li><a href="#" onclick="getReferee();return false;">Dommere</a></li>
                     <li><a href="#" onclick="getTransfers();return false;">Overganger</a></li>
-                    <li><a href="#" onclick="getScopeCurrent();return false;">Statoskopet</a></li>
+                    <!--<li><a href="#" onclick="getScopeCurrent();return false;">Statoskopet</a></li>-->
                 </ul>
             </li>
             <li class="menu">

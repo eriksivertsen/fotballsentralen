@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-03-24 12:10:12
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-26 09:58:19
          compiled from "smarty\templates\futsal\player.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:86175329aa7bc93c69-12505084%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'edf0c1271a09ebeb3a1ed778ab143ece8ab214b1' => 
     array (
       0 => 'smarty\\templates\\futsal\\player.tpl',
-      1 => 1395663006,
+      1 => 1395784558,
       2 => 'file',
     ),
   ),
@@ -68,4 +68,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 </label>
 <br/>
 <text id="futsal_player_nb" style="font-size:12px;margin-left:15px">NB: Kun kamper med hendelser (mål eller kort) finnes på denne listen. Desverre ingen tropp/startoppstilling for futsal.</text>
+<br/>
+<br/>
 <table id="futsal_player_info" class="tablesorter playerinfo"></table><?php }} ?>

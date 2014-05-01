@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-03-24 12:52:41
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-29 09:14:32
          compiled from "smarty\templates\infoindex.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2783150ad1bad17d3d9-99298101%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '279da6dfa57648cbbd671987e62eec3cbf48ae9c' => 
     array (
       0 => 'smarty\\templates\\infoindex.tpl',
-      1 => 1395665527,
+      1 => 1396084469,
       2 => 'file',
     ),
   ),
@@ -159,7 +159,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         {            
             var paramArray =  window.location.hash.split("/");
             if(paramArray == ''){
-                setSeason(2013);
+                setSeason(2014);
                 getTeam(0, 0);
                 return;
             }
@@ -194,6 +194,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     Det finnes flere ulike oversikter som gir deg et unikt bilde over hvordan din klubb eller spiller gjør det i 
                     forhold til resten av fotball-Norge. Du kan også navigere deg tilbake til 2011 med detaljert informasjon for enkeltspillere.
                     Heller ingen andre i Norge har oversikt over suspensjoner i 2. divisjon!
+                    <br/>
+                    <br/>
+                    Fotballsentralen blir oppdatert automatisk 3 timer etter endt kamp i hver divisjon. Hvis det spilles en kamp klokken 14.00 og en kamp klokken 18.00 
+                    i samme divisjon, blir alle kampene fra denne divisjonen hentet og lastet opp på nettstedet klokken 21.00.
                     <br/>
                     <br/>
                     Vi har ambisjoner om å være statistikkansvarlig for flere og flere lag i Norge. Lag i 2.divisjon har ikke ressurser til å

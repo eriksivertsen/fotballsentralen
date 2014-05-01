@@ -1650,10 +1650,15 @@ function updatePreviewTable(array,team)
     $(prefix + 'suspensions').html('Ingen');
     $(prefix + 'over3').html(array.overgoals.over3+'%');
     $(prefix + 'over4').html(array.overgoals.over4+'%');
-    $(prefix + 'firsthalf_g').html(array.scoringpercentagehalfs[0].firsthalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_first+'%)');
-    $(prefix + 'firsthalf_c').html(array.concededpercentagehalfs[0].first_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_first+'%)');
-    $(prefix + 'secondhalf_g').html(array.scoringpercentagehalfs[0].secondhalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_second+'%)');
-    $(prefix + 'secondhalf_c').html(array.concededpercentagehalfs[0].second_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_second+'%)');
+    try{
+        $(prefix + 'firsthalf_g').html(array.scoringpercentagehalfs[0].firsthalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_first+'%)');
+        $(prefix + 'firsthalf_c').html(array.concededpercentagehalfs[0].first_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_first+'%)');
+        $(prefix + 'secondhalf_g').html(array.scoringpercentagehalfs[0].secondhalfgoals+' av '+array.scoringpercentagehalfs[0].total+' (' +array.scoringpercentagehalfs[0].percentage_second+'%)');
+        $(prefix + 'secondhalf_c').html(array.concededpercentagehalfs[0].second_half+' av '+array.concededpercentagehalfs[0].total+' (' +array.concededpercentagehalfs[0].percentage_second+'%)');
+    }
+    catch(err){
+        
+    }
 }
 function updateEventTableMin(array,table,eventtype){
     var league = leagueidselected
@@ -1704,18 +1709,17 @@ function updateGoalPie(array, divplaceholder, scoringtype)
     $("#pies").show();
     
     $.plot(divplaceholder, array.pie, {
-        series: {
-            pie: {
-                show: true
-            }
-        },
-        grid: {
-            hoverable: true
-        },
-        legend: {
-            labelBoxBorderColor: "none"
-        }
-    });
+        series: {
+            pie: {
+                show: true
+            }},
+        grid: {
+            hoverable: true
+        },
+        legend: {
+            labelBoxBorderColor: "none"
+        }
+    });
     divplaceholder.bind("plothover", function (event, pos, item) {
         // axis coordinates for other axes, if present, are in pos.x2, pos.x3, ...
         // if you need global screen coordinates, they are pos.pageX, pos.pageY
@@ -2004,10 +2008,10 @@ function addSuspensionTable(array, reason)
     
 }
 function pieHover(event, pos, obj) {
-    if (!obj)
-        return;
-    percent = parseFloat(obj.series.percent).toFixed(2);
-    $("#pieHover").html('<span style="font-weight: bold; color: '+obj.series.color+'">'+obj.series.label+' ('+percent+'%)</span>');
+    if (!obj)
+        return;
+    var percent = parseFloat(obj.series.percent).toFixed(2);
+    $("#pieHover").html('<span style="font-weight: bold; color: '+obj.series.color+'">'+obj.series.label+' ('+percent+'%)</span>');
 }
 
 function startLoad()

@@ -47,4 +47,6 @@
 </label>
 <br/>
 <text id="futsal_player_nb" style="font-size:12px;margin-left:15px">NB: Kun kamper med hendelser (mål eller kort) finnes på denne listen. Desverre ingen tropp/startoppstilling for futsal.</text>
+<br/>
+<br/>
 <table id="futsal_player_info" class="tablesorter playerinfo"></table>

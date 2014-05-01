@@ -532,7 +532,7 @@ class DatabaseTeam {
             echo 'not supported';
             return;
         }
-         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, unix_timestamp(m.dateofmatch) as timestamp, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid, home.surface " .
+         $q = "SELECT m.*, SUBSTRING(m.dateofmatch FROM 1 FOR 16) AS dateofmatch1, unix_timestamp(m.dateofmatch) * 1000 as timestamp, home.`teamid` as homeid ,home.`teamname` as homename ,away.`teamid` as awayid ,away.`teamname` as awayname, m.teamwonid, home.surface " .
             "FROM matchtable m  " .
             "JOIN leaguetable l ON m.`leagueid` = l.`leagueid` " .
             "JOIN teamtable home ON m.`hometeamid` = home.`teamid` " .

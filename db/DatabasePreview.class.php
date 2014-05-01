@@ -13,8 +13,8 @@ class DatabasePreview {
         }
         DatabaseUtils::setPreviewHit($matchid);
         
-        $teamArray = self::getMatchInfo($matchid);
-        $refereeStats = DatabaseUtils::getRefereeStats($season);
+        $teamArray = DatabasePreview::getMatchInfo($matchid);
+        $refereeStats = DatabaseUtils::getRefereeStats();
         $homeTeamInfo = DatabaseTeam::getTeamInfo($teamArray['hometeamid'],$season,'null');
         $awayTeamInfo = DatabaseTeam::getTeamInfo($teamArray['awayteamid'],$season,'null');
         $suspensions = DatabaseUtils::getSuspList($teamArray['leagueid']);

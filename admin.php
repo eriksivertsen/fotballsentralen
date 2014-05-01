@@ -1,6 +1,7 @@
 <?php
 require('smarty/libs/Smarty.class.php');
 require('db/DatabaseAdmin.class.php');
+require('db/MatchObserver.class.php');
 
 
 $smarty = new Smarty();
@@ -25,7 +26,7 @@ if($username != '' && $password != ''){
 }
 
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == true){
-    $smarty->display('admin.tpl');
+    $smarty->display('matchobserver/index.tpl');
 }else{
     $smarty->display('login.tpl');
 }

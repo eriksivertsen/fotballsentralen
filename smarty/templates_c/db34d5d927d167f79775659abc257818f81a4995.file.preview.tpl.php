@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-03-22 00:18:32
+<?php /* Smarty version Smarty-3.1.12, created on 2014-03-26 12:36:37
          compiled from "smarty\templates\preview.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:1765751963eaa16a358-42013132%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'db34d5d927d167f79775659abc257818f81a4995' => 
     array (
       0 => 'smarty\\templates\\preview.tpl',
-      1 => 1395447509,
+      1 => 1395830852,
       2 => 'file',
     ),
   ),
@@ -20,8 +20,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_51963eaa1728c8_10840550')) {function content_51963eaa1728c8_10840550($_smarty_tpl) {?><br/>
-<ul id="preview_matches" class="ranking" style="margin-left:15px;"></ul>
+<ul id="previewmatches" class="ranking" style="margin-left:15px;"></ul>
     <center>
+        <label id="preview_label_label" style="font-size:13px" for="preview_label">Statistikk fra</label>
+        <label id="preview_label" class="selectlabel" for="preview_stats_type">
+            <select id="preview_stats_type" onchange="setStatsType()">
+                <option value="0">Alle sesonger</option>
+                <option value="1">Forrige sesong</option>
+                <option value="2">Denne sesongen</option>
+            </select>
+        </label>
+        
     <table id="preview_table" style="font-size: 9pt;">
         <tr>
             <td></td>
@@ -57,11 +66,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <td align="center"><text id="preview_previous"></td>
             <td align="center"></td>
         </tr>
-        <tr>
-            <td align="center"></td>
-            <td align="center"><text id="preview_cardrating"></td>
-            <td align="center"></td>
-        </tr>
+        
         <tr>
             <td align="center"><text id="preview_home_surface"></text></td>
             <td align="center">Spiller på</td>

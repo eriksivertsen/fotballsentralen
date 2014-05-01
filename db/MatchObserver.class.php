@@ -351,7 +351,7 @@ class MatchObserver {
             return $lastLeague;
         }
 
-        if ($lastLeague['timestamp'] < $lastCup['timestamp']) {
+        if ($lastLeague['timestamp'] > $lastCup['timestamp']) {
             return $lastCup;
         } else {
             return $lastLeague;

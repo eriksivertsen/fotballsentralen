@@ -274,9 +274,11 @@
                 </td>
             </tr>
             <tr>
-                <input type="button" onclick="saveMailSettings()" value="Lagre"/>
-            <input type="button" onclick="changePassword()" value="Bytt passord"/>
-                </tr>
+                <td colspan="6">
+                    <input type="button" onclick="saveMailSettings()" value="Lagre"/>
+                    <input type="button" onclick="changePassword()" value="Bytt passord"/>
+                </td>
+            </tr>
         </table>
         
     </div>

@@ -308,13 +308,20 @@ class MatchObserver {
                 $teamScore = $row['awayscore'];
                 $venue = 'borte';
             }
+            $league = $row['leaguename'];
+            if($league == 'Tippeligaen'){
+                $league = 'TL';
+            }else if($league == 'NM-cup'){
+                $league = 'NM';
+            }
+            
             $data = array(
                 'homeid' => $row['hometeamid'],
                 'homename' => $row['homename'],
                 'awayid' => $row['awayteamid'],
                 'result' => $teamScore . ' - ' . $opponentScore . ' (' . $venue . ')',
                 'awayname' => $row['awayname'],
-                'leaguename' => $row['leaguename'],
+                'leaguename' => $league,
                 'dateofmatch' => $row['dateofmatch'],
                 'timestamp' => $cdate,
                 'opponentid' => $opponentId,
@@ -380,12 +387,22 @@ class MatchObserver {
             $cdate = $row['timestamp'];
             $difference = $cdate - $today;
             $toDays = abs(floor($difference / 60 / 60 / 24));
+            $venue = '';
             if ($row['hometeamid'] == $teamid) {
                 $opponentId = $row['awayteamid'];
                 $opponentName = $row['awayname'];
+                $venue = 'hjemme';
             } else {
                 $opponentId = $row['hometeamid'];
                 $opponentName = $row['homename'];
+                $venue = 'borte';
+            }
+            
+            $league = $row['leaguename'];
+            if($league == 'Tippeligaen'){
+                $league = 'TL';
+            }else if($league == 'NM-cup'){
+                $league = 'NM';
             }
 
             $data = array(
@@ -393,11 +410,11 @@ class MatchObserver {
                 'homename' => $row['homename'],
                 'awayid' => $row['awayteamid'],
                 'awayname' => $row['awayname'],
-                'leaguename' => $row['leaguename'],
+                'leaguename' => $league,
                 'dateofmatch' => $row['dateofmatch'],
                 'timestamp' => $row['timestamp'],
                 'opponentid' => $opponentId,
-                'opponentname' => $opponentName,
+                'opponentname' => $opponentName . ' ('. $venue . ')',
                 'todays' => $toDays
             );
         }

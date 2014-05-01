@@ -365,7 +365,7 @@ function updateMatchBasic(json){
     
     var forecast = 'Ikke klart';
 
-    if(json.forecast != undefined){
+    if(json.forecast.symbol != undefined){
         forecast = json.forecast.symbol + '. ' + json.forecast.wind_speed + ', ' + json.forecast.temperature + ' grader. ' + json.forecast.precipitation + ' mm nedbør.';
     }
 

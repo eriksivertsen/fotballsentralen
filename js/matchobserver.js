@@ -17,9 +17,26 @@ function getInfo(){
             updateTabs(json.matches);
             updateSettings(json);
             $('#matchlist').show();
+//            autoRefreshMatches();
             stopLoad();
         }
     });
+}
+function autoRefreshMatches(){
+    setInterval(function(){
+        $.ajax({
+            type: "POST",
+            url: "db/MatchObserver.class.php",
+            dataType: "json",
+            data: {
+                action: "getInfo"
+            },
+            success: function(json) {
+                updateTabs(json.matches);
+                autoRefreshMatches();
+            }
+        });
+    }, 30000);
 }
 
 function updateSettings(array) {
@@ -195,6 +212,7 @@ function saveDerbyLevel(derbyid){
     });
 }
 function updateTabs(json){
+    $('#matchlist_body').empty();
     updateMatchesMO(json.tippeligaen);
     updateMatchesMO(json.firstdiv);
 //    updateMatches('2div1',json.seconddiv1);
@@ -204,7 +222,6 @@ function updateTabs(json){
 }
 
 function updateMatchesMO(array){
-    
     for(var i=0;i<=7;i++){
         var row = '<tr>';
         var style = 'background-color:none';
@@ -482,9 +499,6 @@ function updateOdds(array,type){
 
 function updateNews(array,type){
     for(var i=0;i<array.length;i++){
-        if(array[i] === undefined){
-            continue;
-        }
         
         var time = $('#match_'+type+'_news_time_'+(i+1));
         var source = $('#match_'+type+'_news_source_'+(i+1));
@@ -493,6 +507,11 @@ function updateNews(array,type){
         header.empty();
         time.empty();
         source.empty();
+        
+        if(array[i] === undefined){
+            continue;
+        }
+        
         
         source.html(array[i].source);
         time.html(getNewsDateString(array[i].timestamp));

@@ -421,7 +421,7 @@ function getDateString(date)
 function getDateStringMilli(milli)
 {
     var jdate = new Date();
-    jdate.setTime(milli);
+    jdate.setTime(milli * 1000);
     // + " " +getDoubleDigit(jdate.getHours()) + ":" + getDoubleDigit(jdate.getMinutes()
     return getDoubleDigit(jdate.getDate()) + ". "+month[jdate.getMonth()] + " " +jdate.getFullYear();
 }

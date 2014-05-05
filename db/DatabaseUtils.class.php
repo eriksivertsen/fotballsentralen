@@ -595,6 +595,7 @@ class DatabaseUtils {
         //Sent off
         $q = "SELECT * FROM eventtable e
             JOIN matchtable m ON e.`matchid` = m.`matchid` 
+            LEFT JOIN suspension s on s.eventid = e.eventid 
             WHERE e.eventtype IN (1,3)
             AND e.playerid != -1
             AND m.leagueid = {$leagueid}
@@ -608,30 +609,37 @@ class DatabaseUtils {
         $result = mysql_query($q);
         while($row = mysql_fetch_array($result))
         {
+            $matchcount = 1;
+            $m = $row['matches'];
+            
+            if(isset($m) && !empty($m)){
+                $matchcount = $m;
+            }
+            
             $redcard[$row['playerid']] = array(
                 'matchid' => $row['matchid'] ,
                 'leagueid' => $row['leagueid'] ,
-                'eventtype' => $row['eventtype']
+                'eventtype' => $row['eventtype'] ,
+                'matchcount' => $matchcount
             );
         }
-        //var_dump($redcard);
         foreach($redcard as $key => $value){
             
             $leagueid = $value['leagueid'];
-            $value = $value['matchid'];
-            $event = $value['eventtype'];
+            $matchid = $value['matchid'];
+            $matchcount = $value['matchcount'];
+            
             
             $q = "SELECT SUBSTRING(m.dateofmatch FROM 1 FOR 16) as date,m.*,home.`teamname` AS homename, away.`teamname` AS awayname,p.*, unix_timestamp(m.dateofmatch) as timestamp 
             FROM matchtable m 
-            JOIN matchtable c ON c.`matchid` = {$value} AND m.leagueid = {$leagueid}
+            JOIN matchtable c ON c.`matchid` = {$matchid} AND m.leagueid = {$leagueid}
             JOIN playertable p ON p.`playerid` = {$key} AND p.year = {$year}
             JOIN teamtable home ON m.`hometeamid` = home.`teamid`
             JOIN teamtable away ON m.`awayteamid` = away.`teamid`
             WHERE m.`dateofmatch` > c.`dateofmatch`
             AND (m.`awayteamid` = p.`teamid` OR m.`hometeamid` = p.`teamid`)
             AND (c.`awayteamid` = p.`teamid` OR c.`hometeamid` = p.`teamid`)
-            ORDER BY DATE ASC LIMIT 1";
-           // echo $q;
+            ORDER BY DATE ASC LIMIT {$matchcount}";
             
             $result = mysql_query($q);
             while($row = mysql_fetch_array($result)) {
@@ -646,7 +654,7 @@ class DatabaseUtils {
                         'playerid' => $row['playerid'],
                         'playername' => $row['playername'],
                         'teamid' => $row['teamid'],
-                        'eventtype' => $event,
+                        'eventtype' => '1',
                         'timestamp' => $row['timestamp']
                     );
                 }

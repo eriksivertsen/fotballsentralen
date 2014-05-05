@@ -20,7 +20,7 @@ class MatchObserver {
             UNIX_TIMESTAMP(m.dateofmatch) * 1000 as timestamp , home.teamid as homeid, away.teamid as awayid, 
             home.teamname as homename, away.teamname as awayname, l.java_variable,
             home.surface as homesurface, home.surface_condition as homecondition, away.surface as awaysurface, away.surface_condition as awaycondition,
-            SUBSTRING_INDEX(c1.url,'/sted/',-1) AS c1url, SUBSTRING_INDEX(c2.url,'/sted/',-1) AS c2url, o.matchid as odds
+            SUBSTRING_INDEX(c1.url,'/sted',-1) AS c1url, SUBSTRING_INDEX(c2.url,'/sted',-1) AS c2url, o.matchid as odds
             FROM matchtable m 
             JOIN teamtable home on m.hometeamid = home.teamid 
             LEFT JOIN match_observe mo ON mo.matchid = m.matchid
@@ -39,7 +39,6 @@ class MatchObserver {
         // Loop throguh suspension and sort list with team => suspensioncount
 
         $suspension = array();
-
         foreach ($suspTL as $array) {
             foreach ($array as $player) {
                 if (isset($suspension[$player['teamid']])) {
@@ -78,33 +77,11 @@ class MatchObserver {
             $url = str_replace('å', '%c3%85', $url);
             $url = stripslashes($url);
 
-
-            $yr = Yr\Yr::create($url, "/tmp", $settings[Constant::SETTING_CACHE]['value'], 'norwegian');
             $from = ($row['timestamp'] / 1000);
             $to = ($from + 7200);
-            $forecastRes = array();
-            foreach ($yr->getHourlyForecasts($from, $to) as $forecast) {
-                $timestamp = $forecast->getFrom()->getTimestamp();
-                if ($timestamp > $from && $timestamp < $to) {
-                    $windMps = $forecast->getWindSpeed('mps');
-                    $percipitation = $forecast->getPrecipitation();
-                    $alert = false;
-                    if ($windMps > $settings[Constant::SETTING_WIND]['value'] || $percipitation >= $settings[Constant::SETTING_PREP]['value']) {
-                        $alert = true;
-                    }
-                    $forecastRes = array(
-                        'from' => $forecast->getFrom(),
-                        'alert' => $alert,
-                        'temperature' => $forecast->getTemperature(),
-                        'symbol' => $forecast->getSymbol(),
-                        'wind_speed' => $forecast->getWindSpeed('name'),
-                        'wind_speed_mps' => $windMps,
-                        'precipitation' => $percipitation
-                    );
-                }
-            }
-
-
+            
+            $forecastRes = MatchObserver::getWeather($url,$from,$to,$settings);
+            
             $suspHome = 0;
             $suspAway = 0;
             if (isset($suspension[$row['homeid']])) {
@@ -139,6 +116,33 @@ class MatchObserver {
         }
         return $data;
     }
+    
+    public function getWeather($url,$from,$to,$settings)
+    {
+        $yr = Yr\Yr::create($url, "/tmp", $settings[Constant::SETTING_CACHE]['value'], 'norwegian');
+        $forecastRes = array();
+        foreach ($yr->getHourlyForecasts($from, $to) as $forecast) {
+            $timestamp = $forecast->getFrom()->getTimestamp();
+            if ($timestamp > $from && $timestamp < $to) {
+                $windMps = $forecast->getWindSpeed('mps');
+                $percipitation = $forecast->getPrecipitation();
+                $alert = false;
+                if ($windMps > $settings[Constant::SETTING_WIND]['value'] || $percipitation >= $settings[Constant::SETTING_PREP]['value']) {
+                    $alert = true;
+                }
+                $forecastRes = array(
+                    'from' => $forecast->getFrom(),
+                    'alert' => $alert,
+                    'temperature' => $forecast->getTemperature(),
+                    'symbol' => $forecast->getSymbol(),
+                    'wind_speed' => $forecast->getWindSpeed('name'),
+                    'wind_speed_mps' => $windMps,
+                    'precipitation' => $percipitation
+                );
+            }
+        }
+        return $forecastRes;
+    }
 
     public function getArrayName($java_variable) {
         switch ($java_variable) {
@@ -164,7 +168,7 @@ class MatchObserver {
     public function getMatchInfo($matchid) {
         $q = "SELECT d.level,m.dateofmatch, m.matchid, UNIX_TIMESTAMP(m.dateofmatch) * 1000 as timestamp, 
             home.teamname as homename, home.teamid as homeid, away.teamid as awayid, away.teamname as awayname, home.surface as homesurface, home.surface_condition, away.surface as awaysurface,
-            l.java_variable, r.refereename, SUBSTRING_INDEX(c1.url,'/sted/',-1) AS c1url, SUBSTRING_INDEX(c2.url,'/sted/',-1) AS c2url,
+            l.java_variable, r.refereename, SUBSTRING_INDEX(c1.url,'/sted',-1) AS c1url, SUBSTRING_INDEX(c2.url,'/sted',-1) AS c2url,
             mo.hometeam_lineup_text as homelineup, mo.awayteam_lineup_text as awaylineup, m.leagueid, m.refereeid, home.official_homepage as home_homepage, away.official_homepage as away_homepage
             
         FROM matchtable m JOIN teamtable home on m.hometeamid = home.teamid 
@@ -279,7 +283,7 @@ class MatchObserver {
         if ($type == '_cup') {
             $andClause = "";
         }
-        $q = "SELECT m.homescore, m.awayscore, m.`hometeamid`, home.`teamname` as homename, m.`awayteamid`, away.teamname as awayname, m.`dateofmatch`, m.`result`, UNIX_TIMESTAMP(m.dateofmatch) AS `timestamp`, m.`leagueid`, l.`leaguename` FROM matchtable$type m 
+        $q = "SELECT m.homescore, m.awayscore, m.`hometeamid`, home.`teamname` as homename, m.`awayteamid`, away.teamname as awayname, m.`dateofmatch`, m.`result`, UNIX_TIMESTAMP(m.dateofmatch) * 1000 AS `timestamp`, m.`leagueid`, l.`leaguename` FROM matchtable$type m 
             JOIN teamtable home ON home.`teamid` = m.`hometeamid`
             JOIN teamtable away ON away.`teamid` = m.`awayteamid`
             JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
@@ -291,7 +295,7 @@ class MatchObserver {
         $result = mysql_query($q);
         while ($row = mysql_fetch_array($result)) {
             $today = time();
-            $cdate = $row['timestamp'];
+            $cdate = $row['timestamp'] / 1000;
             $difference = $cdate - $today;
             $sinceDays = abs(floor($difference / 60 / 60 / 24));
 
@@ -300,13 +304,13 @@ class MatchObserver {
                 $opponentName = $row['awayname'];
                 $opponentScore = $row['awayscore'];
                 $teamScore = $row['homescore'];
-                $venue = 'hjemme';
+                $venue = 'H';
             } else {
                 $opponentId = $row['hometeamid'];
                 $opponentName = $row['homename'];
                 $opponentScore = $row['homescore'];
                 $teamScore = $row['awayscore'];
-                $venue = 'borte';
+                $venue = 'B';
             }
             $league = $row['leaguename'];
             if($league == 'Tippeligaen'){
@@ -343,7 +347,7 @@ class MatchObserver {
             return $nextLeague;
         }
 
-        if ($nextLeague['timestamp'] < $nextCup['timestamp']) {
+        if ($nextLeague['timestamp'] > $nextCup['timestamp']) {
             return $nextCup;
         } else {
             return $nextLeague;
@@ -367,35 +371,30 @@ class MatchObserver {
 
     public function getNextMatch($teamid, $type = '') {
 
-        $limit = '1,1';
-        if ($type == '_cup') {
-            $limit = '1';
-        }
-
-        $q = "SELECT m.`hometeamid`, home.`teamname` as homename, m.`awayteamid`, away.teamname as awayname, m.`dateofmatch`, UNIX_TIMESTAMP(m.dateofmatch) AS `timestamp`, m.`leagueid`, l.`leaguename` FROM matchtable$type m 
+        $q = "SELECT m.`hometeamid`, home.`teamname` as homename, m.`awayteamid`, away.teamname as awayname, m.`dateofmatch`, UNIX_TIMESTAMP(m.dateofmatch) * 1000 AS `timestamp`, m.`leagueid`, l.`leaguename` FROM matchtable$type m 
             JOIN teamtable home ON home.`teamid` = m.`hometeamid`
             JOIN teamtable away ON away.`teamid` = m.`awayteamid`
             JOIN leaguetable l ON l.`leagueid` = m.`leagueid`
             WHERE (m.`hometeamid` = $teamid OR m.`awayteamid` = $teamid) AND m.`result` LIKE '- : -' 
-            ORDER BY m.`dateofmatch` ASC LIMIT $limit";
+            ORDER BY m.`dateofmatch` ASC LIMIT 1,1";
         $data = array();
 
         $result = mysql_query($q);
         while ($row = mysql_fetch_array($result)) {
 
             $today = time();
-            $cdate = $row['timestamp'];
+            $cdate = $row['timestamp'] / 1000;
             $difference = $cdate - $today;
             $toDays = abs(floor($difference / 60 / 60 / 24));
             $venue = '';
             if ($row['hometeamid'] == $teamid) {
                 $opponentId = $row['awayteamid'];
                 $opponentName = $row['awayname'];
-                $venue = 'hjemme';
+                $venue = 'H';
             } else {
                 $opponentId = $row['hometeamid'];
                 $opponentName = $row['homename'];
-                $venue = 'borte';
+                $venue = 'B';
             }
             
             $league = $row['leaguename'];
@@ -499,7 +498,7 @@ class MatchObserver {
     }
 
     public function getNews($teamid) {
-        $q = "SELECT news_id,header,href,includes_squad,lastupdate, unix_timestamp(lastupdate) * 1000 as timestamp, type FROM news n JOIN teamtable_news t ON t.`newsid` = n.`news_id` WHERE teamid = $teamid ORDER BY lastupdate AND header not like '' DESC LIMIT 6";
+        $q = "SELECT news_id,header,href,includes_squad,lastupdate, unix_timestamp(lastupdate) * 1000 as timestamp, type FROM news n JOIN teamtable_news t ON t.`newsid` = n.`news_id` WHERE teamid = $teamid ORDER BY lastupdate DESC LIMIT 6";
         $data = array();
 
         $result = mysql_query($q);
@@ -520,6 +519,22 @@ class MatchObserver {
             );
         }
         return $data;
+    }
+    
+    public function fixSuspension(array $suspension)
+    {
+        $retVal = array();
+        foreach($suspension as $key => $array){
+            if($key == 'redCard'){
+                foreach($suspension['redCard'] as $key => $value){
+                    $retVal[$value['playerid']] = array($value);
+                }
+            }else{
+                $retVal[$key] = $array;
+            }
+        }
+        
+        return $retVal;
     }
 
     public function getOdds($matchid, $period) {
@@ -620,6 +635,9 @@ if ($action == 'getInfo') {
     $suspTL = DatabaseUtils::getSuspList(Constant::CURRENT_TIPPELIGA);
     $susp1div = DatabaseUtils::getSuspList(Constant::CURRENT_1DIV);
 
+    $suspTL = MatchObserver::fixSuspension($suspTL);
+    $susp1div = MatchObserver::fixSuspension($susp1div);
+    
     $matches = MatchObserver::getMatches($suspTL, $susp1div);
 
     $retval = array(
@@ -664,24 +682,10 @@ if ($action == 'getMatch') {
     $firsthalfodds = MatchObserver::getOdds($matchid, 'FIRST_HALF');
 
     $settings = MatchObserver::getSettings();
-    $yr = Yr\Yr::create($matchInfo['url'], "/tmp", $settings[Constant::SETTING_CACHE]['value'], 'norwegian');
-
-    $forecastRes = array();
     $from = ($matchInfo['timestamp'] / 1000);
     $to = ($from + 7200);
-    foreach ($yr->getHourlyForecasts(strtotime("now"), strtotime("tomorrow") + 7000222) as $forecast) {
-        $timestamp = $forecast->getFrom()->getTimestamp();
-        if ($timestamp > $from && $timestamp < $to) {
-            $forecastRes = array(
-                'from' => $forecast->getFrom(),
-                'temperature' => $forecast->getTemperature(),
-                'symbol' => $forecast->getSymbol(),
-                'wind_speed' => $forecast->getWindSpeed('name'),
-                'wind_speed_mps' => $forecast->getWindSpeed('mps'),
-                'precipitation' => $forecast->getPrecipitation()
-            );
-        }
-    }
+    
+    $forecastRes =  MatchObserver::getWeather($matchInfo['url'],$from,$to,$settings);
 
     $retval = array(
         'info' => $matchInfo,

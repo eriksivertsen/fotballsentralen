@@ -328,7 +328,7 @@ function getPreviewFull(matchid,statsSeasonSel)
             stopLoad()
         },
         success: function(json) {
-            if(json.hometeam.currentposition == undefined || json.awayteam.currentposition == 0){
+            if(json.hometeam.teamtoleague == undefined && json.awayteam.teamtoleague == undefined){
                 $('#noData').show();
                 $('[id^="preview_"]').hide();
                 $('#preview_label').show();
@@ -337,12 +337,26 @@ function getPreviewFull(matchid,statsSeasonSel)
                 return;
             }
             $('[id^="preview_"]').show();
-            var url = json.hometeam.teamtoleague[0].weatherurl;
-            $('#preview_weather').attr('src',url+'ekstern_boks_tre_dager.html');
-            updateBreadcrumbSpecific("Forhåndsstoff","getPreviewMatches()",json.hometeam.teamtoleague[0].teamname + ' - ' +json.awayteam.teamtoleague[0].teamname,"getPreview("+matchid+")");
             
-            updatePreviewTable(json.hometeam,'home');
-            updatePreviewTable(json.awayteam,'away');
+            if(json.hometeam.teamtoleague[0] != undefined){
+                var url = json.hometeam.teamtoleague[0].weatherurl;
+                $('#preview_weather').attr('src',url+'ekstern_boks_tre_dager.html');
+                updatePreviewTable(json.hometeam,'home');
+                $('[id^="preview_home"]').show();
+            }else{
+                $('[id^="preview_home"]').hide();
+            }
+            if(json.awayteam.teamtoleague[0] != undefined){
+                updatePreviewTable(json.awayteam,'away');
+                $('[id^="preview_away"]').show();
+            }else{
+                $('[id^="preview_away"]').hide();
+            }
+            if(json.hometeam.teamtoleague[0] != undefined && json.awayteam.teamtoleague[0] != undefined) {
+                updateBreadcrumbSpecific("Forhåndsstoff","getPreviewMatches()",json.hometeam.teamtoleague[0].teamname + ' - ' +json.awayteam.teamtoleague[0].teamname,"getPreview("+matchid+")");
+            }else{
+                updateBreadcrumbSpecific("Forhåndsstoff","getPreviewMatches()","Kamp","getPreview("+matchid+")");
+            }
             
             var now = new Date();
             var timestamp = json.timestamp;
@@ -372,9 +386,12 @@ function getPreviewFull(matchid,statsSeasonSel)
 //                'En rating på +/- 10 ansees som høy.';
 //            $('#preview_cardrating').html(getOverlibWidth(overlibString2,'Kortrating: ' + json.cardrating,350));
             
-            
-            updateSuspensions(json.suspension, json.hometeam.teamtoleague[0].teamid, 'home');
-            updateSuspensions(json.suspension, json.awayteam.teamtoleague[0].teamid, 'away');
+            if(json.hometeam.teamtoleague[0] != undefined){
+                updateSuspensions(json.suspension, json.hometeam.teamtoleague[0].teamid, 'home');
+            }
+            if(json.awayteam.teamtoleague[0] != undefined){
+                updateSuspensions(json.suspension, json.awayteam.teamtoleague[0].teamid, 'away');
+            }
             
             var prevMatches = [];
             for(var k in json.previousmatches){
@@ -1661,7 +1678,7 @@ function updatePreviewTable(array,team)
     }
 }
 function updateEventTableMin(array,table,eventtype){
-    var league = leagueidselected
+    var league = leagueidselected;
     if(league == '3,4,5,6'){
         league = '8';
     }

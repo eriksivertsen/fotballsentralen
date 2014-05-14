@@ -536,6 +536,20 @@ class DatabaseUtils {
         return $data;
     }
     
+    
+    public function getAllSuspList()
+    {
+        $susp = array(
+            'tippeligaen' => DatabaseUtils::getSuspList(Constant::CURRENT_TIPPELIGA),
+            'firstdiv' => DatabaseUtils::getSuspList(Constant::CURRENT_1DIV),
+            'seconddiv1' => DatabaseUtils::getSuspList(Constant::CURRENT_2DIV1),
+            'seconddiv2' => DatabaseUtils::getSuspList(Constant::CURRENT_2DIV2),
+            'seconddiv3' => DatabaseUtils::getSuspList(Constant::CURRENT_2DIV3),
+            'seconddiv4' => DatabaseUtils::getSuspList(Constant::CURRENT_2DIV4)
+        );
+        return $susp;
+    }
+    
     public function getSuspList($leagueid)
     {
         $year = Constant::CURRENT_YEAR;

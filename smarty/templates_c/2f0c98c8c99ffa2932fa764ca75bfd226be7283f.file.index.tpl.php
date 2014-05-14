@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-01 08:32:59
+<?php /* Smarty version Smarty-3.1.12, created on 2014-05-12 08:42:57
          compiled from "smarty\templates\matchobserver\index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:256695348fd519fdef6-15201992%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2f0c98c8c99ffa2932fa764ca75bfd226be7283f' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\index.tpl',
-      1 => 1398933177,
+      1 => 1399884055,
       2 => 'file',
     ),
   ),
@@ -38,41 +38,32 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <script type="text/javascript" src="js/common.js"></script>  
         <script>
             $(document).ready(function() {
-                $('#match_period').tabs();
-                $('#match_basic_div').tabs();
-                $('#settings').tabs();
-                $('[id^="slider_"]').slider();
-                getInfo();
-                getUsersLeague();
-                $("input:checkbox").click(function() {
-                    if ($(this).is(":checked")) {
-                        var group = "input:checkbox[name='" + $(this).attr("name") + "']";
-                        $(group).prop("checked", false);
-                        $(this).prop("checked", true);
-                    } else {
-                        $(this).prop("checked", false);
-                    }
-                });
-            });
+            $('#match_period').tabs();
+            $('#match_basic_div').tabs();
+            $('#matchlist_div').tabs();
+            $('#team_detail').tabs();
+            //                $('[id^="slider_"]').slider();
+            getInfo();
+            //                getUsersLeague();
+            //                $("input:checkbox").click(function() {
+            //                    if ($(this).is(":checked")) {
+            //                        var group = "input:checkbox[name='" + $(this).attr("name") + "']";
+            //                        $(group).prop("checked", false);
+            //                        $(this).prop("checked", true);
+            //                    } else {
+            //                        $(this).prop("checked", false);
+            //                    }
+            //                });
+        });
         </script>
     </head>
     <body>
         <div id="loader" class="loader"></div>
         <div id="doc3" class="yui-t7">
-            <!--
-            <div id="hd">
-                <div id="header">
-                    <div id="info" style="display: inline-block;">
-                        <center>
-                        <h1 id="header_match"></h1>
-                        </center>
-                    </div>
-                </div>
-            </div>-->
             <div id="bd">
                 <div id="yui-main">
                     <div class="yui-b">
-                        <div class="yui-gb">
+                        <div class="yui-gc">
                             <div class="yui-u first">
                                 <div class="content">
                                     <text class="content-header">Kampliste</text>
@@ -87,43 +78,24 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
                                 </div>
                             </div>
-                            <div class="yui-u">
-                                <div class="content">
-                                    <text class="content-header">Pinnacle Odds</text>
-                                    <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/odds.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
-
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                                <!--
-                <div class="yui-b">
-                    <div id="secondary"></div>
-                </div>
-                                -->
                 <div id="bd">
                     <div id="yui-main">
                         <div class="yui-b">
-                            <div class="yui-gb">
+                            <div class="yui-gc">
                                 <div class="yui-u first">
                                     <div class="content">
-                                        <text class="content-header">Siste nyheter // </text> <text class="content-header" style="background-color:yellow">Inneholder mulig tropp </text>
-                                        <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/news.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
-
-                                    </div>
-                                </div>
-                                <div class="yui-u">
-                                    <div class="content">
-                                        <text class="content-header">Mer info</text>
+                                        <text class="content-header">Detaljer </text>
                                         <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/news_detail.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
                                     </div>
                                 </div>
                                 <div class="yui-u">
                                     <div class="content">
-                                        <text class="content-header">Innstillinger</text>
-                                        <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/settings.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
+                                        <text class="content-header">Mer info // </text>  </text> <text class="content-header" style="background-color:yellow">Inneholder mulig tropp </text>
+                                        <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/news.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
                                     </div>
                                 </div>
@@ -133,5 +105,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 </div>
             </div>
     </body>
+    <a style="color: white" href="settings.php">Innstillinger</a>
 </html>
 <?php }} ?>

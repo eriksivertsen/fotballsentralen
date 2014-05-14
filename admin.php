@@ -1,4 +1,7 @@
 <?php
+session_start();
+header('Cache-control: private');
+
 require('smarty/libs/Smarty.class.php');
 require('db/DatabaseAdmin.class.php');
 require('db/MatchObserver.class.php');
@@ -21,11 +24,12 @@ if($username != '' && $password != ''){
     $userid = $dbAdmin->login($username, $password);
     if($userid != -1){
         $_SESSION['loggedIn'] = true;
-        echo '<input id=userid type=hidden value='.$userid.'>';
+        $_SESSION['userid'] = $userid;
     }
 }
 
 if(isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] == true){
+    echo '<input id=userid type=hidden value='.$_SESSION['userid'].'>';
     $smarty->display('matchobserver/index.tpl');
 }else{
     $smarty->display('login.tpl');

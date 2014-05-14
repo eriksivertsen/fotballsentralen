@@ -5,31 +5,26 @@ http://developer.yahoo.net/yui/license.txt
 version: 2.2.2
 */
 /* for all templates and grids */
-body{
-    text-align:center;
-    background-image: url('background.png');
-    font-size:10px;
-}
 #ft{clear:both;}
 /**/
 /* 750 centered, and backward compatibility */ 
 #doc,#doc2,#doc3,.yui-t1,.yui-t2,.yui-t3,.yui-t4,.yui-t5,.yui-t6,.yui-t7 {
-    margin:auto;text-align:left;
-    width:57.69em;*width:56.3em;min-width:750px;}
+	margin:auto;text-align:left;
+	width:57.69em;*width:56.3em;min-width:750px;}
 /* 950 centered */ 
 #doc2 {
-    width:73.074em;*width:71.313em;min-width:950px;}
+	width:73.074em;*width:71.313em;min-width:950px;}
 /* 100% with 10px viewport side matting */ 
 #doc3 {
-    margin:auto 10px; /* not for structure, but so content doesn't bleed to edge */
-    width:auto;}
-
+	margin:auto 10px; /* not for structure, but so content doesn't bleed to edge */
+	width:auto;}
+	
 /* below required for all fluid grids; adjust widths and margins above accordingly */
 
-/* to preserve source-order independence for Gecko */
-.yui-b{position:relative;}
-.yui-b{_position:static;} /* for IE < 7 */
-#yui-main .yui-b{position:static;} 
+	/* to preserve source-order independence for Gecko */
+	.yui-b{position:relative;}
+	.yui-b{_position:static;} /* for IE < 7 */
+	#yui-main .yui-b{position:static;} 
 
 #yui-main {width:100%;}
 .yui-t1 #yui-main,
@@ -41,49 +36,49 @@ body{
 .yui-t6 #yui-main{float:left;margin-right:-25em;/* IE: preserve layout at narrow widths */}
 
 .yui-t1 .yui-b {
-    float:left;
+	float:left;
     width:12.3207em;*width:12.0106em;}
 .yui-t1 #yui-main .yui-b{
     margin-left:13.3207em;*margin-left:13.0106em;
 }
 
 .yui-t2 .yui-b {
-    float:left;
+	float:left;
     width:13.8456em;*width:13.512em;}
 .yui-t2 #yui-main .yui-b {
     margin-left:14.8456em;*margin-left:14.512em;
 }
 
 .yui-t3 .yui-b {
-    float:left;
+	float:left;
     width:23.0759em;*width:22.52em;}
 .yui-t3 #yui-main .yui-b {
     margin-left:24.0759em;*margin-left:23.52em;
 }
 
 .yui-t4 .yui-b {
-    float:right;
+	float:right;
     width:13.8456em;*width:13.512em;}
 .yui-t4 #yui-main .yui-b {
     margin-right:14.8456em;*margin-right:14.512em;
 }
 
 .yui-t5 .yui-b {
-    float:right;
+	float:right;
     width:18.4608em;*width:18.016em;}
 .yui-t5 #yui-main .yui-b {
     margin-right:19.4608em;*margin-right:19.016em;
 }
 
 .yui-t6 .yui-b {
-    float:right;
+	float:right;
     width:23.0759em;*width:22.52em;}
 .yui-t6 #yui-main .yui-b {
     margin-right:24.0759em;*margin-right:23.52em;
 }
 
 .yui-t7 #yui-main .yui-b {
-    display:block;margin:0 0 1em 0;
+	display:block;margin:0 0 1em 0;
 }
 #yui-main .yui-b {float:none;width:auto;}
 /* GRIDS (not TEMPLATES) */

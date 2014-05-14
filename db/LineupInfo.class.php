@@ -1,15 +1,20 @@
 <?php
 
 class LineupInfo {
-
-    public function getLineupInfo($teamid, $teamString) {
+    public function getLineupInfo($teamid, $teamString, $limit = 11, $includeMissing = true) {
 
         $mostUsedLineup = LineupInfo::getMostUsedLineup($teamid);
         $startedLastMatch = LineupInfo::getStartedLastMatch($teamid);
         $startCountArray = LineupInfo::getStartCount($teamid);
         $squadCountArray = LineupInfo::getSquadCount($teamid);
-        $startedLastFive = LineupInfo::getSquadCount($teamid);
-
+        $startedLastFive = LineupInfo::getStartedLastGames($teamid);
+        if($includeMissing) {
+            $bestSquad = LineupInfo::getBestSquad($teamid);
+        }else{
+            $bestSquad = array();
+        }
+        $teamString = addslashes($teamString);
+        
         $q = "SELECT * FROM playertable p 
         WHERE p.teamid = " . $teamid . ' 
         AND p.year = ' . Constant::CURRENT_YEAR . ' 
@@ -17,10 +22,24 @@ class LineupInfo {
 
         $data = array();
         $result = mysql_query($q);
+        
+        $totalKey = 0;
+        $prefferedCount = 0;
+        $startedLastCount = 0;
+        $totalStart = 0;
+        $totalSquad = 0;
+        $totalPlaytime = 0;
+        
+        
+        $totalPlayers = 0;
         while ($row = mysql_fetch_array($result)) {
-
+            $totalPlayers++;
             $playerid = $row['playerid'];
 
+            if(isset($bestSquad[$playerid])){
+                $bestSquad[$playerid] = '1';
+            }
+            
             $mostUsed = 'NEI';
             $startedLast = 'NEI';
             $startCount = 0;
@@ -29,26 +48,33 @@ class LineupInfo {
 
             if (in_array($playerid, $mostUsedLineup)) {
                 $mostUsed = 'JA';
+                $prefferedCount++;
             }
             if (in_array($playerid, $startedLastMatch)) {
                 $startedLast = 'JA';
+                $startedLastCount++;
             }
             if (isset($startCountArray[$playerid])) {
                 $startCount = $startCountArray[$playerid];
+                $totalStart += $startCount;
             }
             if (isset($squadCountArray[$playerid])) {
                 $squadCount = $squadCountArray[$playerid];
+                $totalSquad += $squadCount;
             }
             if (isset($startedLastFive[$playerid])) {
                 $lastFive = $startedLastFive[$playerid];
             }
             
             $playtime = LineupInfo::getPlaytime($teamid,$playerid);
-
+            $totalPlaytime += $playtime;
+            
+            $key = number_format($row['key'],2);
+            $totalKey += $key;
 
             $data[] = array(
                 'playername' => $row['playername'],
-                'key' => number_format($row['key'],2),
+                'key' => $key,
                 'mostused' => $mostUsed,
                 'startedlast' => $startedLast,
                 'startcount' => $startCount,
@@ -59,6 +85,7 @@ class LineupInfo {
             );
         }
         
+        
         $players = explode('|',$teamString);
         $sorted = array();
         foreach($players as $player){
@@ -68,6 +95,25 @@ class LineupInfo {
                 }
             }
         }
+        if($includeMissing){
+            $missingPlayers = array();
+            foreach($bestSquad as $key => $val){
+                if($val != '1'){
+                    $missingPlayers[] = $val;
+                }
+            }
+        }
+        
+        if($includeMissing){
+            $missingString = implode('|', $missingPlayers);
+            $sorted['summary']['missingplayers'] = LineupInfo::getLineupInfo($teamid,$missingString,11,false);
+        }
+        $sorted['summary']['totalkey'] = $totalKey;
+        $sorted['summary']['laststarted'] = $startedLastCount;
+        $sorted['summary']['preferred'] = $prefferedCount;
+        $sorted['summary']['totalstart'] = number_format($totalStart / $limit ,2);
+        $sorted['summary']['totalsquad'] = number_format($totalSquad / $limit ,2);
+        $sorted['summary']['totalplaytime'] = number_format($totalPlaytime / $limit ,2);
         
         return $sorted;
     }
@@ -188,7 +234,7 @@ class LineupInfo {
                 "WHERE m.`result` NOT LIKE '- : -'  " .
                 "AND (m.`hometeamid` = " . $teamid . " OR m.`awayteamid` = " . $teamid . ") " .
                 "ORDER BY m.`dateofmatch` DESC LIMIT 5) AS matches  " .
-                "JOIN matchtable p ON p.`matchid` = matches.matchid AND p.`start` = 1 AND p.`teamid` =  " . $teamid . " " .
+                "JOIN playtable p ON p.`matchid` = matches.matchid AND p.`start` = 1 AND p.`teamid` =  " . $teamid . " " .
                 "GROUP BY p.`playerid`";
 
         $data = array();
@@ -199,6 +245,28 @@ class LineupInfo {
         return $data;
     }
 
+    public function getBestSquad($teamid)
+    {
+       $q = "SELECT  " .
+            "SUM(p.minutesplayed) as minutes,p.playerid, pl.playername " .
+            "FROM " .
+            "playtable p  " .
+            "JOIN matchtable m ON m.`matchid` = p.`matchid` " .
+            "JOIN leaguetable l ON l.`leagueid` = m.`leagueid` " .
+            "JOIN playertable pl ON pl.`playerid` = p.`playerid` AND pl.`year` = l.`year` " .
+            "WHERE p.`teamid` =   " . $teamid . " " .
+            "AND l.`year` =  " . Constant::CURRENT_YEAR . " " .
+            "GROUP BY p.`playerid` " .
+            "HAVING sum(p.minutesplayed) > 0 " .
+            "ORDER BY SUM(p.`minutesplayed`) DESC ";
+        $data = array();
+        $result = mysql_query($q);
+        while ($row = mysql_fetch_array($result)) {
+            $data[$row['playerid']] = $row['playername'];
+        }
+        return $data;
+    }
+    
     public function getSquadStatus($starts, $squads) {
         if ($starts == 0 && $squads == 0) {
             return "Ny";

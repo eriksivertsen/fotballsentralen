@@ -1,4 +1,3 @@
-
 /*
 Copyright (c) 2007, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
@@ -6,26 +5,27 @@ http://developer.yahoo.net/yui/license.txt
 version: 2.2.2
 */
 /* for all templates and grids */
+body{text-align:center;}
 #ft{clear:both;}
 /**/
 /* 750 centered, and backward compatibility */ 
 #doc,#doc2,#doc3,.yui-t1,.yui-t2,.yui-t3,.yui-t4,.yui-t5,.yui-t6,.yui-t7 {
-    margin:auto;text-align:left;
-    width:57.69em;*width:56.3em;min-width:750px;}
+	margin:auto;text-align:left;
+	width:57.69em;*width:56.3em;min-width:750px;}
 /* 950 centered */ 
 #doc2 {
-    width:73.074em;*width:71.313em;min-width:950px;}
+	width:73.074em;*width:71.313em;min-width:950px;}
 /* 100% with 10px viewport side matting */ 
 #doc3 {
-    margin:auto 10px; /* not for structure, but so content doesn't bleed to edge */
-    width:auto;}
-
+	margin:auto 10px; /* not for structure, but so content doesn't bleed to edge */
+	width:auto;}
+	
 /* below required for all fluid grids; adjust widths and margins above accordingly */
 
-/* to preserve source-order independence for Gecko */
-.yui-b{position:relative;}
-.yui-b{_position:static;} /* for IE < 7 */
-#yui-main .yui-b{position:static;} 
+	/* to preserve source-order independence for Gecko */
+	.yui-b{position:relative;}
+	.yui-b{_position:static;} /* for IE < 7 */
+	#yui-main .yui-b{position:static;} 
 
 #yui-main {width:100%;}
 .yui-t1 #yui-main,
@@ -37,49 +37,49 @@ version: 2.2.2
 .yui-t6 #yui-main{float:left;margin-right:-25em;/* IE: preserve layout at narrow widths */}
 
 .yui-t1 .yui-b {
-    float:left;
+	float:left;
     width:12.3207em;*width:12.0106em;}
 .yui-t1 #yui-main .yui-b{
     margin-left:13.3207em;*margin-left:13.0106em;
 }
 
 .yui-t2 .yui-b {
-    float:left;
+	float:left;
     width:13.8456em;*width:13.512em;}
 .yui-t2 #yui-main .yui-b {
     margin-left:14.8456em;*margin-left:14.512em;
 }
 
 .yui-t3 .yui-b {
-    float:left;
+	float:left;
     width:23.0759em;*width:22.52em;}
 .yui-t3 #yui-main .yui-b {
     margin-left:24.0759em;*margin-left:23.52em;
 }
 
 .yui-t4 .yui-b {
-    float:right;
+	float:right;
     width:13.8456em;*width:13.512em;}
 .yui-t4 #yui-main .yui-b {
     margin-right:14.8456em;*margin-right:14.512em;
 }
 
 .yui-t5 .yui-b {
-    float:right;
+	float:right;
     width:18.4608em;*width:18.016em;}
 .yui-t5 #yui-main .yui-b {
     margin-right:19.4608em;*margin-right:19.016em;
 }
 
 .yui-t6 .yui-b {
-    float:right;
+	float:right;
     width:23.0759em;*width:22.52em;}
 .yui-t6 #yui-main .yui-b {
     margin-right:24.0759em;*margin-right:23.52em;
 }
 
 .yui-t7 #yui-main .yui-b {
-    display:block;margin:0 0 1em 0;
+	display:block;margin:0 0 1em 0;
 }
 #yui-main .yui-b {float:none;width:auto;}
 /* GRIDS (not TEMPLATES) */
@@ -128,11 +128,12 @@ version: 2.2.2
 .yui-ge, 
 .yui-gf{zoom:1;}
 
+
 /* Basic Element Formatting */
 
 #header{
     height:50px;
-    background-color:darkgrey;
+    background-color:whitesmoke;
     margin:0;
     padding:0;
 }
@@ -155,27 +156,27 @@ version: 2.2.2
 }
 
 .content{
-    height:340px;
-    background:darkgrey;
+    height:46%;
+    background:#F5F5F5;
     margin:0;
     padding:0;
-    margin-top: 15px;
+    margin-top: 1px;
     overflow-y: scroll;
 }
 
 #secondary{
-    height:340px;
+    height:320px;
     background: darkgrey;
     margin:0;
     padding:0;
-    margin-top: 15px;
+    margin-top: 1px;
 }
 
 #secondaryFull{
     height:50px;
     background-color:#CFB59F;
     margin:0;
-    margin-top:15px;
+    margin-top:1px;
 }
 
 #footer{
@@ -198,6 +199,9 @@ version: 2.2.2
     border-bottom: 1px solid;
     border-top: 1px solid;
     border-left: 1px solid;
+}
+.auto {
+    width:auto;
 }
 
 .table tbody tr td  {
@@ -252,9 +256,6 @@ div.loader {
     background-color: white;
     z-index: 100;
 }
-
-
-
 
 
 /*! jQuery UI - v1.9.2 - 2012-12-20
@@ -493,7 +494,7 @@ body .ui-tooltip { border-width: 2px; }
 
 /* Component containers
 ----------------------------------*/
-.ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.9em;}
+.ui-widget { font-family: Verdana,Arial,sans-serif; font-size: 0.6em;}
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Verdana,Arial,sans-serif; font-size: 0.8em; }
 .ui-widget-content { background: transparent; color: #222222; }

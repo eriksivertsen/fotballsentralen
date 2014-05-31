@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-14 07:36:45
+<?php /* Smarty version Smarty-3.1.12, created on 2014-05-27 16:51:17
          compiled from "smarty\templates\matchobserver\matchlist.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:327605354d42fa6f866-94571428%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '76d86c3dd18b0d405692dfb9183a21e3fe281303' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\matchlist.tpl',
-      1 => 1400053002,
+      1 => 1401209476,
       2 => 'file',
     ),
   ),
@@ -22,6 +22,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_5354d42fa73766_84810320')) {function content_5354d42fa73766_84810320($_smarty_tpl) {?>
 <div id="matchlist_div">
     <ul>
+        <li><a href="#playable">Spillbare</a></li>
         <li><a href="#tippeliga">Tippeligaen</a></li>
         <li><a href="#firstdiv">1.divisjon</a></li>
         <li><a href="#seconddiv1">2.divisjon avd 1</a></li>
@@ -30,6 +31,41 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <li><a href="#seconddiv4">2.divisjon avd 4</a></li>
     </ul>
 
+    <div id="playable">
+        <table id="matchlist_playable" class="table">
+            <thead>
+                <tr>
+                    <td>
+                        Dato
+                    </td>
+                    <td>
+                        Kamp
+                    </td>
+                    <td>
+                        %
+                    </td>
+                    <td>
+                        Verdi
+                    </td>
+                    <td>
+                        Varsel
+                    </td>
+                    <td>
+                        Handicap
+                    </td>
+                     <td>
+                        Total
+                    </td>
+<!--                    <td>
+                        Total verdi
+                    </td>-->
+                </tr>
+            </thead>
+            <tbody id="matchlist_playable_body">
+            </tbody>
+        </table>
+    </div>
+    
     <div id="tippeliga">
         <table id="matchlist_tippeliga" class="table">
             <thead>
@@ -55,6 +91,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                      <td>
                         Total
                     </td>
+<!--                     <td>
+                        Total verdi
+                    </td>-->
                 </tr>
             </thead>
             <tbody id="matchlist_tippeliga_body">
@@ -86,6 +125,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                      <td>
                         Total
                     </td>
+<!--                     <td>
+                        Total verdi
+                    </td>-->
                 </tr>
             </thead>
             <tbody id="matchlist_firstdiv_body">
@@ -116,6 +158,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </td>
                      <td>
                         Total
+                    </td>
+                     <td>
+                        Total verdi
                     </td>
                 </tr>
             </thead>
@@ -148,6 +193,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                      <td>
                         Total
                     </td>
+                     <td>
+                        Total verdi
+                    </td>
                 </tr>
             </thead>
             <tbody id="matchlist_seconddiv2_body">
@@ -179,6 +227,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                      <td>
                         Total
                     </td>
+                     <td>
+                        Total verdi
+                    </td>
                 </tr>
             </thead>
             <tbody id="matchlist_seconddiv3_body">
@@ -209,6 +260,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </td>
                      <td>
                         Total
+                    </td>
+                     <td>
+                        Total verdi
                     </td>
                 </tr>
             </thead>

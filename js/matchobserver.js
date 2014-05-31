@@ -2,6 +2,9 @@ var allowClicks = true;
 var selectedMatch = '';
 
 function getInfo(){
+    if(!allowClicks){
+        return;
+    }
     startLoad();
     $('#matches').hide();
     $('#odds_match').hide();
@@ -17,7 +20,8 @@ function getInfo(){
         },
         success: function(json) {
             $("#team_detail").tabs("option","disabled", [1,2,3,4,5]);
-            $("#matchlist_div").tabs("option","disabled", [0,1,2,3,4,5]);
+            $("#matchlist_div").tabs("option","disabled", [0,1,2,3,4,5,6]);
+            $('#matchlist_playable_body').empty();
             updateTabs(json.matches);
             selectHighestTab(json.matches);
             $('#matchlist').show();
@@ -33,6 +37,9 @@ function autoRefreshMatches(){
     }, 15000);
 }
 function updateMatchesOnly(){
+    if($('[id^="input_"]').is(":focus")){
+        return;
+    }
     $.ajax({
         type: "POST",
         url: "db/MatchObserver.class.php",
@@ -48,6 +55,7 @@ function updateMatchesOnly(){
 }
 
 function updateTabs(json){
+    $('#matchlist_playable_body').empty();
     updateMatchesMO(json.seconddiv4,'seconddiv4');
     updateMatchesMO(json.seconddiv3,'seconddiv3');
     updateMatchesMO(json.seconddiv2,'seconddiv2');
@@ -76,7 +84,7 @@ function updateMatchesMO(array,type){
     table.empty();
     
     for(var i=0;i<=7;i++){
-        
+        var warnCount = 0;
         var row = '<tr>';
         var style = 'background-color:none;text-align:top';
         
@@ -96,27 +104,38 @@ function updateMatchesMO(array,type){
         var button ='<input type="button" onclick=updatePercentage('+array[i].matchid+') id=input_button_'+array[i].matchid+' value=OK></input>';
         
         row += '<td rowspan=2 style='+style+'>'+inputhome+'' + inputdraw + '' + inputaway+' ' + button + '</td>';
-        row += '<td style='+style+';text-align:center><b>' + array[i].valuehome+'</b></td>';
+        row += '<td style='+style+';text-align:center><text id=match_'+array[i].matchid+'_valuehome style=font-weight:bold>' + array[i].valuehome+'</text></td>';
         // Varsel
         row += '<td rowspan=2 style="text-align:center;'+style+'">';
         if(array[i].derby != undefined) {
             row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Derby\', WIDTH, 75);" onmouseout="return nd();">D </a>';
+            warnCount++;
         }
         if(array[i].forecast.symbol != undefined) {
             if(array[i].forecast.alert == true){
                 row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Ekstremvær\', WIDTH, 75);" onmouseout="return nd();">E </a>';
+                warnCount++;
             }
         }
         if(array[i].homesurface != array[i].awaysurface){
+           warnCount++;
            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Underlag mismatch\', WIDTH, 115);" onmouseout="return nd();">U </a>';
         }
         if(array[i].tightfixure != 0){
+            warnCount++;
            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Tight fixture\', WIDTH, 115);" onmouseout="return nd();">F </a>';
         }
-        if(array[i].totalsusp != 0){
-            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Totale suspensjoner\', WIDTH, 135);" onmouseout="return nd();">'+array[i].totalsusp+'S </a>';
+        
+        if(array[i].susphome >= array[i].settings['MIN_PLAYERS_SUSPENDED']['value']){
+            warnCount++;
+            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Hjemmelag suspensjoner\', WIDTH, 135);" onmouseout="return nd();">'+array[i].susphome+'HS </a>';
+        }
+        if(array[i].suspaway >= array[i].settings['MIN_PLAYERS_SUSPENDED']['value']){
+            warnCount++;
+            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Bortelag suspensjoner\', WIDTH, 135);" onmouseout="return nd();">'+array[i].suspaway+'BS </a>';
         }
         if(array[i].preferedalert != 0){
+            warnCount++;
             row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Mangler førstelagsspillere\', WIDTH, 155);" onmouseout="return nd();">M </a>';
         }
         
@@ -133,8 +152,13 @@ function updateMatchesMO(array,type){
         }else{
             row += '<td style='+style+'>&nbsp;</td>';
         }
-        row += '<tr>';
-        row += '<td style='+style+';text-align:center><b>' + array[i].valueaway+'</b></td>';
+//        if(array[i].totaloddsline != undefined){
+//            row += '<td style='+style+'><b>'+array[i].totalovervalue+'</b></td>';
+//        }else{
+//            row += '<td style='+style+'>&nbsp;</td>';
+//        }
+        row += '</tr><tr>';
+        row += '<td style='+style+';text-align:center><text id=match_'+array[i].matchid+'_valueaway style=font-weight:bold>' + array[i].valueaway+' </text></td>';
         if(array[i].awayspread != undefined){
             row += '<td style='+style+'>'+getDiv(array[i].awayname + ' ' + array[i].awayspread, array[i].awayprice)+'</td>';
         }else{
@@ -145,8 +169,19 @@ function updateMatchesMO(array,type){
         }else{
             row += '<td style='+style+'>&nbsp;</td>';
         }
+//        if(array[i].totaloddsline != undefined){
+//            row += '<td style='+style+'><b>'+array[i].totalundervalue+'</b></td>';
+//        }else{
+//            row += '<td style='+style+'>&nbsp;</td>';
+//        }
+        
         row += '</tr>';
         
+        if(warnCount >= array[i].settings['MIN_WARN_MATCH']['value']){
+            var index1 = $('#matchlist_div a[href="#playable"]').parent().index();
+            $("#matchlist_div").tabs("enable",index1);
+            $('#matchlist_playable_body').append(row);
+        }
         table.append(row);
     }
     table.show();
@@ -201,6 +236,12 @@ function getSuspensionString(array, teamid){
 
 
 function getMatchMO(matchid){
+    if(!allowClicks){
+        return;
+    }
+    var includeOthersHome = $('#home_team_include_source').is(':checked');
+    var includeOthersAway = $('#away_team_include_source').is(':checked');
+       
     startLoad();
     $.ajax({
         type: "POST",
@@ -208,6 +249,8 @@ function getMatchMO(matchid){
         dataType: "json",
         data: {
             action: "getMatch",
+            includeHome: includeOthersHome,
+            includeAway: includeOthersAway,
             matchid: matchid
         },
         success: function(json) {
@@ -227,6 +270,10 @@ function getMatchMO(matchid){
             updateOdds(json.matchodds,'match');
             updateOdds(json.firsthalfodds,'firsthalf');
             
+            $("#team_detail").tabs('enable', 1);
+            $("#team_detail").tabs('enable', 2);
+            $("#team_detail").tabs('enable', 3);
+            $("#team_detail").tabs('enable', 4);
             
             stopLoad();
         }
@@ -236,7 +283,28 @@ function getMatchMO(matchid){
 function appendRow(table, column, columnval){
     table.append('<tr><td style="border-right: 1px solid black"><b>'+column+'</b></td><td>'+columnval+'</td></tr>');
 }
-function appendPlayerRow(table, player){
+function appendPlayerRow(table, player, team){
+    
+    if(player.playername == undefined){
+        return;
+    }
+    var isMissing = false;
+    if(team.indexOf("missing") > -1){
+        isMissing = true;
+    }
+    var type = 'away';
+    if(team.indexOf("home") > -1){
+        type = 'home';
+    }
+    
+    var button = '<td><input type="button" value="Fjern" onclick="removePlayerFromSource(\''+player.playername+'\',\''+type+'\')"></input></td>';
+    if(isMissing){
+        button = '<td><input type="button" value="Tropp" onclick="addPlayerToSource(\''+player.playername+'\',\''+type+'\')"></input></td>';
+    }
+    if(team == 'hometeam' || team == 'awayteam'){
+        button = '';
+    }
+    
     table.append('<tr>'+
         '<td style="border-right: 1px solid black">'+player.playername+'</td>'+
         '<td>'+player.key+'</td>'+
@@ -247,6 +315,7 @@ function appendPlayerRow(table, player){
         '<td>'+player.squadcount+'</td>'+
         '<td>'+player.squadstatus+'</td>'+
         '<td>'+player.playtime+'%</td>'+
+        ''+button+''+
     '</tr>');
 }
 function appendSummaryRow(table, summary){
@@ -288,36 +357,41 @@ function updateMatchBasic(json){
     
     // HOMETEAM
 //    $('#news_detail a[href=#hometeam]').text(json.info.homename + ' lagoppstilling');
-    $('#hometeam_name').html(json.info.homename);
+    $('#basic_hometeam_name').html(json.info.homename);
     $('#hometeam_name_team').html(json.info.homename);
     var nexthomerow = json.nexthome.opponentname + " (" + json.nexthome.leaguename+") " + getDateStringMilliNoYear(json.nexthome.timestamp) + " (Om " + json.nexthome.todays + " dager)";
     var lasthomerow = json.lasthome.opponentname + " " + json.lasthome.result + " (" + json.lasthome.leaguename+") (" + json.lasthome.dayssince + " dager siden)";
     
-    $('#hometeam_body').empty();
-    appendRow($('#hometeam_body'),'Suspensjoner', getSuspensionString(json.suspension,json.info.homeid));
-    appendRow($('#hometeam_body'),'Neste kamp',nexthomerow);
-    appendRow($('#hometeam_body'),'Forrige kamp',lasthomerow);
+    $('#basic_hometeam_body').empty();
+    appendRow($('#basic_hometeam_body'),'Suspensjoner', getSuspensionString(json.suspension,json.info.homeid));
+    appendRow($('#basic_hometeam_body'),'Neste kamp',nexthomerow);
+    appendRow($('#basic_hometeam_body'),'Forrige kamp',lasthomerow);
     
     // AWAYTEAM
-    $('#awayteam_name').html(json.info.awayname + ' ('+json.info.awaysurface+')');
+    $('#basic_awayteam_name').html(json.info.awayname + ' ('+json.info.awaysurface+')');
     $('#awayteam_name_team').html(json.info.awayname + ' ('+json.info.awaysurface+')');
     var lastawayrow = json.lastaway.opponentname + " " + json.lastaway.result + " (" + json.lastaway.leaguename+") (" + json.lastaway.dayssince + " dager siden)";
     var nextawayrow = json.nextaway.opponentname  +" (" + json.nextaway.leaguename+") " + getDateStringMilliNoYear(json.nextaway.timestamp) + " (Om " + json.nextaway.todays + " dager)";
     
-    $('#awayteam_body').empty();
-    appendRow($('#awayteam_body'),'Suspensjoner', getSuspensionString(json.suspension,json.info.awayid));
-    appendRow($('#awayteam_body'),'Neste kamp',nextawayrow);
-    appendRow($('#awayteam_body'),'Forrige kamp',lastawayrow);
+    $('#basic_awayteam_body').empty();
+    appendRow($('#basic_awayteam_body'),'Suspensjoner', getSuspensionString(json.suspension,json.info.awayid));
+    appendRow($('#basic_awayteam_body'),'Neste kamp',nextawayrow);
+    appendRow($('#basic_awayteam_body'),'Forrige kamp',lastawayrow);
     
     //TEAM INFO
     $("#team_detail").tabs('select', 0);
+    $('[id^="hometeam"]').hide();
+    $('[id^="awayteam"]').hide();
+    $('[id^="homesquad"]').hide();
+    $('[id^="awaysquad"]').hide();
     if(json.homelineup == undefined || json.homelineup.length == 0){
         if(json.homesquad.length != 0){
             $("#team_detail").tabs('enable', 2);
+            $('#homesquad_text').show();
             $('#homesquad_source').html('Fotball.no');
             $('#homesquad_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
             $('#homesquad_source').attr('target','_blank');
-            $('#homesquad_source_button').hide();
+            $('#homesquad_source').show();
             updateTeams(json.homesquad,'hometeam_squad','Tropp');
             updateTeams(json.homesquad.summary.missingplayers,'hometeam_missing','Spillere ute');
             $('#team_detail').tabs('select', 2);
@@ -325,17 +399,53 @@ function updateMatchBasic(json){
             $("#team_detail").tabs('enable', 2);
             $('#homesquad_source_button').show();
             $('#homesquad_source').html(json.info.home_news_header);
+            $('#homesquad_text').show()
             $('#homesquad_source').attr('onclick','getNews('+json.info.home_news_id+',\'home\')');
             $('#homesquad_source').attr('href','#');
-            $('#homesquad_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'home\')');
+            $('#homesquad_source').show();
+            $('#homesquad_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'home\',\'squad\')');
+            $('#homesquad_source_button').show();
             updateTeams(json.homesquad_news,'hometeam_squad','Tropp');
             updateTeams(json.homesquad_news.summary.missingplayers,'hometeam_missing','Spillere ute');
             $('#team_detail').tabs('select', 2);
+        }else if(json.homelineup_string != undefined){
+            $('#hometeam_text').show();
+            $('#hometeam_source').html('Fotball.no');
+            $('#hometeam_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
+            $('#hometeam_source').attr('target','_blank');
+            $("#team_detail").tabs('enable', 1);
+            updateTeams(json.homelineup_string,'hometeam','Lagoppstilling');
+            $('#team_detail').tabs('select', 1);
+        }else{
+            $('#hometeam_input').show();
+            $('#hometeam_input_textarea').show();
+            $('#hometeam_input_textarea').val('');
+            $('#hometeam_input_button').show();
+            
+            $('#homesquad_input').show();
+            $('#homesquad_input_textarea').show();
+            $('#homesquad_input_textarea').val('');
+            $('#homesquad_input_button').show();
+            
+            $('#hometeam_squad_body_team').empty();
+            $('#hometeam_missing_body_team').empty();
         }
     }else{
-        $('#hometeam_source').html('Fotball.no');
-        $('#hometeam_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
-        $('#hometeam_source').attr('target','_blank');
+        $('#hometeam_text').show();
+        $('#hometeam_source').show();
+        if(json.homelineup.source == 'Fotball.no'){
+            $('#hometeam_source').html(json.homelineup.source);
+            $('#hometeam_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
+            $('#hometeam_source').attr('target','_blank');
+        }else{
+            $('#hometeam_source_button').show();
+            $('#hometeam_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'home\',\'team\')');
+            $('#hometeam_source').html('Egendefinert');
+            $('#hometeam_source').attr('href','#');
+            $('#hometeam_source').attr('onclick','getNews('+json.homelineup.source+')');
+            $('#hometeam_source').show();
+            $('#hometeam_text').show();
+        }
         $("#team_detail").tabs('enable', 1);
         updateTeams(json.homelineup,'hometeam','Lagoppstilling');
         $('#team_detail').tabs('select', 1);
@@ -347,32 +457,58 @@ function updateMatchBasic(json){
             $('#awaysquad_source').html('Fotball.no');
             $('#awaysquad_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
             $('#awaysquad_source').attr('target','_blank');
-            $('#awaysquad_source_button').hide();
+            $('#awaysquad_source').show();
+            $('#awaysquad_text').show();
             updateTeams(json.awaysquad,'awayteam_squad','Tropp');
             updateTeams(json.awaysquad.summary.missingplayers,'awayteam_missing','Spillere ute');
             $('#team_detail').tabs('select', 4);
         }else if(json.awaysquad_news.length != 0){
             $('#team_detail').tabs('enable', 4);
+            $('#awaysquad_text').show();
             $('#awaysquad_source').html(json.info.away_news_header);
             $('#awaysquad_source').attr('onclick','getNews('+json.info.away_news_id+',\'away\')');
             $('#awaysquad_source').attr('href','#');
-            $('#awaysquad_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'away\')');
+            $('#awaysquad_source').show();
+            $('#awaysquad_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'away\',\'squad\')');
+            $('#awaysquad_source_button').show();
             updateTeams(json.awaysquad_news, 'awayteam_squad','Tropp');
             updateTeams(json.awaysquad_news.summary.missingplayers,'awayteam_missing','Spillere ute');
             $('#team_detail').tabs('select', 4);
+        }else{
+            $('#awayteam_input').show();
+            $('#awayteam_input_textarea').show();
+            $('#awayteam_input_textarea').val('');
+            $('#awayteam_input_button').show();
+            
+            $('#awaysquad_input').show();
+            $('#awaysquad_input_textarea').show();
+            $('#awaysquad_input_textarea').val('');
+            $('#awaysquad_input_button').show();
+            
+            $('#awayteam_squad_body_team').empty();
+            $('#awayteam_missing_body_team').empty();
         }
     }else{
-        $('#awayteam_source').html('Fotball.no');
-        $('#awayteam_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
-        $('#awayteam_source').attr('target','_blank');
+        $('#awayteam_text').show();
+        if(json.awaylineup.source == 'Fotball.no'){
+            $('#awayteam_source').html(json.awaylineup.source);
+            $('#awayteam_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
+            $('#awayteam_source').attr('target','_blank');
+        }else{
+            $('#awayteam_source_button').show();
+            $('#awayteam_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'away\',\'team\')');
+            $('#awayteam_source').html('Egendefinert');
+            $('#awayteam_source').attr('href','#');
+            $('#awayteam_source').attr('onclick','getNews('+json.awaylineup.source+')');
+            $('#awayteam_source').show();
+        }
         $("#team_detail").tabs('enable', 3);
         updateTeams(json.awaylineup,'awayteam','Lagoppstilling');
         $('#team_detail').tabs('select', 3);
     }
     
 }
-
-function removeNewsSource(matchid,column){
+function removeNewsSource(matchid,column,type){
     $.ajax({
         type: "POST",
         url: "db/MatchObserver.class.php",
@@ -380,7 +516,8 @@ function removeNewsSource(matchid,column){
         data: {
             action: "removeAsSource",
             column: column,
-            matchid: matchid
+            matchid: matchid,
+            type: type
         },
         success: function(json) {
             var index = $('#team_detail a[href="#news_detail"]').parent().index();
@@ -399,11 +536,14 @@ function updateTeams(array,team, header){
         return;
     }
     var body = $('#'+team+'_body_team');
+    
     var div = $('#'+team+'_basic');
     var text = $('#'+team+'_text');
     $('#'+team+'_header').html(header);
+    $('#'+team+'_header').show();
     
     body.empty();
+    body.show();
     if(array.length == 0){
         div.hide();
         text.show();
@@ -416,7 +556,7 @@ function updateTeams(array,team, header){
                 continue;
             }
             var player = array[p];
-            appendPlayerRow(body,player);
+            appendPlayerRow(body,player,team);
         }
         var summary = array.summary;
         appendSummaryRow(body,summary);
@@ -505,51 +645,82 @@ function updateOdds(array,type){
     }
     $('#odds_'+type).show();
 }
+function moreNews(type,count){
+    var max = (count+4);
+    for(var i=0;i<20;i++){
+        if(i >= count && i <= max){
+            $('#match_'+type+'_row_'+i).show();
+        }else{
+            $('#match_'+type+'_row_'+i).hide();
+        }
+    }
+    $('#match_'+type+'_body tr:last').remove();
+    var extra = '<tr>';
+    extra += '<td colspan=3>';
+    if(!$('#match_'+type+'_row_0').is(':visible')){
+        extra += '<a href="#" onclick="lessNews(\''+type+'\','+(count-5)+');return false">Mindre nyheter...</a>';
+    }
+    if(!$('#match_'+type+'_row_19').is(':visible')){
+        extra += '<a href="#" onclick="moreNews(\''+type+'\','+(count+5)+');return false">Flere nyheter...</a></td>';
+    }
+    extra += '</tr>';
+    $('#match_'+type+'_body').append(extra);
+}
+
+function lessNews(type,count){
+    var max = (count+4);
+    for(var i=0;i<20;i++){
+        if(i >= count && i <= max){
+            $('#match_'+type+'_row_'+i).show();
+        }else{
+            $('#match_'+type+'_row_'+i).hide();
+        }
+    }
+    $('#match_'+type+'_body tr:last').remove();
+    var extra = '<tr>';
+    extra += '<td colspan=3>';
+    if(!$('#match_'+type+'_row_0').is(':visible')){
+        extra += '<a href="#" onclick="lessNews(\''+type+'\','+(count-5)+');return false">Mindre nyheter...</a>';
+    }
+    if(!$('#match_'+type+'_row_19').is(':visible')){
+        extra += '<a href="#" onclick="moreNews(\''+type+'\','+(count+5)+');return false">Flere nyheter...</a></td>';
+    }
+    extra += '</tr>';
+    $('#match_'+type+'_body').append(extra);
+}
 
 function updateNews(array,type){
     
     if(array == undefined || array.length == 0){
-        for(var i=0;i<7;i++){
-            var time1 = $('#match_'+type+'_news_time_'+(i+1));
-            var source1 = $('#match_'+type+'_news_source_'+(i+1));
-            var header1 = $('#match_'+type+'_news_header_'+(i+1));
-
-            header1.empty();
-            time1.empty();
-            source1.empty();
-        }
         return;
     }
     
+    $('#match_'+type+'_body').empty();
+    
     for(var i=0;i<array.length;i++){
-        var time = $('#match_'+type+'_news_time_'+(i+1));
-        var source = $('#match_'+type+'_news_source_'+(i+1));
-        var header = $('#match_'+type+'_news_header_'+(i+1));
-        
-        header.empty();
-        time.empty();
-        source.empty();
-        
         if(array[i] === undefined){
             continue;
         }
         
-        
-        source.html(array[i].source);
-        time.html(getNewsDateString(array[i].timestamp));
-        
-        header.html(array[i].header);
-        
-        header.attr('onclick','getNews('+array[i].id+',\''+type+'\');return false');
-        header.attr('href','#');
-        
-        if(array[i].includes_squad == 1){
-            header.attr('style','background-color:yellow');
-//            var div = getDiv(header.html(),'<text onclick="setAsNewsSource('+array[i].id+')">Sett som lagkilde</text>');
-        }else{
-            header.removeAttr('style');
+        var hidden = '';
+        if(i >= 5){
+            hidden = 'display: none';
         }
+        var style = '';
+        if(array[i].includes_squad == 1){
+            style = 'background-color:yellow';
+        }
+        var row = '<tr id=match_'+type+'_row_'+i+' style="'+hidden+'">';
+        row += '<td>'+(getNewsDateString(array[i].timestamp))+'</td>';
+        row += '<td><a style="'+style+'" href="#" onclick="getNews('+array[i].id+',\''+type+'\');return false"> '+array[i].header+'</a></td>';
+        row += '<td>'+array[i].source+'</td>';
+        row += '</tr>';
+        $('#match_'+type+'_body').append(row);
     }
+    var extra = '<tr>';
+    extra += '<td colspan=3><a style="'+style+'" href="#" onclick="moreNews(\''+type+'\',5);return false">Flere nyheter...</a></td>';
+    extra += '</tr>';
+    $('#match_'+type+'_body').append(extra);
 }
 function getNews(newsid,type){
     $.ajax({
@@ -623,8 +794,87 @@ function updatePercentage(matchid){
             away: away,
             userid : $('#userid').val()
         },
-        success: function(){
+        success: function(json){
+            $('#match_'+matchid+'_valuehome').text(json.valuehome);
+            $('#match_'+matchid+'_valueaway').text(json.valueaway);
             updateMatchesOnly();
+        }
+    });
+}
+function removePlayerFromSource(playername,type){
+    
+    $.ajax({
+        type: "POST",
+        url: "db/MatchObserver.class.php",
+        dataType: "json",
+        data: {
+            action: "removePlayerFromSource",
+            matchid: selectedMatch,
+            playername: playername,
+            type: type
+        },
+        success: function(){
+            getMatchMO(selectedMatch);
+        }
+    });
+}
+function addPlayerToSource(playername,type){
+    
+    $.ajax({
+        type: "POST",
+        url: "db/MatchObserver.class.php",
+        dataType: "json",
+        data: {
+            action: "addPlayerToSource",
+            matchid: selectedMatch,
+            playername: playername,
+            type: type
+        },
+        success: function(){
+            getMatchMO(selectedMatch);
+        }
+    });
+}
+
+function setTextAreaSource(type){
+    
+    var text = $('#'+type+'squad_input_textarea').val();
+    
+    $.ajax({
+        type: "POST",
+        url: "db/MatchObserver.class.php",
+        dataType: "json",
+        data: {
+            action: "setTextAreaSource",
+            matchid: selectedMatch,
+            text: text,
+            type: type
+        },
+        success: function(){
+            getMatchMO(selectedMatch);
+        }
+    });
+}
+function setTextAreaTeam(type){
+    
+    var text = $('#'+type+'team_input_textarea').val();
+    
+    $.ajax({
+        type: "POST",
+        url: "db/MatchObserver.class.php",
+        dataType: "json",
+        data: {
+            action: "setTextAreaTeam",
+            matchid: selectedMatch,
+            text: text,
+            type: type
+        },
+        success: function(json){
+            if(json.error != undefined){
+                alert(json.error);
+            }else{
+                getMatchMO(selectedMatch);
+            }
         }
     });
 }

@@ -37,10 +37,10 @@
         <div id="settings" style="background-color: #F8F8F8 ">
             <div id="loader_settings" class="loader"></div>
             <ul>
+                <li><a href="#warning">Varsler</a></li>
                 <li><a href="#surface">Underlag</a></li>
                 <li><a href="#derby">Derby</a></li>
                 <li><a href="#players">Spillere</a></li>
-                <li><a href="#warning">Varsler</a></li>
                 <li><a href="#mailsender">Mailsender</a></li>
             </ul>
             <div id="surface">

@@ -106,8 +106,13 @@ class Yr {
             }
         }
 
+        
         // Download the periodic xml if we doesnt have it
         if(!is_readable($xml_periodic_path) || (time() - filemtime($xml_periodic_path) > ($cache_life * 60))) {
+            file_put_contents($xml_periodic_path, fopen("$baseurl/$location/forecast.xml", 'r'));
+        }
+         if(filesize($xml_periodic_path) < 10){
+            unlink($xml_periodic_path);
             file_put_contents($xml_periodic_path, fopen("$baseurl/$location/forecast.xml", 'r'));
         }
 
@@ -115,10 +120,13 @@ class Yr {
         if(!is_readable($xml_hourly_path) || (time() - filemtime($xml_hourly_path) > ($cache_life * 60))) {
             file_put_contents($xml_hourly_path, fopen("$baseurl/$location/forecast_hour_by_hour.xml", 'r'));
         }
-
+        if(filesize($xml_hourly_path) < 10){
+            unlink($xml_hourly_path);
+            file_put_contents($xml_hourly_path, fopen("$baseurl/$location/forecast_hour_by_hour.xml", 'r'));
+        }
+        
         $xml_hourly = new \SimpleXMLElement($xml_hourly_path, null, true);
         $xml_periodic = new \SimpleXMLElement($xml_periodic_path, null, true);
-
         // Get all the hourly forecasts and create Forecast objects
         $forecasts_hourly = array();
         foreach($xml_hourly->forecast->tabular->time as $forecast) {

@@ -15,6 +15,10 @@ class LineupInfo {
         }
         $teamString = addslashes($teamString);
         
+        if(empty($teamString)){
+            return array();
+        }
+        
         $q = "SELECT * FROM playertable p 
         WHERE p.teamid = " . $teamid . ' 
         AND p.year = ' . Constant::CURRENT_YEAR . ' 
@@ -245,7 +249,7 @@ class LineupInfo {
         return $data;
     }
 
-    public function getBestSquad($teamid)
+    public function getBestSquad($teamid, $value = '>')
     {
        $q = "SELECT  " .
             "SUM(p.minutesplayed) as minutes,p.playerid, pl.playername " .
@@ -257,7 +261,7 @@ class LineupInfo {
             "WHERE p.`teamid` =   " . $teamid . " " .
             "AND l.`year` =  " . Constant::CURRENT_YEAR . " " .
             "GROUP BY p.`playerid` " .
-            "HAVING sum(p.minutesplayed) > 0 " .
+            "HAVING sum(p.minutesplayed) $value 0 " .
             "ORDER BY SUM(p.`minutesplayed`) DESC ";
         $data = array();
         $result = mysql_query($q);

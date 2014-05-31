@@ -1,6 +1,7 @@
 
 <div id="matchlist_div">
     <ul>
+        <li><a href="#playable">Spillbare</a></li>
         <li><a href="#tippeliga">Tippeligaen</a></li>
         <li><a href="#firstdiv">1.divisjon</a></li>
         <li><a href="#seconddiv1">2.divisjon avd 1</a></li>
@@ -9,6 +10,41 @@
         <li><a href="#seconddiv4">2.divisjon avd 4</a></li>
     </ul>
 
+    <div id="playable">
+        <table id="matchlist_playable" class="table">
+            <thead>
+                <tr>
+                    <td>
+                        Dato
+                    </td>
+                    <td>
+                        Kamp
+                    </td>
+                    <td>
+                        %
+                    </td>
+                    <td>
+                        Verdi
+                    </td>
+                    <td>
+                        Varsel
+                    </td>
+                    <td>
+                        Handicap
+                    </td>
+                     <td>
+                        Total
+                    </td>
+<!--                    <td>
+                        Total verdi
+                    </td>-->
+                </tr>
+            </thead>
+            <tbody id="matchlist_playable_body">
+            </tbody>
+        </table>
+    </div>
+    
     <div id="tippeliga">
         <table id="matchlist_tippeliga" class="table">
             <thead>
@@ -34,6 +70,9 @@
                      <td>
                         Total
                     </td>
+<!--                     <td>
+                        Total verdi
+                    </td>-->
                 </tr>
             </thead>
             <tbody id="matchlist_tippeliga_body">
@@ -65,6 +104,9 @@
                      <td>
                         Total
                     </td>
+<!--                     <td>
+                        Total verdi
+                    </td>-->
                 </tr>
             </thead>
             <tbody id="matchlist_firstdiv_body">
@@ -95,6 +137,9 @@
                     </td>
                      <td>
                         Total
+                    </td>
+                     <td>
+                        Total verdi
                     </td>
                 </tr>
             </thead>
@@ -127,6 +172,9 @@
                      <td>
                         Total
                     </td>
+                     <td>
+                        Total verdi
+                    </td>
                 </tr>
             </thead>
             <tbody id="matchlist_seconddiv2_body">
@@ -158,6 +206,9 @@
                      <td>
                         Total
                     </td>
+                     <td>
+                        Total verdi
+                    </td>
                 </tr>
             </thead>
             <tbody id="matchlist_seconddiv3_body">
@@ -188,6 +239,9 @@
                     </td>
                      <td>
                         Total
+                    </td>
+                     <td>
+                        Total verdi
                     </td>
                 </tr>
             </thead>

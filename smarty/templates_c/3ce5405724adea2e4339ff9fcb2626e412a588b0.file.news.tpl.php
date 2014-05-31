@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-01 08:11:58
+<?php /* Smarty version Smarty-3.1.12, created on 2014-05-26 09:35:07
          compiled from "smarty\templates\matchobserver\news.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:28889535b5e2a994930-93724740%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '3ce5405724adea2e4339ff9fcb2626e412a588b0' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\news.tpl',
-      1 => 1398931916,
+      1 => 1401094606,
       2 => 'file',
     ),
   ),
@@ -22,7 +22,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <?php if ($_valid && !is_callable('content_535b5e2a999d64_50449213')) {function content_535b5e2a999d64_50449213($_smarty_tpl) {?><table id="match_news" class="table">
     <thead>
         <tr>
-            <td colspan="3"><a style="font-weight: bold;" id="home_team"></a></td>
+            <td colspan="3">
+                <a style="font-weight: bold;" id="home_team"></a>
+                <!--
+                <input type="checkbox" id="home_team_include_source" style="margin:0px;margin-left:4px"></input>
+                <label for="home_team_include_source">Kun offsielle nyheter</label>
+                -->
+            </td>
         </tr>
         <tr>
             <td>
@@ -36,75 +42,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </td>
         </tr>
     </thead>
-    <tr>
-        <td>
-            <text id="match_home_news_time_1"></text>
-        </td>
-        <td>
-            <a id="match_home_news_header_1"></a>
-        </td>
-        <td>
-            <text id="match_home_news_source_1"></text>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <text id="match_home_news_time_2"></text>
-        </td>
-        <td>
-            <a id="match_home_news_header_2"></a>
-        </td>
-        <td>
-            <text id="match_home_news_source_2"></text>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <text id="match_home_news_time_3"></text>
-        </td>
-        <td>
-            <a id="match_home_news_header_3"></a>
-        </td>
-        <td>
-            <text id="match_home_news_source_3"></text>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <text id="match_home_news_time_4"></text>
-        </td>
-        <td>
-            <a id="match_home_news_header_4"></a>
-        </td>
-        <td>
-            <text id="match_home_news_source_4"></text>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <text id="match_home_news_time_5"></text>
-        </td>
-        <td>
-            <a id="match_home_news_header_5"></a>
-        </td>
-        <td>
-            <text id="match_home_news_source_5"></text>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <text id="match_home_news_time_6"></text>
-        </td>
-        <td>
-            <a id="match_home_news_header_6"></a>
-        </td>
-        <td>
-            <text id="match_home_news_source_6"></text>
-        </td>
-    </tr>
+    <tbody id="match_home_body">
+    </tbody>
     <thead>
         <tr>
-            <td colspan="3" style="border-top: 1px solid black"><a style="font-weight: bold;" id="away_team"</a></td>
+            <td colspan="3" style="border-top: 1px solid black">
+                <a style="font-weight: bold;" id="away_team"></a>
+                <!--
+                <input type="checkbox" id="away_team_include_source" style="margin:0px;margin-left:4px"></input>
+                <label for="away_team_include_source">Kun offsielle nyheter</label>
+                -->
+            </td>
         </tr>
         <tr>
             <td>
@@ -118,70 +66,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             </td>
         </tr>
     </thead>
-    <td>
-        <text id="match_away_news_time_1"></text>
-    </td>
-    <td>
-        <a id="match_away_news_header_1"></a>
-    </td>
-    <td>
-        <text id="match_away_news_source_1"></text>
-    </td>
-</tr>
-<tr>
-    <td>
-        <text id="match_away_news_time_2"></text>
-    </td>
-    <td>
-        <a id="match_away_news_header_2"></a>
-    </td>
-    <td>
-        <text id="match_away_news_source_2"></text>
-    </td>
-</tr>
-<tr>
-    <td>
-        <text id="match_away_news_time_3"></text>
-    </td>
-    <td>
-        <a id="match_away_news_header_3"></a>
-    </td>
-    <td>
-        <text id="match_away_news_source_3"></text>
-    </td>
-</tr>
-<tr>
-    <td>
-        <text id="match_away_news_time_4"></text>
-    </td>
-    <td>
-        <a id="match_away_news_header_4"></a>
-    </td>
-    <td>
-        <text id="match_away_news_source_4"></text>
-    </td>
-</tr>
-<tr>
-    <td>
-        <text id="match_away_news_time_5"></text>
-    </td>
-    <td>
-        <a id="match_away_news_header_5"></a>
-    </td>
-    <td>
-        <text id="match_away_news_source_5"></text>
-    </td>
-</tr>
-<tr>
-    <td>
-        <text id="match_away_news_time_6"></text>
-    </td>
-    <td>
-        <a id="match_away_news_header_6"></a>
-    </td>
-    <td>
-        <text id="match_away_news_source_6"></text>
-    </td>
-</tr>
+    <tbody id="match_away_body">
+    </tbody>
 </table>
 <?php }} ?>

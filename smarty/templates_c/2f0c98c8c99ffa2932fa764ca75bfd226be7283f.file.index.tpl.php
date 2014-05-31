@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-12 08:42:57
+<?php /* Smarty version Smarty-3.1.12, created on 2014-05-26 08:40:34
          compiled from "smarty\templates\matchobserver\index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:256695348fd519fdef6-15201992%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '2f0c98c8c99ffa2932fa764ca75bfd226be7283f' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\index.tpl',
-      1 => 1399884055,
+      1 => 1401093632,
       2 => 'file',
     ),
   ),
@@ -35,26 +35,16 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <script type="text/javascript" src="js/spin.js"></script> 
         <script type="text/javascript" src="js/expander/jquery.expander.js"></script>
         <script type="text/javascript" src="js/readmore.js"></script>
-        <script type="text/javascript" src="js/common.js"></script>  
+        <script type="text/javascript" src="js/common.js"></script> 
         <script>
             $(document).ready(function() {
             $('#match_period').tabs();
             $('#match_basic_div').tabs();
             $('#matchlist_div').tabs();
             $('#team_detail').tabs();
-            //                $('[id^="slider_"]').slider();
             getInfo();
-            //                getUsersLeague();
-            //                $("input:checkbox").click(function() {
-            //                    if ($(this).is(":checked")) {
-            //                        var group = "input:checkbox[name='" + $(this).attr("name") + "']";
-            //                        $(group).prop("checked", false);
-            //                        $(this).prop("checked", true);
-            //                    } else {
-            //                        $(this).prop("checked", false);
-            //                    }
-            //                });
         });
+        
         </script>
     </head>
     <body>
@@ -66,14 +56,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                         <div class="yui-gc">
                             <div class="yui-u first">
                                 <div class="content">
-                                    <text class="content-header">Kampliste</text>
                                     <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/matchlist.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
                                 </div>
                             </div>
                             <div class="yui-u">
                                 <div class="content">
-                                    <text class="content-header">Informasjon</text>
                                     <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/match_basic.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
                                 </div>
@@ -87,14 +75,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                             <div class="yui-gc">
                                 <div class="yui-u first">
                                     <div class="content">
-                                        <text class="content-header">Detaljer </text>
                                         <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/news_detail.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
                                     </div>
                                 </div>
                                 <div class="yui-u">
                                     <div class="content">
-                                        <text class="content-header">Mer info // </text>  </text> <text class="content-header" style="background-color:yellow">Inneholder mulig tropp </text>
                                         <?php echo $_smarty_tpl->getSubTemplate ("matchobserver/news.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, null, null, array(), 0);?>
 
                                     </div>

@@ -19,21 +19,21 @@
             <thead>
                 <tr>
                     <td colspan="2">
-                        <text id="hometeam_name"></text>
+                        <text id="basic_hometeam_name"></text>
                     </td>
                 </tr>
             </thead>
-            <tbody id="hometeam_body">
+            <tbody id="basic_hometeam_body">
 
             </tbody>
             <thead>
                 <tr>
                     <td colspan="2">
-                        <text id="awayteam_name"></text>
+                        <text id="basic_awayteam_name"></text>
                     </td>
                 </tr>
             </thead>
-            <tbody id="awayteam_body">
+            <tbody id="basic_awayteam_body">
 
             </tbody>
         </table>

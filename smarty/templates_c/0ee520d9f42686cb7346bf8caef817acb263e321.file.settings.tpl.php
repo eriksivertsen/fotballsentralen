@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-12 09:26:19
+<?php /* Smarty version Smarty-3.1.12, created on 2014-05-26 11:53:07
          compiled from "smarty\templates\matchobserver\settings.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:194595358045554edf8-39777332%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '0ee520d9f42686cb7346bf8caef817acb263e321' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\settings.tpl',
-      1 => 1399886778,
+      1 => 1401105186,
       2 => 'file',
     ),
   ),
@@ -58,10 +58,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <div id="settings" style="background-color: #F8F8F8 ">
             <div id="loader_settings" class="loader"></div>
             <ul>
+                <li><a href="#warning">Varsler</a></li>
                 <li><a href="#surface">Underlag</a></li>
                 <li><a href="#derby">Derby</a></li>
                 <li><a href="#players">Spillere</a></li>
-                <li><a href="#warning">Varsler</a></li>
                 <li><a href="#mailsender">Mailsender</a></li>
             </ul>
             <div id="surface">

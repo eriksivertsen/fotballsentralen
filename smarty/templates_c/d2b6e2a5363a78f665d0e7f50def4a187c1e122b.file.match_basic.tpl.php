@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-10 15:57:29
+<?php /* Smarty version Smarty-3.1.12, created on 2014-05-31 07:38:50
          compiled from "smarty\templates\matchobserver\match_basic.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:30664535e127b33b897-16258245%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'd2b6e2a5363a78f665d0e7f50def4a187c1e122b' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\match_basic.tpl',
-      1 => 1399737440,
+      1 => 1401521928,
       2 => 'file',
     ),
   ),
@@ -40,21 +40,21 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <thead>
                 <tr>
                     <td colspan="2">
-                        <text id="hometeam_name"></text>
+                        <text id="basic_hometeam_name"></text>
                     </td>
                 </tr>
             </thead>
-            <tbody id="hometeam_body">
+            <tbody id="basic_hometeam_body">
 
             </tbody>
             <thead>
                 <tr>
                     <td colspan="2">
-                        <text id="awayteam_name"></text>
+                        <text id="basic_awayteam_name"></text>
                     </td>
                 </tr>
             </thead>
-            <tbody id="awayteam_body">
+            <tbody id="basic_awayteam_body">
 
             </tbody>
         </table>

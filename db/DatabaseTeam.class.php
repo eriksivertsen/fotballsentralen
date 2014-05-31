@@ -456,6 +456,7 @@ class DatabaseTeam {
             WHERE p.`teamid` = $teamid
             AND p.start = 1
             AND p.matchid = $matchid
+            GROUP by p.playerid
             ORDER BY is_goalkeeper DESC
             LIMIT 11";
         $data = array();

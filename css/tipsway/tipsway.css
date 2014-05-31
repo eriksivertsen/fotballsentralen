@@ -79,7 +79,7 @@ body{text-align:center;}
 }
 
 .yui-t7 #yui-main .yui-b {
-	display:block;margin:0 0 1em 0;
+	display:block;margin:0 0 0.2em 0;
 }
 #yui-main .yui-b {float:none;width:auto;}
 /* GRIDS (not TEMPLATES) */
@@ -156,7 +156,7 @@ body{text-align:center;}
 }
 
 .content{
-    height:46%;
+    height:48%;
     background:#F5F5F5;
     margin:0;
     padding:0;

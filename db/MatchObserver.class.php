@@ -735,6 +735,26 @@ class MatchObserver {
                 'period' => $row['period']
             );
         }
+        
+        $q = "select h.`homespread`, h.`homeprice`, h.`awayspread`, h.`awayprice`, h.`changenumber`
+            from
+            spreadodds_history h 
+            where h.`matchid` = $matchid 
+            and h.`period` = 'MATCH'
+            and h.`is_main_line` = 1
+            order by h.`changenumber` asc ;
+            ";
+        $result = mysql_query($q);
+        while ($row = mysql_fetch_array($result)) {
+            $data['history'][] = array(
+                'changenumber' => $row['changenumber'],
+                'homespread' => $row['homespread'],
+                'homeprice' => $row['homeprice'],
+                'awayspread' => $row['awayspread'],
+                'awayprice' => $row['awayprice']
+            );
+        }
+        
         return $data;
     }
     public function setCustomLineup($matchid,$type,$text){
@@ -987,8 +1007,8 @@ if($action == 'getReferee') {
 if ($action == 'getMatch') {
 
     $matchInfo = MatchObserver::getMatchInfo($matchid);
-    $includeHome = filter_input(INPUT_POST, 'includeHome', FILTER_DEFAULT);
-    $includeAway = filter_input(INPUT_POST, 'includeAway', FILTER_DEFAULT);
+//    $includeHome = filter_input(INPUT_POST, 'includeHome', FILTER_DEFAULT);
+//    $includeAway = filter_input(INPUT_POST, 'includeAway', FILTER_DEFAULT);
 
     $homeid = $matchInfo['homeid'];
     $awayid = $matchInfo['awayid'];
@@ -1044,20 +1064,22 @@ if ($action == 'getMatch') {
     
     $suspension = DatabaseUtils::getSuspList($matchInfo['real_leagueid']);
     $odds = MatchObserver::getOdds($matchid, 'MATCH');
-    $firsthalfodds = MatchObserver::getOdds($matchid, 'FIRST_HALF');
 
-    $settings = DatabaseSettings::getSettings();
     $from = ($matchInfo['timestamp'] / 1000);
     $to = ($from + 7200);
 
-    $forecastRes = MatchObserver::getWeather($matchInfo['url'], $from, $to, $settings);
+    $settings = DatabaseSettings::getSettings();
+    try{
+        $forecastRes = MatchObserver::getWeather($matchInfo['url'], $from, $to, $settings);
+    }catch(Exception $e){
+        $forecastRes = array();
+    }
 
     $retval = array(
         'info' => $matchInfo,
         'homenews' => $homeNews,
         'awaynews' => $awayNews,
         'matchodds' => $odds,
-        'firsthalfodds' => $firsthalfodds,
         'nexthome' => $nextHome,
         'nextaway' => $nextAway,
         'lasthome' => $lastHome,

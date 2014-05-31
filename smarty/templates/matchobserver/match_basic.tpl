@@ -1,7 +1,8 @@
 <div id="match_basic_div">
     <ul>
         <li><a href="#info">Kampinfo</a></li>
-        <li><a href="#odds">Odds</a></li>      
+        <li><a href="#odds">Odds</a></li>     
+        <li><a href="#odds_history">Odds History</a></li>   
     </ul>
     <div id="info">
         <table id="match_basic" class="table">
@@ -40,5 +41,8 @@
     </div>
     <div id="odds">
         {include file='matchobserver/odds.tpl'}
+    </div>
+    <div id="odds_history">
+        {include file='matchobserver/odds_history.tpl'}
     </div>
 </div>

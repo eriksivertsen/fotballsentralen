@@ -268,7 +268,6 @@ function getMatchMO(matchid){
             updateNews(json.homenews,'home');
             updateNews(json.awaynews,'away');
             updateOdds(json.matchodds,'match');
-            updateOdds(json.firsthalfodds,'firsthalf');
             
             $("#team_detail").tabs('enable', 1);
             $("#team_detail").tabs('enable', 2);
@@ -643,6 +642,19 @@ function updateOdds(array,type){
         row += ('</tr>');
         $('#totalbody_'+type).append(row);
     }
+    $('#spreadbody_history_match').empty();
+    for(var k in array.history){
+        var history = array.history[k];
+        row = '<tr>';
+        row += '<td>'+history.changenumber+'</td>';
+        row += '<td>'+history.homespread+'</td>';
+        row += '<td>'+history.homeprice+'</td>';
+        row += '<td>'+history.awayspread+'</td>';
+        row += '<td>'+history.awayprice+'</td>';
+        row += '</tr>';
+        $('#spreadbody_history_match').append(row);
+    }
+    
     $('#odds_'+type).show();
 }
 function moreNews(type,count){

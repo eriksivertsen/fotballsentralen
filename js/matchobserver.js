@@ -83,10 +83,10 @@ function updateMatchesMO(array,type){
     var table = $('#matchlist_'+type+"_body");
     table.empty();
     
-    for(var i=0;i<=7;i++){
+    for(var i=0;i<=8;i++){
         var warnCount = 0;
         var row = '<tr>';
-        var style = 'background-color:none;text-align:top';
+        var style = 'background-color:none;text-align:top;';
         
         if(array[i].homelineup == 1 && array[i].awaylineup == 1){
             style = 'background-color:#33CC33';
@@ -95,18 +95,34 @@ function updateMatchesMO(array,type){
         }else if(array[i].homesquad == 1 || array[i].awaysquad == 1){
             style = 'background-color:#66CCFF';
         }
-        row += '<td rowspan=2 style='+style+'>'+getMatchDateString(array[i].timestamp)+'</td>';
-        row += '<td rowspan=2 style='+style+'><a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].homename + ' - ' + array[i].awayname +'</a></td>';
-        
-        var inputhome='<input type="text" size=2 id=input_home_'+array[i].matchid+' value='+array[i].homepercentage+'></input>';
-        var inputdraw='<input type="text" size=2 id=input_draw_'+array[i].matchid+' value='+array[i].drawpercentage+'></input>';
-        var inputaway='<input type="text" size=2 id=input_away_'+array[i].matchid+' value='+array[i].awaypercentage+'></input>';
+        row += '<td rowspan=2 style="'+style+'">'+getMatchDateString(array[i].timestamp)+'</td>';
+        var homename = '<a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].homename+'</a>';
+        if(array[i].homespread != undefined){
+            row += '<td style='+style+'>'+getDiv(homename + ' ' + array[i].homespread, array[i].homeprice)+'</td>';
+        }else{
+            row += '<td style='+style+'>'+homename+'</td>';
+        }
+        var inputhomemore='<input type="text" size=2 id=input_home_more_'+array[i].matchid+' value='+array[i].homemorepercentage+' title="H-1"></input>';
+        var inputhome='<input type="text" size=2 id=input_home_'+array[i].matchid+' value='+array[i].homepercentage+' title="H"></input>';
+        var inputdraw='<input type="text" size=2 id=input_draw_'+array[i].matchid+' value='+array[i].drawpercentage+' title="U"></input>';
+        var inputaway='<input type="text" size=2 id=input_away_'+array[i].matchid+' value='+array[i].awaypercentage+' title="B"></input>';
+        var inputawaymore='<input type="text" size=2 id=input_away_more_'+array[i].matchid+' value='+array[i].awaymorepercentage+' title="B-1"></input>';
         var button ='<input type="button" onclick=updatePercentage('+array[i].matchid+') id=input_button_'+array[i].matchid+' value=OK></input>';
         
-        row += '<td rowspan=2 style='+style+'>'+inputhome+'' + inputdraw + '' + inputaway+' ' + button + '</td>';
-        row += '<td style='+style+';text-align:center><text id=match_'+array[i].matchid+'_valuehome style=font-weight:bold>' + array[i].valuehome+'</text></td>';
+        var input = '';
+        if(array[i].homespread != undefined && array[i].homespread <= -0.75){
+            input = inputhomemore;
+        }
+        input += inputhome+'' + inputdraw + '' + inputaway;
+        if(array[i].awayspread != undefined && array[i].awayspred <= -0.75){
+            input += inputawaymore;
+        }
+        
+        row += '<td rowspan=2 style="'+style+'">'+input+' ' + button + '</td>';
+        row += '<td style="'+style+';text-align:center"><text id=match_'+array[i].matchid+'_valuehome style=font-weight:bold>' + array[i].valuehome+'</text></td>';
         // Varsel
         row += '<td rowspan=2 style="text-align:center;'+style+'">';
+        
         if(array[i].derby != undefined) {
             row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Derby\', WIDTH, 75);" onmouseout="return nd();">D </a>';
             warnCount++;
@@ -121,11 +137,14 @@ function updateMatchesMO(array,type){
            warnCount++;
            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Underlag mismatch\', WIDTH, 115);" onmouseout="return nd();">U </a>';
         }
-        if(array[i].tightfixure != 0){
+        if(array[i].tightfixurehome != 0){
             warnCount++;
-           row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Tight fixture\', WIDTH, 115);" onmouseout="return nd();">F </a>';
+           row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Tight fixture ('+array[i].homename+')\', WIDTH, 115);" onmouseout="return nd();">HF </a>';
         }
-        
+        if(array[i].tightfixureaway != 0){
+            warnCount++;
+           row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Tight fixture ('+array[i].awayname+')\', WIDTH, 115);" onmouseout="return nd();">BF </a>';
+        }
         if(array[i].susphome >= array[i].settings['MIN_PLAYERS_SUSPENDED']['value']){
             warnCount++;
             row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Hjemmelag suspensjoner\', WIDTH, 135);" onmouseout="return nd();">'+array[i].susphome+'HS </a>';
@@ -134,47 +153,38 @@ function updateMatchesMO(array,type){
             warnCount++;
             row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Bortelag suspensjoner\', WIDTH, 135);" onmouseout="return nd();">'+array[i].suspaway+'BS </a>';
         }
-        if(array[i].preferedalert != 0){
+        if(array[i].preferedalerthome != 0){
             warnCount++;
-            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Mangler førstelagsspillere\', WIDTH, 155);" onmouseout="return nd();">M </a>';
+            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Mangler førstelagsspillere ('+array[i].homename+') \', WIDTH, 155);" onmouseout="return nd();">HM </a>';
+        }
+        if(array[i].preferedalertaway != 0){
+            warnCount++;
+            row += '<a href="javascript:void(0);" onmouseover="return overlib(\'Mangler førstelagsspillere ('+array[i].awayname+') \', WIDTH, 155);" onmouseout="return nd();">BM </a>';
         }
         
         row += '</td>';
         // Varsel end
         
-        if(array[i].homespread != undefined){
-            row += '<td style='+style+'>'+getDiv(array[i].homename + ' ' + array[i].homespread, array[i].homeprice)+'</td>';
-        }else{
-            row += '<td style='+style+'>&nbsp;</td>';
-        }
         if(array[i].totaloddsline != undefined){
             row += '<td style='+style+'>'+getDiv('Over '+array[i].totaloddsline,array[i].totalover)+'</td>';
         }else{
             row += '<td style='+style+'>&nbsp;</td>';
         }
-//        if(array[i].totaloddsline != undefined){
-//            row += '<td style='+style+'><b>'+array[i].totalovervalue+'</b></td>';
-//        }else{
-//            row += '<td style='+style+'>&nbsp;</td>';
-//        }
         row += '</tr><tr>';
-        row += '<td style='+style+';text-align:center><text id=match_'+array[i].matchid+'_valueaway style=font-weight:bold>' + array[i].valueaway+' </text></td>';
-        if(array[i].awayspread != undefined){
-            row += '<td style='+style+'>'+getDiv(array[i].awayname + ' ' + array[i].awayspread, array[i].awayprice)+'</td>';
-        }else{
-            row += '<td style='+style+'>&nbsp;</td>';
-        }
-        if(array[i].totaloddsline != undefined){
-            row += '<td style='+style+'>'+getDiv('Under '+array[i].totaloddsline,array[i].totalunder)+'</td>';
-        }else{
-            row += '<td style='+style+'>&nbsp;</td>';
-        }
-//        if(array[i].totaloddsline != undefined){
-//            row += '<td style='+style+'><b>'+array[i].totalundervalue+'</b></td>';
-//        }else{
-//            row += '<td style='+style+'>&nbsp;</td>';
-//        }
         
+        var awayname = '<a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].awayname+'</a>';
+        
+        if(array[i].awayspread != undefined){
+            row += '<td style="'+style+'">'+getDiv(awayname + ' ' + array[i].awayspread, array[i].awayprice)+'</td>';
+        }else{
+            row += '<td style="'+style+'">'+awayname+'</td>';
+        }
+        row += '<td style="'+style+';text-align:center;"><text id=match_'+array[i].matchid+'_valueaway style=font-weight:bold>' + array[i].valueaway+' </text></td>';
+        if(array[i].totaloddsline != undefined){
+            row += '<td style="'+style+'">'+getDiv('Under '+array[i].totaloddsline,array[i].totalunder)+'</td>';
+        }else{
+            row += '<td style="'+style+'">&nbsp;</td>';
+        }
         row += '</tr>';
         
         if(warnCount >= array[i].settings['MIN_WARN_MATCH']['value']){
@@ -300,7 +310,7 @@ function appendPlayerRow(table, player, team){
     if(isMissing){
         button = '<td><input type="button" value="Tropp" onclick="addPlayerToSource(\''+player.playername+'\',\''+type+'\')"></input></td>';
     }
-    if(team == 'hometeam' || team == 'awayteam'){
+    if(team == 'hometeam' || team == 'awayteam' || team.indexOf("squad") == -1){
         button = '';
     }
     
@@ -377,6 +387,10 @@ function updateMatchBasic(json){
     appendRow($('#basic_awayteam_body'),'Neste kamp',nextawayrow);
     appendRow($('#basic_awayteam_body'),'Forrige kamp',lastawayrow);
     
+    updateTeamInfo(json);
+}
+
+function updateTeamInfo(json){
     //TEAM INFO
     $("#team_detail").tabs('select', 0);
     $('[id^="hometeam"]').hide();
@@ -405,7 +419,7 @@ function updateMatchBasic(json){
             $('#homesquad_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'home\',\'squad\')');
             $('#homesquad_source_button').show();
             updateTeams(json.homesquad_news,'hometeam_squad','Tropp');
-            updateTeams(json.homesquad_news.summary.missingplayers,'hometeam_missing','Spillere ute');
+            updateTeams(json.homesquad_news.summary.missingplayers,'homesquad_missing','Spillere ute');
             $('#team_detail').tabs('select', 2);
         }else if(json.homelineup_string != undefined){
             $('#hometeam_text').show();
@@ -447,6 +461,7 @@ function updateMatchBasic(json){
         }
         $("#team_detail").tabs('enable', 1);
         updateTeams(json.homelineup,'hometeam','Lagoppstilling');
+        updateTeams(json.homelineup.summary.missingplayers,'hometeam_missing','Spillere ute (Ikke fra start)');
         $('#team_detail').tabs('select', 1);
     }
     
@@ -459,7 +474,7 @@ function updateMatchBasic(json){
             $('#awaysquad_source').show();
             $('#awaysquad_text').show();
             updateTeams(json.awaysquad,'awayteam_squad','Tropp');
-            updateTeams(json.awaysquad.summary.missingplayers,'awayteam_missing','Spillere ute');
+            updateTeams(json.awaysquad.summary.missingplayers,'awaysquad_missing','Spillere ute');
             $('#team_detail').tabs('select', 4);
         }else if(json.awaysquad_news.length != 0){
             $('#team_detail').tabs('enable', 4);
@@ -471,7 +486,7 @@ function updateMatchBasic(json){
             $('#awaysquad_source_button').attr('onclick','removeNewsSource('+json.info.matchid+',\'away\',\'squad\')');
             $('#awaysquad_source_button').show();
             updateTeams(json.awaysquad_news, 'awayteam_squad','Tropp');
-            updateTeams(json.awaysquad_news.summary.missingplayers,'awayteam_missing','Spillere ute');
+            updateTeams(json.awaysquad_news.summary.missingplayers,'awaysquad_missing','Spillere ute');
             $('#team_detail').tabs('select', 4);
         }else{
             $('#awayteam_input').show();
@@ -488,7 +503,7 @@ function updateMatchBasic(json){
             $('#awayteam_missing_body_team').empty();
         }
     }else{
-        $('#awayteam_text').show();
+        $('#awayteam_source').show();
         if(json.awaylineup.source == 'Fotball.no'){
             $('#awayteam_source').html(json.awaylineup.source);
             $('#awayteam_source').attr('href','https://www.fotball.no/System-pages/Kampfakta/?matchId='+json.info.matchid);
@@ -499,13 +514,13 @@ function updateMatchBasic(json){
             $('#awayteam_source').html('Egendefinert');
             $('#awayteam_source').attr('href','#');
             $('#awayteam_source').attr('onclick','getNews('+json.awaylineup.source+')');
-            $('#awayteam_source').show();
         }
         $("#team_detail").tabs('enable', 3);
         updateTeams(json.awaylineup,'awayteam','Lagoppstilling');
+        updateTeams(json.awaylineup.summary.missingplayers,'awayteam_missing','Spillere ute (Ikke fra start)');
+        $('#awayteam_text').show();
         $('#team_detail').tabs('select', 3);
     }
-    
 }
 function removeNewsSource(matchid,column,type){
     $.ajax({
@@ -535,7 +550,6 @@ function updateTeams(array,team, header){
         return;
     }
     var body = $('#'+team+'_body_team');
-    
     var div = $('#'+team+'_basic');
     var text = $('#'+team+'_text');
     $('#'+team+'_header').html(header);
@@ -643,18 +657,39 @@ function updateOdds(array,type){
         $('#totalbody_'+type).append(row);
     }
     $('#spreadbody_history_match').empty();
+    var maxHome = 0;
+    var maxAway = 0;
     for(var k in array.history){
         var history = array.history[k];
         row = '<tr>';
         row += '<td>'+history.changenumber+'</td>';
         row += '<td>'+history.homespread+'</td>';
         row += '<td>'+history.homeprice+'</td>';
+        if(history.homeprice > maxHome){
+            maxHome = history.homeprice;
+        }
         row += '<td>'+history.awayspread+'</td>';
         row += '<td>'+history.awayprice+'</td>';
+        if(history.awayprice > maxAway){
+            maxAway = history.awayprice;
+        }
+        row += '<td>'+getMatchDateString(history.lastupdate)+'</td>';
         row += '</tr>';
         $('#spreadbody_history_match').append(row);
     }
-    
+    $('#spreadbody_history_match tr').each(function () {
+        $(this).find("td:eq(2)").each(function() {
+            if($(this).text() == maxHome){
+                $(this).attr('style','background-color:#33CC33');
+            }
+        });
+        
+        $(this).find("td:eq(4)").each(function() {
+            if($(this).text() == maxAway){
+                $(this).attr('style','background-color:#33CC33');
+            }
+        });
+    });
     $('#odds_'+type).show();
 }
 function moreNews(type,count){
@@ -784,13 +819,27 @@ function setNewsSource(newsid,type){
     });
 }
 function updatePercentage(matchid){
+    var homemore = $('#input_home_more_'+matchid).val();
     var home = $('#input_home_'+matchid).val();
     var draw = $('#input_draw_'+matchid).val();
     var away = $('#input_away_'+matchid).val();
+    var awaymore = $('#input_away_more_'+matchid).val();
     
-    var combined = parseInt(home) + parseInt(draw) + parseInt(away);
+    var combined = 0;
+    var combinedString = ''+parseInt(home) + ' + ' + parseInt(draw) + ' + ' + parseInt(away)+'';
+    if(homemore != undefined){
+        combined = parseInt(homemore) + parseInt(home) + parseInt(draw) + parseInt(away);
+        combinedString = parseInt(homemore)+ ' + '+parseInt(home) + ' + ' + parseInt(draw) + ' + ' + parseInt(away)+'';
+    }
+    else if(awaymore != undefined){
+        combined = parseInt(awaymore) + parseInt(home) + parseInt(draw) + parseInt(away);
+        combinedString = parseInt(home) + ' + ' + parseInt(draw) + ' + ' + parseInt(away)+' + ' + parseInt(awaymore);
+    }else{
+        combined = parseInt(home) + parseInt(draw) + parseInt(away);
+    }
+    
     if(combined != 100){
-        alert('Ikke 100%: ' + parseInt(home) + ' + ' + parseInt(draw) + ' + ' + parseInt(away) + " = " + combined);
+        alert('Ikke 100%: ' + combinedString + " = " + combined);
         return;
     }
     
@@ -801,9 +850,11 @@ function updatePercentage(matchid){
         data: {
             action: "updatePercentage",
             matchid: matchid,
+            homemore: homemore,
             home: home,
             draw: draw,
             away: away,
+            awaymore: awaymore,
             userid : $('#userid').val()
         },
         success: function(json){

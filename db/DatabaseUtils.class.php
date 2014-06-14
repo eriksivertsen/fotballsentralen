@@ -311,8 +311,6 @@ class DatabaseUtils {
             LEFT JOIN matchtable m ON m.`matchid` = trending.clicked_id
             LEFT JOIN teamtable home ON m.`hometeamid` = home.`teamid`
             LEFT JOIN teamtable away ON m.`awayteamid` = away.`teamid`
-            GROUP BY trending.clicked_id,
-            trending.clicktype 
             ORDER BY trending.antall DESC 
             LIMIT 10";
         

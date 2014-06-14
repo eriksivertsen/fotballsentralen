@@ -77,7 +77,9 @@ class LineupInfo {
             $totalKey += $key;
 
             $data[] = array(
+                'playerid' => $row['playerid'],
                 'playername' => $row['playername'],
+                'nickname' => $row['nickname'],
                 'key' => $key,
                 'mostused' => $mostUsed,
                 'startedlast' => $startedLast,
@@ -94,8 +96,8 @@ class LineupInfo {
         $sorted = array();
         foreach($players as $player){
             foreach($data as $res){
-                if($player == $res['playername']){
-                    $sorted []= $res;
+                if($player == $res['playername'] || $player == $res['nickname']){
+                    $sorted [$res['playerid']] = $res;
                 }
             }
         }
@@ -103,7 +105,7 @@ class LineupInfo {
             $missingPlayers = array();
             foreach($bestSquad as $key => $val){
                 if($val != '1'){
-                    $missingPlayers[] = $val;
+                    $missingPlayers[] = $val['playername'];
                 }
             }
         }
@@ -249,10 +251,10 @@ class LineupInfo {
         return $data;
     }
 
-    public function getBestSquad($teamid, $value = '>')
+    public function getBestSquad($teamid, $value = '>=')
     {
        $q = "SELECT  " .
-            "SUM(p.minutesplayed) as minutes,p.playerid, pl.playername " .
+            "SUM(p.minutesplayed) as minutes,p.playerid, pl.playername, pl.nickname " .
             "FROM " .
             "playtable p  " .
             "JOIN matchtable m ON m.`matchid` = p.`matchid` " .
@@ -266,7 +268,7 @@ class LineupInfo {
         $data = array();
         $result = mysql_query($q);
         while ($row = mysql_fetch_array($result)) {
-            $data[$row['playerid']] = $row['playername'];
+            $data[$row['playerid']] = array('playername' => $row['playername'], 'nickname' => $row['nickname']) ;
         }
         return $data;
     }

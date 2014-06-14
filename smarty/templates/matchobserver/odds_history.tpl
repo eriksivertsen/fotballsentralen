@@ -2,19 +2,22 @@
     <thead>
         <tr>
             <td>
-                Changenr
+                Change
             </td>
             <td>
-                Homespread
+                Home
             </td>
             <td>
-                Homeprice
+                Price
             </td>
             <td>
-                Awayspread
+                Away
             </td>
             <td>
-                Awayprice
+                Price
+            </td>
+            <td>
+                Date
             </td>
         </tr>
     </thead>

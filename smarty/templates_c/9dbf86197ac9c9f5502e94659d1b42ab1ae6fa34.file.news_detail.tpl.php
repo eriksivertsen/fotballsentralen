@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-05-31 08:45:18
+<?php /* Smarty version Smarty-3.1.12, created on 2014-06-11 09:14:48
          compiled from "smarty\templates\matchobserver\news_detail.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:16951535b5f6d47eba8-08425471%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '9dbf86197ac9c9f5502e94659d1b42ab1ae6fa34' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\news_detail.tpl',
-      1 => 1401525884,
+      1 => 1402478063,
       2 => 'file',
     ),
   ),
@@ -42,7 +42,53 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <textarea id="hometeam_input_textarea" style="width: 100%; height:30%"></textarea>
             <input id="hometeam_input_button" type="button" value="Sett streng som lagoppstilling" onclick="setTextAreaTeam('home')"></input>
         </div>
-        <text id="hometeam_text">Kilde: </text>
+        <text id="hometeam_text" style="margin-left:10px;">Kilde: </text>
+        <table id="hometeam_missing_basic" class="table">
+            <thead>
+                <tr>
+                    <td colspan="10">
+                        <text id="hometeam_missing_header"></text>
+                    </td>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <td>
+                        Navn
+                    </td>
+                    <td>
+                        Key
+                    </td>
+                    <td>
+                        Startet sist
+                    </td>
+                    <td>
+                        F.11'er
+                    </td>
+                    <td>
+                        Siste 5
+                    </td>
+                    <td>
+                        Start i år
+                    </td>
+                    <td>
+                        Tropp i år
+                    </td>
+                    <td>
+                        Status
+                    </td>
+                    <td>
+                        Spilletid
+                    </td>
+                    <td>
+                        Endre
+                    </td>
+                </tr>
+            </thead>
+            <tbody id="hometeam_missing_body_team">
+
+            </tbody>
+        </table>
         <table id="hometeam_basic" class="table">
             <thead>
                 <tr>
@@ -92,14 +138,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <textarea id="homesquad_input_textarea" style="width: 100%; height:30%"></textarea>
             <input id="homesquad_input_button" type="button" value="Sett streng som kilde" onclick="setTextAreaSource('home')"></input>
         </div>
-        <text id="homesquad_text">Kilde: </text>
+        <text id="homesquad_text" style="margin-left:10px;">Kilde: </text>
         <a id="homesquad_source"></a><input id="homesquad_source_button" type="button" value="Fjern som kilde" style="font-size:0.9em;margin:3px"></input>
         <br/>
-        <table id="hometeam_missing_basic" class="table">
+        <table id="homesquad_missing_basic" class="table">
             <thead>
                 <tr>
                     <td colspan="10">
-                        <text id="hometeam_missing_header"></text>
+                        <text id="homesquad_missing_header"></text>
                     </td>
                 </tr>
             </thead>
@@ -137,7 +183,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </td>
                 </tr>
             </thead>
-            <tbody id="hometeam_missing_body_team">
+            <tbody id="homesquad_missing_body_team">
 
             </tbody>
         </table>
@@ -190,13 +236,59 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         </table>
     </div>
     <div id="awayteam">
-        <text id="awayteam_text">Kilde:</text>
+        <text id="awayteam_text" style="margin-left:10px;">Kilde:</text>
         <a id="awayteam_source"></a>
         <div id="awayteam_input" style="font-size: 10pt">
             <textarea id="awayteam_input_textarea" style="width: 100%; height:30%"></textarea>
             <input id="awayteam_input_button" type="button" value="Sett streng som lagoppstilling" onclick="setTextAreaTeam('away')"></input>
         </div>
         <a id="awayteam_source"></a><input id="awayteam_source_button" type="button" value="Fjern som kilde"  style="font-size:0.9em;margin:3px"></input>
+        <table id="awayteam_missing_basic" class="table">
+            <thead>
+                <tr>
+                    <td colspan="10">
+                        <text id="awayteam_missing_header"></text>
+                    </td>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <td>
+                        Navn
+                    </td>
+                    <td>
+                        Key
+                    </td>
+                    <td>
+                        Startet sist
+                    </td>
+                    <td>
+                        F.11'er
+                    </td>
+                    <td>
+                        Siste 5
+                    </td>
+                    <td>
+                        Start i år
+                    </td>
+                    <td>
+                        Tropp i år
+                    </td>
+                    <td>
+                        Status
+                    </td>
+                    <td>
+                        Spilletid
+                    </td>
+                    <td>
+                        Endre
+                    </td>
+                </tr>
+            </thead>
+            <tbody id="awayteam_missing_body_team">
+
+            </tbody>
+        </table>
         <table id="awayteam_basic" class="table">
             <thead>
                 <tr>
@@ -246,14 +338,14 @@ $_valid = $_smarty_tpl->decodeProperties(array (
             <textarea id="awaysquad_input_textarea" style="width: 100%; height:30%"></textarea>
             <input id="awaysquad_input_button" type="button" value="Sett streng som kilde" onclick="setTextAreaSource('away')"></input>
         </div>
-        <text id="awaysquad_text">Kilde:</text>
+        <text id="awaysquad_text"  style="margin-left:10px;">Kilde:</text>
         <a id="awaysquad_source"></a><input id="awaysquad_source_button" type="button" value="Fjern som kilde"  style="font-size:0.9em;margin:3px"></input>
         <br/>
-        <table id="awayteam_missing_basic" class="table">
+        <table id="awaysquad_missing_basic" class="table">
             <thead>
                 <tr>
                     <td colspan="10">
-                        <text id="awayteam_missing_header"></text>
+                        <text id="awaysquad_missing_header"></text>
                     </td>
                 </tr>
             </thead>
@@ -291,7 +383,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                     </td>
                 </tr>
             </thead>
-            <tbody id="awayteam_missing_body_team">
+            <tbody id="awaysquad_missing_body_team">
 
             </tbody>
         </table>

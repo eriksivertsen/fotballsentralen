@@ -29,9 +29,7 @@
                     <td>
                         Varsel
                     </td>
-                    <td>
-                        Handicap
-                    </td>
+                    
                      <td>
                         Total
                     </td>
@@ -64,9 +62,7 @@
                     <td>
                         Varsel
                     </td>
-                    <td>
-                        Handicap
-                    </td>
+                    
                      <td>
                         Total
                     </td>
@@ -98,9 +94,7 @@
                     <td>
                         Varsel
                     </td>
-                    <td>
-                        Handicap
-                    </td>
+                   
                      <td>
                         Total
                     </td>

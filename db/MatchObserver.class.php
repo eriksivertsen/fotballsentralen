@@ -8,6 +8,8 @@ require_once 'DatabaseSettings.class.php';
 require_once 'LineupInfo.class.php';
 
 class MatchObserver {
+    
+    const LOAD_WEATHER = false;
 
     public function getTightFixtures() {
         $q = " SELECT 
@@ -47,6 +49,7 @@ class MatchObserver {
 
     public function getMatches(array $susp, array $tightFixtures, $userid) {
 
+        set_time_limit(60);
         $settings = DatabaseSettings::getSettings();
 
         $q = "SELECT d.level, m.dateofmatch, m.matchid, 
@@ -62,7 +65,7 @@ class MatchObserver {
             home.teamname as homename, away.teamname as awayname, l.java_variable, m.hometeamid as homeid, m.awayteamid as awayid,
             home.surface as homesurface, home.surface_condition as homecondition, away.surface as awaysurface, away.surface_condition as awaycondition,
             SUBSTRING_INDEX(c1.url,'/sted/',-1) AS c1url, SUBSTRING_INDEX(c2.url,'/sted/',-1) AS c2url, spread.homespread, spread.homeprice, spread.awayspread,spread.awayprice, total.points, total.overprice, total.underprice,
-            o.match_homeprice as homeodds, o.match_drawprice as drawodds, o.match_awayprice as awayodds, mp.home as homepercentage, mp.draw as drawpercentage, mp.away as awaypercentage
+            o.match_homeprice as homeodds, o.match_drawprice as drawodds, o.match_awayprice as awayodds, mp.home as homepercentage, mp.draw as drawpercentage, mp.away as awaypercentage,  mp.homemore as homemorepercentage , mp.awaymore as awaymorepercentage
             FROM matchtable m 
             JOIN teamtable home on m.hometeamid = home.teamid 
             JOIN matchobserve_user mou ON mou.userid = $userid
@@ -104,7 +107,7 @@ class MatchObserver {
             $arrayName = MatchObserver::getArrayName($row['java_variable']);
 
             if (isset($data[$arrayName])) {
-                if (count($data[$arrayName]) >= 8) {
+                if (count($data[$arrayName]) >= 9) {
                     continue;
                 }
             }
@@ -134,47 +137,46 @@ class MatchObserver {
                 $suspAway = $suspension[$row['awayid']];
             }
             
-            $tightFixture = 0;
-            if ($tightFixtures[$row['homeid']] >= $settings[Constant::TIGHT_FIXTURE_MIN]['value'] ||
-                    $tightFixtures[$row['awayid']] >= $settings[Constant::TIGHT_FIXTURE_MIN]['value']) {
-                $tightFixture = 1;
+            $tightFixtureHome = 0;
+            $tightFixtureAway = 0;
+            if(isset($tightFixtures[$row['homeid']])){
+                if($tightFixtures[$row['homeid']] >= $settings[Constant::TIGHT_FIXTURE_MIN]['value']){
+                    $tightFixtureHome = 1;
+                }
+            }
+            if(isset($tightFixtures[$row['awayid']])){
+                if($tightFixtures[$row['awayid']] >= $settings[Constant::TIGHT_FIXTURE_MIN]['value']){
+                    $tightFixtureAway = 1;
+                }
             }
             
+            $homemoreperceantage = (isset($row['homemorepercentage']) ? $row['homemorepercentage'] : 0);
             $homepercentage = (isset($row['homepercentage']) ? $row['homepercentage'] : 0);
             $drawpercentage = (isset($row['drawpercentage']) ? $row['drawpercentage'] : 0);
             $awaypercentage = (isset($row['awaypercentage']) ? $row['awaypercentage'] : 0);
+            $awaymoreperceantage = (isset($row['awaymorepercentage']) ? $row['awaymorepercentage'] : 0);
             
             $valueHome = MatchObserver::getHomeValue($homepercentage, $drawpercentage, $row['homespread'],$row['homeprice']);
             $valueAway = MatchObserver::getAwayValue($awaypercentage, $drawpercentage, $row['awayspread'],$row['awayprice']);
 
-//            $totalValueHome = DatabaseTeam::getOverGoals($row['homeid'],Constant::ALL_STRING,'home');
-//            $totalValueAway = DatabaseTeam::getOverGoals($row['awayid'],Constant::ALL_STRING,'away');
-//            
-//            $valueArray = MatchObserver::getTotalValue($totalValueHome['over3'],$totalValueAway['over3'],$row['points'], 
-//                    $row['overprice'],$row['underprice']);
-//            
-//            $totalOver = $valueArray['over'];
-//            $totalUnder = $valueArray['under'];
-//            
-//            $totalOver4 = ($totalValueHome['over4'] + $totalValueAway['over4']) / 2;
-            
             $homeLineupInfo = array();
             $awayLineupInfo = array();
             $homeLineup = 0;
             $awayLineup = 0;
-            $prefferedAlert = 0;
+            $prefferedAlertHome = 0;
+            $prefferedAlertAway = 0;
             
             if (!empty($row['homelineup_string'])) {
                 $homeLineupInfo = LineupInfo::getLineupInfo($row['homeid'], $row['homelineup_string']);
                 $homeLineup = 1;
                 if((11-$homeLineupInfo['summary']['preferred']) >= $settings[Constant::MIN_FIRSTTEAM_PLAYER]['value']){
-                    $prefferedAlert = 1;
+                    $prefferedAlertHome = 1;
                 }
             }else{
                 if (!empty($row['homesquad_string'])) {
                     $homeSquadInfo = LineupInfo::getLineupInfo($row['homeid'],$row['homesquad_string']);
                     if((11-$homeSquadInfo['summary']['preferred']) >= $settings[Constant::MIN_FIRSTTEAM_PLAYER]['value']){
-                        $prefferedAlert = 1;
+                        $prefferedAlertHome = 1;
                     }
                 }
             }
@@ -182,13 +184,13 @@ class MatchObserver {
                 $awayLineup = 1;
                 $awayLineupInfo = LineupInfo::getLineupInfo($row['awayid'], $row['awaylineup_string']);
                 if((11 - $awayLineupInfo['summary']['preferred']) >= $settings[Constant::MIN_FIRSTTEAM_PLAYER]['value']){
-                    $prefferedAlert = 1;
+                    $prefferedAlertAway = 1;
                 }
             }else{
                 if (!empty($row['awaysquad_string'])) {
                     $awaySquadInfo = LineupInfo::getLineupInfo($row['awayid'],$row['awaysquad_string']);
                     if((11-$awaySquadInfo['summary']['preferred']) >= $settings[Constant::MIN_FIRSTTEAM_PLAYER]['value']){
-                        $prefferedAlert = 1;
+                        $prefferedAlertAway = 1;
                     }
                 }
             }
@@ -211,8 +213,10 @@ class MatchObserver {
                 'awaysurface' => $row['awaysurface'],
                 'awaycondition' => $row['awaycondition'],
                 'forecast' => $forecastRes,
-                'tightfixure' => $tightFixture,
-                'preferedalert' => $prefferedAlert,
+                'tightfixurehome' => $tightFixtureHome,
+                'tightfixureaway' => $tightFixtureAway,
+                'preferedalerthome' => $prefferedAlertHome,
+                'preferedalertaway' => $prefferedAlertAway,
                 'derby' => $row['level'],
                 'totalsusp' => ($suspHome + $suspAway),
                 'susphome' => $suspHome,
@@ -227,14 +231,14 @@ class MatchObserver {
                 'homeodds' => $row['homeodds'],
                 'drawodds' => $row['drawodds'],
                 'awayodds' => $row['awayodds'],
+                'homemorepercentage' => $homemoreperceantage,
                 'homepercentage' => $homepercentage,
                 'drawpercentage' => $drawpercentage,
                 'awaypercentage' => $awaypercentage,
+                'awaymorepercentage' => $awaymoreperceantage,
                 'valuehome' => $valueHome,
                 'valueaway' => $valueAway,
                 'settings' => $settings
-//                'totalovervalue' => $totalOver,
-//                'totalundervalue' => $totalUnder
             );
         }
         return $data;
@@ -341,6 +345,11 @@ class MatchObserver {
         }
         return $forecastRes;
     }
+    private function endsWith($haystack, $needle)
+        {
+            return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
+        }
+
 
     public function getArrayName($java_variable) {
         switch ($java_variable) {
@@ -668,10 +677,14 @@ class MatchObserver {
         $result = mysql_query($q);
 
         while ($row = mysql_fetch_array($result)) {
-            $header = str_replace('«', '', $row['header']);
+            $header = $row['header'];
+            $header = str_replace('«', '', $header);
             $header = str_replace('»', '', $header);
-            if (strlen($header) >= 43) {
-                $header = substr($header, 0, 39) . '...';
+            if (mb_strlen($header, 'utf8') >= 43) {
+                $header = substr($header, 0, 40) . '...';
+                if(!isset($header) || empty($header)){
+                    $header = $row['header'];
+                }
             }
             $data[] = array(
                 'id' => $row['news_id'],
@@ -736,7 +749,7 @@ class MatchObserver {
             );
         }
         
-        $q = "select h.`homespread`, h.`homeprice`, h.`awayspread`, h.`awayprice`, h.`changenumber`
+        $q = "select h.`homespread`, h.`homeprice`, h.`awayspread`, h.`awayprice`, h.`changenumber`, unix_timestamp(h.lastupdate) * 1000 as lastupdate
             from
             spreadodds_history h 
             where h.`matchid` = $matchid 
@@ -751,7 +764,8 @@ class MatchObserver {
                 'homespread' => $row['homespread'],
                 'homeprice' => $row['homeprice'],
                 'awayspread' => $row['awayspread'],
-                'awayprice' => $row['awayprice']
+                'awayprice' => $row['awayprice'],
+                'lastupdate' => $row['lastupdate']
             );
         }
         
@@ -782,9 +796,10 @@ class MatchObserver {
         $array = LineupInfo::getBestSquad($teamid, '>=');   
         
         $playerArray = array();
-        foreach($array as $playerid => $playername){
-            $playerNames[] = $playername;
-            $split = explode(' ', $playername);
+        foreach($array as $playerid => $player){
+            $playerNames[] = $player['playername'];
+            $playerNames[] = $player['nickname'];
+            $split = explode(' ', $player['playername']);
             if(count($split) >= 2){
                 $playerNames[] = $split[1];
                 if(count($split) >= 3){
@@ -805,14 +820,14 @@ class MatchObserver {
                     continue;
                 }
                 if (stripos($text, $name) !== FALSE){
-                    $foundPlayers[$playerid] = $array[$playerid];
+                    $foundPlayers[$playerid] = $array[$playerid]['playername'];
                 }
             }
         }
         if(count($foundPlayers) > $maxPlayers){
             if($maxPlayers == 11){
                 if(count($foundPlayers) != 11){
-                    return array('error' => 'Not 11 players, but ' . count($foundPlayers));
+                    return array('error' => 'Not 11 players, but ' . count($foundPlayers) . ': Found players: ' . print_r($foundPlayers,true) . ' Try with only last names.');
                 }
             }
             return array('error' => 'Not 11 players, but ' . count($foundPlayers));
@@ -873,12 +888,14 @@ if($action == 'setNewsSource'){
 
 if ($action == 'updatePercentage') {
     $matchid = filter_input(INPUT_POST, 'matchid', FILTER_VALIDATE_INT);
+    $homemore = filter_input(INPUT_POST, 'homemore', FILTER_VALIDATE_FLOAT);
     $home = filter_input(INPUT_POST, 'home', FILTER_VALIDATE_FLOAT);
     $draw = filter_input(INPUT_POST, 'draw', FILTER_VALIDATE_FLOAT);
     $away = filter_input(INPUT_POST, 'away', FILTER_VALIDATE_FLOAT);
+    $awaymore = filter_input(INPUT_POST, 'awaymore', FILTER_VALIDATE_FLOAT);
     $userid = filter_input(INPUT_POST, 'userid', FILTER_VALIDATE_INT);
     
-    $q = "INSERT INTO match_percentage (matchid,home,draw,away,userid) VALUES ($matchid,$home,$draw,$away,$userid) ON DUPLICATE KEY UPDATE home=VALUES(home), draw=VALUES(draw), away=VALUES(away), lastupdate=VALUES(lastupdate)";
+    $q = "INSERT INTO match_percentage (matchid,homemore,home,draw,away,awaymore,userid) VALUES ($matchid,$homemore,$home,$draw,$away,$awaymore, $userid) ON DUPLICATE KEY UPDATE homemore=VALUES(homemore), home=VALUES(home), draw=VALUES(draw), away=VALUES(away), awaymore=VALUES(awaymore),lastupdate=VALUES(lastupdate)";
     mysql_query($q);
     
     $q = "SELECT homespread,homeprice,awayspread,awayprice FROM spreadodds s WHERE s.matchid = $matchid AND s.period = 'MATCH' AND s.is_main_line = 1";
@@ -1005,10 +1022,7 @@ if($action == 'getReferee') {
 }
 
 if ($action == 'getMatch') {
-
     $matchInfo = MatchObserver::getMatchInfo($matchid);
-//    $includeHome = filter_input(INPUT_POST, 'includeHome', FILTER_DEFAULT);
-//    $includeAway = filter_input(INPUT_POST, 'includeAway', FILTER_DEFAULT);
 
     $homeid = $matchInfo['homeid'];
     $awayid = $matchInfo['awayid'];
@@ -1047,9 +1061,11 @@ if ($action == 'getMatch') {
     }
     if (!empty($matchInfo['awaylineup'])) {
         $awayLineupInfo = LineupInfo::getLineupInfo($awayid, $matchInfo['awaylineup']);
+        $awayLineupInfo['source'] = 'Fotball.no';
     }else{
         if(!empty($matchInfo['awayteam_news'])){
             $awayLineupInfo = LineupInfo::getLineupInfo($awayid, $matchInfo['awayteam_news']);
+            $awayLineupInfo['source'] = $matchInfo['awayteam_news_source'];
         }
         if (!empty($matchInfo['awaysquad'])) {
             $awaySquadFotballNO = LineupInfo::getLineupInfo($awayid, $matchInfo['awaysquad']);
@@ -1074,7 +1090,7 @@ if ($action == 'getMatch') {
     }catch(Exception $e){
         $forecastRes = array();
     }
-
+    
     $retval = array(
         'info' => $matchInfo,
         'homenews' => $homeNews,

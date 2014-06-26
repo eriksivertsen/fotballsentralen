@@ -309,7 +309,7 @@ function getPreviewFull(matchid,statsSeasonSel)
     window.location.hash = '/'+season+'/page/preview/'+matchid;
     $('#feedback_page').val('Forhåndsstoff');
     if(statsSeasonSel == undefined){
-        statsSeason = 1;
+        statsSeason = 2;
     }else{
         statsSeason = statsSeasonSel;
     }

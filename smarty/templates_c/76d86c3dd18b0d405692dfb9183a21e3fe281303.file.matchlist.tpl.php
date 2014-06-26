@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.12, created on 2014-06-04 08:33:21
+<?php /* Smarty version Smarty-3.1.12, created on 2014-06-21 11:02:09
          compiled from "smarty\templates\matchobserver\matchlist.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:327605354d42fa6f866-94571428%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '76d86c3dd18b0d405692dfb9183a21e3fe281303' => 
     array (
       0 => 'smarty\\templates\\matchobserver\\matchlist.tpl',
-      1 => 1401870798,
+      1 => 1403348368,
       2 => 'file',
     ),
   ),
@@ -37,6 +37,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <tr>
                     <td>
                         Dato
+                    </td>
+                    <td>
+                        Odds
+                    </td>
+                    <td>
+                        H2H
                     </td>
                     <td>
                         Kamp
@@ -72,6 +78,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                         Dato
                     </td>
                     <td>
+                        Odds
+                    </td>
+                    <td>
+                        H2H
+                    </td>
+                    <td>
                         Kamp
                     </td>
                     <td>
@@ -102,6 +114,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 <tr>
                     <td>
                         Dato
+                    </td>
+                    <td>
+                        Odds
+                    </td>
+                    <td>
+                        H2H
                     </td>
                     <td>
                         Kamp

@@ -83,7 +83,7 @@ function updateMatchesMO(array,type){
     var table = $('#matchlist_'+type+"_body");
     table.empty();
     
-    for(var i=0;i<=8;i++){
+    for(var i=0;i<array.length;i++){
         var warnCount = 0;
         var row = '<tr>';
         var style = 'background-color:none;text-align:top;';
@@ -96,7 +96,30 @@ function updateMatchesMO(array,type){
             style = 'background-color:#66CCFF';
         }
         row += '<td rowspan=2 style="'+style+'">'+getMatchDateString(array[i].timestamp)+'</td>';
-        var homename = '<a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].homename+'</a>';
+        var homename = '';
+        
+        var tablea = '';
+        if(array[i].nowgoal.odds1x2 != undefined){
+            tablea = createOddsTable(array[i].nowgoal.odds1x2);
+            row += '<td align=center rowspan=2 style="'+style+'"><a href="javascript:void(0);" onmouseover="return overlib(\''+tablea+'\', WIDTH, 600);" onmouseout="return nd();">Odds</a></td>';
+        }else{
+            row += '<td align=center rowspan=2 style="'+style+'"><a href="javascript:void(0);" onmouseover="return overlib(\'Ikke tilgjengelig enda\', WIDTH, 115);" onmouseout="return nd();">Odds</a></td>';
+        }
+        
+        if(array[i].nowgoal.results != undefined){
+            var h2hdata = '<b>Head2Head:</b></br>';
+            h2hdata += createResultTable(array[i].nowgoal.results.H2H);
+            row += '<td align=center rowspan=2 style="'+style+'"><a href="javascript:void(0);" onmouseover="return overlib(\''+h2hdata+'\', WIDTH, 800);" onmouseout="return nd();">H2H</a></td>';
+            
+            var tabledata = '<b>Siste 20 kamper:</b></br>';
+            tabledata += createResultTable(array[i].nowgoal.results.lasthome);
+            homename =  '<a href="javascript:void(0);" onmouseover="return overlib(\''+tabledata+'\', WIDTH, 800);" onmouseout="return nd();" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].homename+'</a>';
+        
+        }else{
+            row += '<td align=center rowspan=2 style="'+style+'"><a href="javascript:void(0);" onmouseover="return overlib(\'Ikke tilgjengelig enda\', WIDTH, 115);" onmouseout="return nd();">H2H</a></td>';
+            homename = '<a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].homename+'</a>';
+        }
+        
         if(array[i].homespread != undefined){
             row += '<td style='+style+'>'+getDiv(homename + ' ' + array[i].homespread, array[i].homeprice)+'</td>';
         }else{
@@ -172,8 +195,15 @@ function updateMatchesMO(array,type){
         }
         row += '</tr><tr>';
         
-        var awayname = '<a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].awayname+'</a>';
+        var awayname = '';
+        if(array[i].nowgoal.results != undefined){
+            tabledata = '<b>Siste 20 kamper:</b></br>';
+            tabledata += createResultTable(array[i].nowgoal.results.lastaway);
+            awayname = '<a href="javascript:void(0);" onmouseover="return overlib(\''+tabledata+'\', WIDTH, 800);" onmouseout="return nd();" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].awayname+'</a>';
         
+        }else{
+            awayname = '<a href="#" onclick="getMatchMO('+array[i].matchid+');return false;">'+array[i].awayname+'</a>';
+        }
         if(array[i].awayspread != undefined){
             row += '<td style="'+style+'">'+getDiv(awayname + ' ' + array[i].awayspread, array[i].awayprice)+'</td>';
         }else{
@@ -244,7 +274,115 @@ function getSuspensionString(array, teamid){
     return susp;
 }
 
+function createResultTable(array){
+    var table = '<table class=table style=background-color:white>';
+    table += '<thead><tr><td>Dato</td><td>Liga&nbsp&nbsp&nbsp</td><td>Hjemmelag&nbsp&nbsp&nbsp</td><td>Bortelag&nbsp&nbsp&nbsp</td><td>Fulltid</td><td>Pause</td><td>H</td><td>U</td><td>B</td><td>Line</td><td>H</td><td>B</td><td>O/U</td></tr></thead>';
+    table += '<tbody>';
+    
+     for(var i=0;i<array.length;i++){
+        
+        var homescore = array[i].score.split("-")[0];
+        var awayscore = array[i].score.split("-")[1];
+        
+        var oddsstyle = 'style=background-color:#33CC33';
+        var stylehome = '';
+        var styledraw = '';
+        var styleaway = '';
+        
+        if(parseInt(homescore) > parseInt(awayscore)){
+            stylehome = oddsstyle;
+        }else if(parseInt(homescore) == parseInt(awayscore)){
+            styledraw = oddsstyle;
+        }else{
+            styleaway = oddsstyle;
+        }
+        
+        table += '<tr>';
+        table += '<td>'+array[i].date+'</td>';
+        table += '<td>'+array[i].league+'</td>';
+        table += '<td>'+array[i].hometeam+'</td>';
+        table += '<td>'+array[i].awayteam+'</td>';
+        table += '<td>'+array[i].score+'</td>';
+        table += '<td>'+array[i].htscore+'</td>';
+        table += '<td '+stylehome+'>'+(array[i].home != null ? array[i].home : '')+'</td>';
+        table += '<td '+styledraw+'>'+(array[i].draw != null ? array[i].draw : '')+'</td>';
+        table += '<td '+styleaway+'>'+(array[i].away != null ? array[i].away : '')+'</td>';
+        table += '<td>'+(array[i].handicapline != null ? array[i].handicapline : '')+'</td>';
+        table += '<td>'+(array[i].handicaphome != null ? array[i].handicaphome : '')+'</td>';
+        table += '<td>'+(array[i].handicapaway != null ? array[i].handicapaway : '')+'</td>';
+        table += '<td>'+array[i].overunder+'</td>';
+        table += '</tr>';
+    }
+    table += '</tbody>'
+    table += '</table>';
+    return table;
+}
+function createOddsTable(array){
+    var table = '<table class=table style=background-color:white>';
+    
+    var firststyle = 'background-color:lightgrey';
+    
+    table += '<thead>';
+    table += '<tr>';
+    table += '<td>Oppdatert</td>';
+    table += '<td>Bookie</td>';
+    table += '<td>Start H</td>';
+    table += '<td>H</td>';
+    table += '<td>Start U</td>';
+    table += '<td>U</td>';
+    table += '<td>Start B</td>';
+    table += '<td>B</td>';
+    
+    
+    table += '</tr>';
+    table += '</thead>';
+    table += '<tbody>';
+    
+     for(var i=0;i<array.length;i++){
+        
+        var homestyle = '';
+        var drawstyle = '';
+        var awaystyle = '';
+        var home = parseFloat(array[i].home);
+        var draw = parseFloat(array[i].draw);
+        var away = parseFloat(array[i].away);
+        var firsthome = parseFloat(array[i].firsthome);
+        var firstdraw = parseFloat(array[i].firstdraw);
+        var firstaway = parseFloat(array[i].firstaway);
 
+        if(home > firsthome){
+            homestyle = 'background-color:#33CC33';
+        }else if(home < firsthome){
+             homestyle = 'background-color:#FF0000';
+        }
+        
+        if(draw > firstdraw){
+            drawstyle = 'background-color:#33CC33';
+        }else if(draw < firstdraw){
+            drawstyle = 'background-color:#FF0000';
+        }
+
+        if(away > firstaway){
+            awaystyle = 'background-color:#33CC33';
+        }else if(away < firstaway) {
+            awaystyle = 'background-color:#FF0000';
+        }
+        
+        table += '<tr>';
+        table += '<td>'+array[i].lastupdate+'</td>';
+        table += '<td>'+array[i].provider+'</td>';
+        table += '<td style='+firststyle+'>'+firsthome+'</td>';
+        table += '<td style='+homestyle+'>'+home+'</td>';
+        table += '<td style='+firststyle+'>'+firstdraw+'</td>';
+        table += '<td style='+drawstyle+'>'+draw+'</td>';
+        table += '<td style='+firststyle+'>'+firstaway+'</td>';
+        table += '<td style='+awaystyle+'>'+away+'</td>';
+        table += '</tr>';
+    }
+    table += '</tbody>'
+    table += '</table>';
+    return table;
+}
 function getMatchMO(matchid){
     if(!allowClicks){
         return;
@@ -406,7 +544,8 @@ function updateTeamInfo(json){
             $('#homesquad_source').attr('target','_blank');
             $('#homesquad_source').show();
             updateTeams(json.homesquad,'hometeam_squad','Tropp');
-            updateTeams(json.homesquad.summary.missingplayers,'hometeam_missing','Spillere ute');
+            updateTeams(json.homesquad.summary.missingplayers,'homesquad_missing','Spillere ute');
+            $('[id^="hometeam_input"]').show();
             $('#team_detail').tabs('select', 2);
         }else if(json.homesquad_news.length != 0){
             $("#team_detail").tabs('enable', 2);
@@ -421,6 +560,7 @@ function updateTeamInfo(json){
             updateTeams(json.homesquad_news,'hometeam_squad','Tropp');
             updateTeams(json.homesquad_news.summary.missingplayers,'homesquad_missing','Spillere ute');
             $('#team_detail').tabs('select', 2);
+            $('[id^="hometeam_input"]').show();
         }else if(json.homelineup_string != undefined){
             $('#hometeam_text').show();
             $('#hometeam_source').html('Fotball.no');
@@ -476,6 +616,7 @@ function updateTeamInfo(json){
             updateTeams(json.awaysquad,'awayteam_squad','Tropp');
             updateTeams(json.awaysquad.summary.missingplayers,'awaysquad_missing','Spillere ute');
             $('#team_detail').tabs('select', 4);
+            $('[id^="awayteam_input"]').show();
         }else if(json.awaysquad_news.length != 0){
             $('#team_detail').tabs('enable', 4);
             $('#awaysquad_text').show();
@@ -488,6 +629,7 @@ function updateTeamInfo(json){
             updateTeams(json.awaysquad_news, 'awayteam_squad','Tropp');
             updateTeams(json.awaysquad_news.summary.missingplayers,'awaysquad_missing','Spillere ute');
             $('#team_detail').tabs('select', 4);
+            $('[id^="awayteam_input"]').show();
         }else{
             $('#awayteam_input').show();
             $('#awayteam_input_textarea').show();

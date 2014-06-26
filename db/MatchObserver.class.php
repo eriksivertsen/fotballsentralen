@@ -9,9 +9,11 @@ require_once 'LineupInfo.class.php';
 
 class MatchObserver {
     
-    const LOAD_WEATHER = false;
+    const LOAD_WEATHER = true;
+    const MATCH_COUNT = 9;
+    const TEST = false;
 
-    public function getTightFixtures() {
+    public static function getTightFixtures() {
         $q = " SELECT 
                 m.hometeamid, m.awayteamid 
                 FROM
@@ -47,7 +49,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function getMatches(array $susp, array $tightFixtures, $userid) {
+    public static function getMatches(array $susp, array $tightFixtures, $userid) {
 
         set_time_limit(60);
         $settings = DatabaseSettings::getSettings();
@@ -107,7 +109,7 @@ class MatchObserver {
             $arrayName = MatchObserver::getArrayName($row['java_variable']);
 
             if (isset($data[$arrayName])) {
-                if (count($data[$arrayName]) >= 9) {
+                if (count($data[$arrayName]) >= MatchObserver::MATCH_COUNT) {
                     continue;
                 }
             }
@@ -159,6 +161,9 @@ class MatchObserver {
             $valueHome = MatchObserver::getHomeValue($homepercentage, $drawpercentage, $row['homespread'],$row['homeprice']);
             $valueAway = MatchObserver::getAwayValue($awaypercentage, $drawpercentage, $row['awayspread'],$row['awayprice']);
 
+            
+            $nowGoal = MatchObserver::getNowGoal($row['matchid']);
+            
             $homeLineupInfo = array();
             $awayLineupInfo = array();
             $homeLineup = 0;
@@ -238,12 +243,13 @@ class MatchObserver {
                 'awaymorepercentage' => $awaymoreperceantage,
                 'valuehome' => $valueHome,
                 'valueaway' => $valueAway,
-                'settings' => $settings
+                'settings' => $settings,
+                'nowgoal' => $nowGoal
             );
         }
         return $data;
     }
-    public function getTotalValue($homeOver, $awayOver, $points, $overprice, $underprice){
+    public static function getTotalValue($homeOver, $awayOver, $points, $overprice, $underprice){
         $overAverage = ($homeOver + $awayOver) / 2;
         $underAverage = 100 - $overAverage;
         switch($points){
@@ -258,7 +264,7 @@ class MatchObserver {
             default: return array('over' => '', 'under' => '');
         }
     }
-    public function getHomeValue($percentage, $drawpercentage, $spread,$homeprice) {
+    public static function getHomeValue($percentage, $drawpercentage, $spread,$homeprice) {
         if(!isset($percentage) || $percentage == 0 || !isset($spread) || !isset($homeprice)){
             return '';
         }
@@ -284,7 +290,7 @@ class MatchObserver {
             default: return '';
         }
     }
-    public function getAwayValue($percentage, $drawpercentage, $spread,$awayprice) {
+    public static function getAwayValue($percentage, $drawpercentage, $spread,$awayprice) {
         if(!isset($percentage) || $percentage == 0 || !isset($spread) || !isset($awayprice)){
             return '';
         }
@@ -310,7 +316,10 @@ class MatchObserver {
         }
     }
     
-    public function getWeather($url, $from, $to, $settings) {
+    public static function getWeather($url, $from, $to, $settings) {
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            throw new Exception($errstr, $errno);
+        });
         $url = str_replace('ø', '%c3%b8', $url);
         $url = str_replace('æ', '%c3%a6', $url);
         $url = str_replace('å', '%c3%85', $url);
@@ -321,7 +330,8 @@ class MatchObserver {
             $yr = Yr\Yr::create($url, "/tmp", $settings[Constant::SETTING_CACHE]['value'], 'norwegian');
         }
         catch(Exception $e){
-            return $forecastRes;
+            restore_error_handler();
+            throw $e;
         }
         foreach ($yr->getHourlyForecasts($from, $to) as $forecast) {
             $timestamp = $forecast->getFrom()->getTimestamp();
@@ -351,7 +361,7 @@ class MatchObserver {
         }
 
 
-    public function getArrayName($java_variable) {
+    public static function getArrayName($java_variable) {
         switch ($java_variable) {
             case 1: return 'tippeligaen';
             case 2: return 'firstdiv';
@@ -362,7 +372,7 @@ class MatchObserver {
         }
     }
 
-    public function getMatchIds(array $matches) {
+    public static function getMatchIds(array $matches) {
         $matchIds = array();
         foreach ($matches as $leagues) {
             foreach ($leagues as $match) {
@@ -372,7 +382,7 @@ class MatchObserver {
         return $matchIds;
     }
 
-    public function getMatchInfo($matchid) {
+    public static function getMatchInfo($matchid) {
         $q = 
         "SELECT d.level,m.dateofmatch, m.matchid, UNIX_TIMESTAMP(m.dateofmatch) * 1000 as timestamp, 
         home.teamname as homename, home.teamid as homeid, 
@@ -474,7 +484,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function getLastMatch($teamid, $type = '') {
+    public static function getLastMatch($teamid, $type = '') {
         $andClause = "AND m.`result` NOT LIKE '- : -' ";
         if ($type == '_cup') {
             $andClause = "AND m.dateofmatch < NOW() ";
@@ -526,7 +536,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function getLeagueShortName($leaguename){
+    public static function getLeagueShortName($leaguename){
         switch($leaguename){
             case 'Tippeligaen': return 'TL';
             case '1.divisjon': return '1.div';
@@ -538,7 +548,7 @@ class MatchObserver {
         }
     }
     
-    public function getNext($teamid) {
+    public static function getNext($teamid) {
         $nextLeague = MatchObserver::getNextMatch($teamid);
         $nextCup = MatchObserver::getNextMatch($teamid, '_cup');
 
@@ -553,7 +563,7 @@ class MatchObserver {
         }
     }
 
-    public function getLast($teamid) {
+    public static function getLast($teamid) {
         $lastLeague = MatchObserver::getLastMatch($teamid);
         $lastCup = MatchObserver::getLastMatch($teamid, '_cup');
 
@@ -568,7 +578,7 @@ class MatchObserver {
         }
     }
 
-    public function getNextMatch($teamid, $type = '') {
+    public static function getNextMatch($teamid, $type = '') {
 
         $q = "SELECT m.`hometeamid`, home.`teamname` as homename, m.`awayteamid`, away.teamname as awayname, m.`dateofmatch`, UNIX_TIMESTAMP(m.dateofmatch) * 1000 AS `timestamp`, m.`leagueid`, l.`leaguename` FROM matchtable$type m 
             JOIN teamtable home ON home.`teamid` = m.`hometeamid`
@@ -613,7 +623,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function getLatestNews() {
+    public static function getLatestNews() {
         $q = "SELECT 
             news_id,
             header,
@@ -642,7 +652,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function getNewsText($newsid) {
+    public static function getNewsText($newsid) {
         $q = "SELECT news_id,header,href,`text`,lastupdate, type, includes_squad FROM news n where n.news_id = $newsid";
         $data = array();
 
@@ -662,7 +672,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function getNews($teamid, $source = false) {
+    public static function getNews($teamid, $source = false) {
         
         $sourceClause = "";
         if($source){
@@ -699,7 +709,7 @@ class MatchObserver {
         return $data;
     }
 
-    public function fixSuspension(array $suspension) {
+    public static function fixSuspension(array $suspension) {
         $retVal = array();
         foreach ($suspension as $key => $array) {
             if ($key == 'redCard') {
@@ -714,7 +724,7 @@ class MatchObserver {
         return $retVal;
     }
 
-    public function getOdds($matchid, $period) {
+    public static function getOdds($matchid, $period) {
         $q = "SELECT * FROM odds o where o.matchid = " . $matchid;
         $data = array();
         $result = mysql_query($q);
@@ -771,7 +781,7 @@ class MatchObserver {
         
         return $data;
     }
-    public function setCustomLineup($matchid,$type,$text){
+    public static function setCustomLineup($matchid,$type,$text){
         $column = $type.'team_news_source';
         $foundPlayers = MatchObserver::setCustomSource($matchid,$type,$text,11);
         if(isset($foundPlayers['error'])){
@@ -780,7 +790,7 @@ class MatchObserver {
         MatchObserver::saveCustomNews($foundPlayers,$column,$matchid,$text);
     }
     
-    public function setCustomSquad($matchid, $type, $text){
+    public static function setCustomSquad($matchid, $type, $text){
         $column = $type.'squad_news_source';
         $foundPlayers = MatchObserver::setCustomSource($matchid,$type,$text);
         MatchObserver::saveCustomNews($foundPlayers,$column,$matchid,$text);
@@ -835,7 +845,7 @@ class MatchObserver {
         return $foundPlayers;
     }
     
-    public function saveCustomNews(array $foundPlayers, $column, $matchid, $text){
+    public static function saveCustomNews(array $foundPlayers, $column, $matchid, $text){
         if(!empty($foundPlayers)){
             $playerString = implode('|', $foundPlayers);
             $newsQuery = 'INSERT INTO news (header,text,squad_string) values (\'Egendefinert tropp\',\''.$text.'\',\''.$playerString.'\')';
@@ -844,6 +854,46 @@ class MatchObserver {
             $observeQuery = 'INSERT INTO match_observe (matchid,'.$column.') values ('.$matchid.', '.$id.') ON DUPLICATE KEY UPDATE '.$column.'=VALUES('.$column.')';
             mysql_query($observeQuery);
         }
+    }
+    
+    public static function getNowGoal($matchid) {
+        $q = "SELECT * FROM nowgoal_results r where r.matchid = " . $matchid . ' ORDER By r.date DESC';
+        $result = mysql_query($q);
+        $data = array();
+        while ($row = mysql_fetch_array($result)) {
+            $data['results'][$row['type']][] = array(
+                'matchid' => $row['matchid'],
+                'league' => $row['league'],
+                'date' => $row['date'],
+                'hometeam' => $row['hometeam'],
+                'awayteam' => $row['awayteam'],
+                'score' => $row['score'],
+                'htscore' => $row['htscore'],
+                'home' => $row['home'],
+                'draw' => $row['draw'],
+                'away' => $row['away'],
+                'overunder' => $row['overunder'],
+                'handicapline' => $row['handicapline'],
+                'handicaphome' => $row['handicaphome'],
+                'handicapaway' => $row['handicapaway']
+            );
+        }
+        $q = "SELECT * FROM nowgoal_odds1x2 r where r.matchid = " . $matchid;
+        $result = mysql_query($q);
+        while ($row = mysql_fetch_array($result)) {
+            $data['odds1x2'][] = array(
+                'matchid' => $row['matchid'],
+                'provider' => $row['provider'],
+                'firsthome' => $row['firsthome'],
+                'firstdraw' => $row['firstdraw'],
+                'firstaway' => $row['firstaway'],
+                'home' => $row['home'],
+                'draw' => $row['draw'],
+                'away' => $row['away'],
+                'lastupdate' => $row['lastupdate']
+            );
+        }
+        return $data;
     }
 }
 
@@ -1006,8 +1056,15 @@ if ($action == 'setTextAreaTeam') {
 
 if ($action == 'getInfo') {
     $userid = filter_input(INPUT_POST, 'userid', FILTER_VALIDATE_INT);
-    $tights = MatchObserver::getTightFixtures();
-    $susp = DatabaseUtils::getAllSuspList();
+    if(MatchObserver::TEST){
+        $tights = array();
+        $susp = array();
+    }else{
+        $tights = MatchObserver::getTightFixtures();
+        $susp = DatabaseUtils::getAllSuspList();
+    }
+   
+    
     $matches = MatchObserver::getMatches($susp, $tights, $userid);
     
     $retval = array(

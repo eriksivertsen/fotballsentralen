@@ -1,0 +1,52 @@
+.yrtable {
+width: 810px;
+border : 1px solid #d8d8d8;
+}
+
+.tbl_header {height: 25px; color:#505050;font-weight:bold;}
+
+
+.yrheader {
+border-bottom: 0px solid #424242;
+padding: 3px;
+font-size: 12px;
+font-weight: bold;
+}
+.yrrow {
+padding: 2px;
+font-size: 12px;
+text-align: center;
+}
+.yrrow_a {
+border-top: 0px solid #424242;
+padding: 2px;
+font-size: 12px;
+text-align: center;
+width: 50px;
+}
+
+img {border:none;}
+
+
+.yrrow_b {
+border-top: 0px solid #424242;
+padding: 2px;
+font-size: 12px;
+text-align: left;
+padding-top: 10px;
+}
+
+.yrrow_aa {
+padding: 2px;
+font-size: 12px;
+text-align: left;
+font-style:bold;
+background: #BCD2EE;
+}
+
+.below {
+color: #1874CD;
+}
+.over {
+color: #CD3333;
+}

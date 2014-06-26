@@ -18,6 +18,12 @@
                         Dato
                     </td>
                     <td>
+                        Odds
+                    </td>
+                    <td>
+                        H2H
+                    </td>
+                    <td>
                         Kamp
                     </td>
                     <td>
@@ -51,6 +57,12 @@
                         Dato
                     </td>
                     <td>
+                        Odds
+                    </td>
+                    <td>
+                        H2H
+                    </td>
+                    <td>
                         Kamp
                     </td>
                     <td>
@@ -81,6 +93,12 @@
                 <tr>
                     <td>
                         Dato
+                    </td>
+                    <td>
+                        Odds
+                    </td>
+                    <td>
+                        H2H
                     </td>
                     <td>
                         Kamp

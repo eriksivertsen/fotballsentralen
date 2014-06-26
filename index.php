@@ -16,6 +16,7 @@ $smarty->setCacheDir('smarty/cache');
 $smarty->setConfigDir('smarty/configs');
 $smarty->error_reporting = 4;
 
+set_time_limit(60);
 
 if(isset($_GET['player_id'])){
     $smarty->assign('player_id',$_GET['player_id']);

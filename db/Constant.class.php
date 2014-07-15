@@ -18,6 +18,7 @@ class Constant {
     const SETTING_CACHE = 'MIN_CACHE';
     const TIGHT_FIXTURE_MIN = 'TIGHT_FIXTURE_MIN';
     const MIN_FIRSTTEAM_PLAYER = 'MIN_FIRSTTEAM_PLAYER';
+    const MIN_TEMPERATURE = 'MIN_TEMPERATURE';
 }
 
 ?>

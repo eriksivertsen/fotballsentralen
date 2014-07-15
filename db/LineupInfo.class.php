@@ -1,7 +1,7 @@
 <?php
 
 class LineupInfo {
-    public function getLineupInfo($teamid, $teamString, $limit = 11, $includeMissing = true) {
+    public static function getLineupInfo($teamid, $teamString, $limit = 11, $includeMissing = true) {
 
         $mostUsedLineup = LineupInfo::getMostUsedLineup($teamid);
         $startedLastMatch = LineupInfo::getStartedLastMatch($teamid);
@@ -124,7 +124,7 @@ class LineupInfo {
         return $sorted;
     }
 
-    public function getMostUsedLineup($teamid) {
+    public static function getMostUsedLineup($teamid) {
         $q = "SELECT SUM(p.`start`) AS starts, pt.playerid, SUBSTRING_INDEX(pt.`playername`,' ',-1) AS lastname,pta.`position` as apos ,ptn.`position` as npos " .
                 "FROM playtable p  " .
                 "JOIN matchtable m ON m.`matchid` = p.`matchid` " .
@@ -147,7 +147,7 @@ class LineupInfo {
         return $data;
     }
 
-    public function getStartedLastMatch($teamid) {
+    public static function getStartedLastMatch($teamid) {
         $q = "SELECT " .
                 "m.matchid " .
                 "FROM " .
@@ -198,7 +198,7 @@ class LineupInfo {
         return $data;
     }
 
-    public function getStartCount($teamid) {
+    public static function getStartCount($teamid) {
         $q = "select count(*) as starts, p.`playerid` " .
                 "from playtable p " .
                 "join matchtable m on p.`matchid` = m.`matchid` " .
@@ -216,7 +216,7 @@ class LineupInfo {
         return $data;
     }
 
-    public function getSquadCount($teamid) {
+    public static function getSquadCount($teamid) {
         $q = "select count(*) as starts, p.`playerid` " .
                 "from playtable p " .
                 "join matchtable m on p.`matchid` = m.`matchid` " .
@@ -232,7 +232,7 @@ class LineupInfo {
         return $data;
     }
 
-    public function getStartedLastGames($teamid) {
+    public static function getStartedLastGames($teamid) {
         $q = "SELECT COUNT(*) as starts, p.`playerid` FROM (SELECT  " .
                 "DISTINCT m.`matchid`  " .
                 "FROM  " .
@@ -251,7 +251,7 @@ class LineupInfo {
         return $data;
     }
 
-    public function getBestSquad($teamid, $value = '>=')
+    public static function getBestSquad($teamid, $value = '>=')
     {
        $q = "SELECT  " .
             "SUM(p.minutesplayed) as minutes,p.playerid, pl.playername, pl.nickname " .
@@ -273,7 +273,7 @@ class LineupInfo {
         return $data;
     }
     
-    public function getSquadStatus($starts, $squads) {
+    public static function getSquadStatus($starts, $squads) {
         if ($starts == 0 && $squads == 0) {
             return "Ny";
         }
@@ -289,7 +289,7 @@ class LineupInfo {
         }
     }
     
-    public function getPlaytime($teamid, $playerid) {
+    public static function getPlaytime($teamid, $playerid) {
         $q = "SELECT  " .
                 "SUM(minutesplayed) AS total, " .
                 "p.`teamid` AS teamid " .

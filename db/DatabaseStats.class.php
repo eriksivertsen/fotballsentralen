@@ -412,6 +412,30 @@ class DatabaseStats {
         }
         return $data;
     }
+    public function getMatchesOneWeek()
+    {
+        $q = "SELECT m.matchid, UNIX_TIMESTAMP(m.dateofmatch) * 1000 as timestamp, home.teamname as homename, away.teamname as awayname, l.java_variable, home.teamid as homeid, away.teamid as awayid
+            FROM matchtable m 
+            JOIN teamtable home on m.hometeamid = home.teamid 
+            JOIN teamtable away on m.awayteamid = away.teamid 
+            JOIN leaguetable l ON l.leagueid = m.leagueid
+            WHERE m.`result` LIKE '- : -' AND m.`dateofmatch` BETWEEN  NOW() AND NOW() + INTERVAL 76 HOUR ORDER BY m.dateofmatch ASC ";
+        $data = array();
+        $result = mysql_query($q);
+        while($row = mysql_fetch_array($result))
+        {
+            $data[] = array(
+                'matchid' => $row['matchid'],
+                'hometeamid' => $row['homeid'],
+                'awayteamid' => $row['awayid'],
+                'homename' => $row['homename'],
+                'awayname' => $row['awayname'],
+                'leagueid' => $row['java_variable'],
+                'timestamp' => $row['timestamp']
+            );
+        }
+        return $data;
+    }
     public function getMatchesOneWeekPL()
     {
         $q = "SELECT m.matchid, UNIX_TIMESTAMP(m.dateofmatch) * 1000 as timestamp, home.teamname as homename, away.teamname as awayname, l.java_variable, home.teamid as homeid, away.teamid as awayid

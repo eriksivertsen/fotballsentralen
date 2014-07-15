@@ -338,8 +338,12 @@ class MatchObserver {
             if ($timestamp > $from && $timestamp < $to) {
                 $windMps = $forecast->getWindSpeed('mps');
                 $percipitation = $forecast->getPrecipitation();
+                $temperature = $forecast->getTemperature();
                 $alert = false;
-                if ($windMps > $settings[Constant::SETTING_WIND]['value'] || $percipitation >= $settings[Constant::SETTING_PREP]['value']) {
+                if ($windMps > $settings[Constant::SETTING_WIND]['value'] || 
+                        $percipitation >= $settings[Constant::SETTING_PREP]['value'] ||
+                        $temperature >= $settings[Constant::MIN_TEMPERATURE]['value'])
+                    {
                     $alert = true;
                 }
                 $forecastRes = array(

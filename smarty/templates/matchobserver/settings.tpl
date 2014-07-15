@@ -41,7 +41,6 @@
                 <li><a href="#surface">Underlag</a></li>
                 <li><a href="#derby">Derby</a></li>
                 <li><a href="#players">Spillere</a></li>
-                <li><a href="#mailsender">Mailsender</a></li>
             </ul>
             <div id="surface">
                 <div id="select" style="font-size: 14px;text-align: left;margin:5px; ">
@@ -142,6 +141,7 @@
                     </tbody>
                 </table>
             </div>
+            <!--
             <div id="mailsender">
                 <table id="settings_table" class="table auto">
                     <thead>
@@ -169,7 +169,7 @@
                             <input id="100_lineup_double" type="checkbox" disabled="true"/>
                         </td>
                     </tr>
-                    <!--
+                    
                     <tr>
                         <td>
                         Champions League (beta, engelske lag)
@@ -210,7 +210,7 @@
                             <input id="300_lineup_double" type="checkbox" disabled="true"/>
                         </td>
                     </tr>
-                    -->
+                    
                     <tr>
                         <td>
                             Tippeligaen
@@ -337,9 +337,10 @@
                             <input type="button" onclick="changePassword()" value="Bytt passord"/>
                         </td>
                     </tr>
+                   
                 </table>
-
             </div>
+             -->
         </div>
     </body>
 </html>

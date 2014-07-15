@@ -14,9 +14,13 @@ function getInfo(){
         type: "POST",
         url: "db/MatchObserver.class.php",
         dataType: "json",
+        timeout: 30000,
         data: {
             action: "getInfo",
             userid : $('#userid').val()
+        },
+        error: function() {
+            location.reload();
         },
         success: function(json) {
             $("#team_detail").tabs("option","disabled", [1,2,3,4,5]);
@@ -27,7 +31,8 @@ function getInfo(){
             $('#matchlist').show();
             autoRefreshMatches();
             stopLoad();
-        }
+        },
+        
     });
 }
 function autoRefreshMatches(){

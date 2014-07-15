@@ -21,14 +21,14 @@ $dailyClick = $db->getDailyClicks();
 $uniqueVisitors = $db->getUniqueVisitors();
 $ratings = $db->getRatings();
 
-$printTips = false;
+$printTips = true;
 
-$year = 2013;
+$year = 2014;
 
-$matchArrayPL = $db->getMatchesOneWeekPL();
-foreach($matchArrayPL as $match){
-    $db->printScoringPercentagePL($match['hometeamid'], $match['awayteamid'], $year,$match['homename'],$match['awayname']);
-}
+//$matchArrayPL = $db->getMatchesOneWeek();
+//foreach($matchArrayPL as $match){
+//    $db->printScoringPercentagePL($match['hometeamid'], $match['awayteamid'], $year,$match['homename'],$match['awayname']);
+//}
 
 
 
@@ -37,22 +37,22 @@ foreach($matchArrayPL as $match){
 echo '<br/>';
 if($printTips) {
     $matchArray = $dbP->getMatchesOneWeek();
-    $susps = array();
-    $susps['134371'] = $dbU->getSuspList(134371);
-    $susps['134372'] = $dbU->getSuspList(134372);
-    $susps['134373'] = $dbU->getSuspList(134373);
-    $susps['134374'] = $dbU->getSuspList(134374);
-
-    $suspAr = array();
-    foreach($susps as $league){
-        foreach($league as $key => $array){
-            if($key == 'threeYellow' || $key == 'redCard' || $key == 'fiveYellow'){
-            foreach($array as $val){
-                    $suspAr[$val['teamid']][] = $val;
-                } 
-            }
-        }
-    }
+//    $susps = array();
+//    $susps['134371'] = $dbU->getSuspList(134371);
+//    $susps['134372'] = $dbU->getSuspList(134372);
+//    $susps['134373'] = $dbU->getSuspList(134373);
+//    $susps['134374'] = $dbU->getSuspList(134374);
+//
+//    $suspAr = array();
+//    foreach($susps as $league){
+//        foreach($league as $key => $array){
+//            if($key == 'threeYellow' || $key == 'redCard' || $key == 'fiveYellow'){
+//            foreach($array as $val){
+//                    $suspAr[$val['teamid']][] = $val;
+//                } 
+//            }
+//        }
+//    }
 
     foreach($matchArray as $match){
         $teamArray = $dbP->getMatchInfo($match['matchid']);
@@ -67,28 +67,28 @@ if($printTips) {
 
         $homePos = $dbT->getLeaguePosition($teamArray['hometeamid'],$teamArray['java_variable'],2013,'home');
         $awayPos = $dbT->getLeaguePosition($teamArray['awayteamid'],$teamArray['java_variable'],2013,'away');
-
+        $matchString = '<a href="http://fotballsentralen.com/#/2014/page/preview/'.$match['matchid'].'">'.$match['matchid'].'"</a>';
         if($homePos < 5 && $awayPos > 13){
             echo 'Solid hometeam('.$homePos.') vs weak awayteam ('.$awayPos.'): ' .  $match['matchid'] . '  ' . $teamArray['dateofmatch'] .'  <br/>';
         }
         if($homeTeam['over3'] >= 80 && $awayTeam['over3'] >= 80){
-            echo 'Over 2.5 goals: ' . $match['matchid'] . ': ' .$homeTeam['over3'] .'%-'.$awayTeam['over3'].'% - '.$teamArray['dateofmatch'] .'  <br/>';
+            echo 'Over 2.5 goals: ' . $matchString . ': ' .$homeTeam['over3'] .'%-'.$awayTeam['over3'].'% - '.$teamArray['dateofmatch'] .'  <br/>';
         }
         if($homeTeam['over4'] >= 80 && $awayTeam['over4'] >= 80){
-            echo 'Over 3.5 goals: ' . $match['matchid'] . ': ' .$homeTeam['over4'] .'%-'.$awayTeam['over4'].'% - '.$teamArray['dateofmatch'] .'   <br/>';
+            echo 'Over 3.5 goals: ' . $matchString . ': ' .$homeTeam['over4'] .'%-'.$awayTeam['over4'].'% - '.$teamArray['dateofmatch'] .'   <br/>';
         }
         if($homeTeam['over3'] <= 30 && $awayTeam['over3'] <= 30){
-            echo 'Under 2.5 goals: ' . $match['matchid'] . ': ' .$homeTeam['over3'] .'%-'.$awayTeam['over3'].'% - '.$teamArray['dateofmatch'] .'   <br/>';
+            echo 'Under 2.5 goals: ' . $matchString . ': ' .$homeTeam['over3'] .'%-'.$awayTeam['over3'].'% - '.$teamArray['dateofmatch'] .'   <br/>';
         }
         if($homeTeam['over4'] <= 30 && $awayTeam['over4'] <= 30){
-            echo 'Under 3.5 goals: ' . $match['matchid'] . '  ' .$homeTeam['over4'] .'%-'.$awayTeam['over4'].'% - '.$teamArray['dateofmatch'] .'   <br/>';
+            echo 'Under 3.5 goals: ' . $matchString . '  ' .$homeTeam['over4'] .'%-'.$awayTeam['over4'].'% - '.$teamArray['dateofmatch'] .'   <br/>';
         }
-        if($homeSuspCount >= 2 && $awaySuspCount < 1){ //  
-            echo 'Suspensions hometeam: ' . $homeSuspCount . ' - awayTeam: ' .$awaySuspCount . ' - ' . $match['matchid'] . ' ' .$teamArray['dateofmatch'] . ' <br/>';
-        }
-        if($awaySuspCount >= 2 && $homeSuspCount < 1){ //  
-            echo 'Suspensions hometeam: ' . $homeSuspCount . ' - awayTeam: ' .$awaySuspCount . ' - ' . $match['matchid'] . ' ' .$teamArray['dateofmatch'] . ' <br/>';
-        }
+//        if($homeSuspCount >= 2 && $awaySuspCount < 1){ //  
+//            echo 'Suspensions hometeam: ' . $homeSuspCount . ' - awayTeam: ' .$awaySuspCount . ' - ' . $match['matchid'] . ' ' .$teamArray['dateofmatch'] . ' <br/>';
+//        }
+//        if($awaySuspCount >= 2 && $homeSuspCount < 1){ //  
+//            echo 'Suspensions hometeam: ' . $homeSuspCount . ' - awayTeam: ' .$awaySuspCount . ' - ' . $match['matchid'] . ' ' .$teamArray['dateofmatch'] . ' <br/>';
+//        }
     }
 }
 
